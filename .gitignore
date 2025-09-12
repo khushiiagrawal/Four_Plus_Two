@@ -1,0 +1,6 @@
+.env
+venv
+sensors/service_key.json
+sensors/venv
+sensors/.DS_Store
+.DS_Store
