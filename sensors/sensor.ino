@@ -13,8 +13,8 @@ void setup() {
 }
 
 void loop() {
-  // Wait 10 seconds between measurements (10 * 1000 milliseconds).
-  delay(10000);
+  // Wait 3 seconds between measurements
+  delay(3000);
 
   float h = dht.readHumidity();
   float t = dht.readTemperature(); // Celsius
