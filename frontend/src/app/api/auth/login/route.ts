@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { authCookie, signUserJwt, type AppUser } from "@/lib/jwt";
-import { getUsersCollection } from "@/lib/mongodb";
+import { getUsersCollection, convertFirestoreUser } from "@/lib/firestore";
 import { User } from "@/types/user";
 
 export async function POST(req: NextRequest) {
@@ -18,9 +18,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Find user in MongoDB
-    const usersCollection = await getUsersCollection();
-    const user = await usersCollection.findOne({ email }) as User | null;
+    // Find user in Firestore
+    const usersCollection = getUsersCollection();
+    const userQuery = await usersCollection.where('email', '==', email).limit(1).get();
+    
+    if (userQuery.empty) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+    
+    const userDoc = userQuery.docs[0];
+    const user = convertFirestoreUser(userDoc) as User | null;
 
     if (!user) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -55,10 +62,9 @@ export async function POST(req: NextRequest) {
     };
 
     // Update last login time
-    await usersCollection.updateOne(
-      { id: user.id },
-      { $set: { updatedAt: new Date() } }
-    );
+    await userDoc.ref.update({
+      updatedAt: new Date()
+    });
 
     const token = await signUserJwt(userForJwt);
     const res = NextResponse.json({ 

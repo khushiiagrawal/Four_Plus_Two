@@ -3,7 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { authCookie, signUserJwt, type AppUser } from "@/lib/jwt";
-import { getUsersCollection } from "@/lib/mongodb";
+import { getUsersCollection } from "@/lib/firestore";
 import { uploadFileToS3 } from "@/lib/s3";
 
 const SignupSchema = z.object({
@@ -42,13 +42,11 @@ export async function POST(req: NextRequest) {
     // Removed domain restrictions - anyone can sign up now
 
     // Check if user already exists
-    const usersCollection = await getUsersCollection();
-    const existingUser = await usersCollection.findOne({
-      $or: [
-        { email: parse.data.email },
-        { employeeId: parse.data.employeeId }
-      ]
-    });
+    const usersCollection = getUsersCollection();
+    const emailQuery = await usersCollection.where('email', '==', parse.data.email).limit(1).get();
+    const employeeIdQuery = await usersCollection.where('employeeId', '==', parse.data.employeeId).limit(1).get();
+    
+    const existingUser = !emailQuery.empty || !employeeIdQuery.empty;
 
     if (existingUser) {
       return NextResponse.json(
@@ -93,10 +91,11 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date(),
     };
 
-    // Save user to MongoDB
-    const result = await usersCollection.insertOne(newUser);
-    
-    if (!result.insertedId) {
+    // Save user to Firestore
+    try {
+      await usersCollection.doc(userId).set(newUser);
+    } catch (error) {
+      console.error("Error creating user:", error);
       return NextResponse.json(
         { error: "Failed to create user account" },
         { status: 500 }

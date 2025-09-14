@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { getUsersCollection } from "@/lib/mongodb";
+import { getUsersCollection, convertFirestoreUser } from "@/lib/firestore";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret-change-me");
 
@@ -19,27 +19,27 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid admin token" }, { status: 401 });
     }
 
-    // Fetch all users from MongoDB
-    const usersCollection = await getUsersCollection();
-    const users = await usersCollection
-      .find({}, {
-        projection: {
-          _id: 0,
-          id: 1,
-          name: 1,
-          email: 1,
-          employeeId: 1,
-          designation: 1,
-          department: 1,
-          region: 1,
-          photoIdUrl: 1,
-          isAuthenticated: 1,
-          createdAt: 1,
-          updatedAt: 1
-        }
-      })
-      .sort({ createdAt: -1 })
-      .toArray();
+    // Fetch all users from Firestore
+    const usersCollection = getUsersCollection();
+    const snapshot = await usersCollection.orderBy('createdAt', 'desc').get();
+    
+    const users = snapshot.docs.map(doc => {
+      const userData = convertFirestoreUser(doc);
+      // Return only the fields we want to expose
+      return {
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        employeeId: userData.employeeId,
+        designation: userData.designation,
+        department: userData.department,
+        region: userData.region,
+        photoIdUrl: userData.photoIdUrl,
+        isAuthenticated: userData.isAuthenticated,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt
+      };
+    });
 
     return NextResponse.json({ 
       ok: true, 
