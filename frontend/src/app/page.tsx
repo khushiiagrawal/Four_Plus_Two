@@ -1,7 +1,44 @@
 "use client";
 import Link from "next/link";
+import { useUser } from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 export default function Home() {
+  const { user, isLoading, refreshUser } = useUser();
+  const router = useRouter();
+  const { addToast } = useToast();
+
+  const handleDashboardClick = async () => {
+    if (isLoading) return;
+    
+    // Refresh user context to ensure we have the latest data
+    await refreshUser();
+    
+    if (!user) {
+      addToast({
+        type: "error",
+        title: "Access Denied",
+        message: "Please log in to access the dashboard.",
+      });
+      router.push("/auth");
+      return;
+    }
+    
+    if (!user.isAuthenticated) {
+      addToast({
+        type: "warning",
+        title: "Access Pending",
+        message: "User not given access yet. Please wait for admin approval.",
+        duration: 8000,
+      });
+      router.push("/profile");
+      return;
+    }
+    
+    router.push("/dashboard");
+  };
+
   return (
     <div className="min-h-dvh flex flex-col overflow-hidden">
       {/* Header removed: Navbar is global in layout */}
@@ -63,12 +100,12 @@ export default function Home() {
               India.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/dashboard"
+              <button
+                onClick={handleDashboardClick}
                 className="rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"
               >
-                Log in to Dashboard
-              </Link>
+                Go to Dashboard
+              </button>
               <Link
                 href="/auth?tab=signup"
                 className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"

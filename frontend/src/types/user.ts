@@ -13,6 +13,7 @@ export interface User {
   photoIdUrl?: string; // S3 URL for uploaded photo ID
   invitationCode?: string;
   role: "official";
+  isAuthenticated: boolean; // Admin approval status
   createdAt: Date;
   updatedAt: Date;
 }

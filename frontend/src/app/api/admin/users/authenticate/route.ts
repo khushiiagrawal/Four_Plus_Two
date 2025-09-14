@@ -4,7 +4,7 @@ import { getUsersCollection } from "@/lib/mongodb";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret-change-me");
 
-export async function GET(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
     // Check admin authentication
     const adminToken = req.cookies.get("admin_token")?.value;
@@ -19,36 +19,36 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid admin token" }, { status: 401 });
     }
 
-    // Fetch all users from MongoDB
+    const body = await req.json();
+    const { userId, isAuthenticated } = body;
+
+    if (!userId || typeof isAuthenticated !== "boolean") {
+      return NextResponse.json({ error: "Invalid request data" }, { status: 400 });
+    }
+
+    // Update user authentication status
     const usersCollection = await getUsersCollection();
-    const users = await usersCollection
-      .find({}, {
-        projection: {
-          _id: 0,
-          id: 1,
-          name: 1,
-          email: 1,
-          employeeId: 1,
-          designation: 1,
-          department: 1,
-          region: 1,
-          photoIdUrl: 1,
-          isAuthenticated: 1,
-          createdAt: 1,
-          updatedAt: 1
+    const result = await usersCollection.updateOne(
+      { id: userId },
+      { 
+        $set: { 
+          isAuthenticated,
+          updatedAt: new Date()
         }
-      })
-      .sort({ createdAt: -1 })
-      .toArray();
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     return NextResponse.json({ 
       ok: true, 
-      users,
-      total: users.length 
+      message: `User ${isAuthenticated ? 'approved' : 'rejected'} successfully` 
     });
 
   } catch (error) {
-    console.error("Admin users fetch error:", error);
+    console.error("Admin user authentication update error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

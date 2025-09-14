@@ -1,20 +1,51 @@
 "use client";
 import useSWR from "swr";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
 import QualityGauge from "@/components/widgets/QualityGauge";
 import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
+import { useUser } from "@/contexts/UserContext";
+import { useToast } from "@/components/ui/Toast";
 
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
 
 export default function DashboardPage() {
-  const { data: summary } = useSWR("/api/data/summary", fetcher, {
+  const { user, isLoading, refreshUser } = useUser();
+  const router = useRouter();
+  const { addToast } = useToast();
+
+  // Protection logic
+  useEffect(() => {
+    if (!isLoading && !user) {
+      addToast({
+        type: "error",
+        title: "Access Denied",
+        message: "Please log in to access the dashboard.",
+      });
+      router.push("/auth");
+      return;
+    }
+    
+    if (!isLoading && user && !user.isAuthenticated) {
+      addToast({
+        type: "warning",
+        title: "Access Pending",
+        message: "User not given access yet. Please wait for admin approval.",
+        duration: 8000,
+      });
+      router.push("/profile");
+      return;
+    }
+  }, [user, isLoading, router, addToast]);
+
+  const { data: summary } = useSWR(user?.isAuthenticated ? "/api/data/summary" : null, fetcher, {
     refreshInterval: 30_000,
   });
-  const { data: map } = useSWR("/api/data/map", fetcher, {
+  const { data: map } = useSWR(user?.isAuthenticated ? "/api/data/map" : null, fetcher, {
     refreshInterval: 30_000,
   });
 
@@ -35,6 +66,21 @@ export default function DashboardPage() {
     query: "",
     region: "All Regions",
   });
+
+  // Show loading state while checking authentication
+  if (isLoading || !user || !user.isAuthenticated) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-500 dark:text-gray-400">
+            {isLoading ? "Loading..." : "Checking access..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-dvh p-4 md:p-6">
       <header className="flex items-center justify-between">

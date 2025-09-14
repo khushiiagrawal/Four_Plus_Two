@@ -32,6 +32,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
+    // Check if user is authenticated (approved by admin)
+    if (!user.isAuthenticated) {
+      return NextResponse.json({ 
+        error: "User not given access yet. Please wait for admin approval.",
+        requiresApproval: true 
+      }, { status: 403 });
+    }
+
     // Create JWT payload (without sensitive data)
     const userForJwt: AppUser = {
       id: user.id,
@@ -43,6 +51,7 @@ export async function POST(req: NextRequest) {
       region: user.region,
       photoIdUrl: user.photoIdUrl,
       role: "official",
+      isAuthenticated: user.isAuthenticated,
     };
 
     // Update last login time
@@ -57,6 +66,7 @@ export async function POST(req: NextRequest) {
       user: userForJwt,
       message: "Login successful" 
     });
+    
     res.cookies.set(authCookie.name, token, authCookie.options);
     return res;
 
