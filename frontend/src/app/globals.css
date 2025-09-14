@@ -99,3 +99,19 @@ body {
   animation: bgDrift 26s ease-in-out infinite;
   will-change: background-position;
 }
+
+@keyframes subtleBorderGlow {
+  0% {
+    border-color: rgba(56, 189, 248, 0.35); /* sky-400 */
+  }
+  50% {
+    border-color: rgba(16, 185, 129, 0.35); /* emerald-500 */
+  }
+  100% {
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+}
+
+.border-animate {
+  animation: subtleBorderGlow 6s ease-in-out infinite;
+}
