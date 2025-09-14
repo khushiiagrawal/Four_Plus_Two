@@ -5,9 +5,11 @@ export type AppUser = {
   id: string;
   name: string;
   email: string;
-  designation?: string;
-  department?: string;
-  region?: string;
+  employeeId: string;
+  designation: string;
+  department: string;
+  region: string;
+  photoIdUrl?: string;
   role: "official";
 };
 
