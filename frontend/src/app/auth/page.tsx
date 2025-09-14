@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/ui/Toast";
+import { useUser } from "@/contexts/UserContext";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -25,11 +27,14 @@ const signupSchema = z.object({
 export default function AuthPage() {
   const params = useSearchParams();
   const router = useRouter();
+  const { addToast } = useToast();
+  const { refreshUser } = useUser();
   const defaultTab = params.get("tab") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState<"login" | "signup">(defaultTab);
   useEffect(() => {
     setTab(defaultTab);
   }, [defaultTab]);
+
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -39,34 +44,99 @@ export default function AuthPage() {
   });
 
   async function onLogin(values: z.infer<typeof loginSchema>) {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    if (res.ok) {
-      router.push("/dashboard");
-    } else {
-      const j = await res.json().catch(() => ({}));
-      alert(j.error || "Login failed");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      
+      if (res.ok) {
+        addToast({
+          type: "success",
+          title: "Login Successful",
+          message: "Welcome back! Redirecting to dashboard...",
+        });
+        // Wait a bit for the cookie to be set, then refresh user context
+        setTimeout(async () => {
+          await refreshUser(); // Refresh user context
+          setTimeout(() => router.push("/dashboard"), 500);
+        }, 500);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        if (data.requiresApproval) {
+          addToast({
+            type: "warning",
+            title: "Access Pending",
+            message: data.error,
+            duration: 8000,
+          });
+        } else {
+          addToast({
+            type: "error",
+            title: "Login Failed",
+            message: data.error || "Invalid credentials",
+          });
+        }
+      }
+    } catch {
+      addToast({
+        type: "error",
+        title: "Login Error",
+        message: "Network error. Please try again.",
+      });
     }
   }
 
   async function onSignup(values: z.infer<typeof signupSchema>) {
-    const fd = new FormData();
-    Object.entries(values).forEach(([k, v]) => {
-      if (k === "photoId" && v && (v as FileList).length) {
-        fd.append("photoId", (v as FileList)[0]);
-      } else if (v != null) {
-        fd.append(k, String(v));
+    try {
+      const fd = new FormData();
+      Object.entries(values).forEach(([k, v]) => {
+        if (k === "photoId" && v && (v as FileList).length) {
+          fd.append("photoId", (v as FileList)[0]);
+        } else if (v != null) {
+          fd.append(k, String(v));
+        }
+      });
+      
+      const res = await fetch("/api/auth/signup", { method: "POST", body: fd });
+      
+      if (res.ok) {
+        addToast({
+          type: "success",
+          title: "Account Created",
+          message: "Your account has been created. Please wait for admin approval.",
+          duration: 8000,
+        });
+        // Wait a bit for the cookie to be set, then refresh user context
+        setTimeout(async () => {
+          await refreshUser(); // Refresh user context
+          setTimeout(() => router.push("/dashboard"), 500);
+        }, 500);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        if (data.error && typeof data.error === "object") {
+          // Handle validation errors
+          const errorMessages = Object.values(data.error).flat();
+          addToast({
+            type: "error",
+            title: "Signup Failed",
+            message: errorMessages.join(", "),
+          });
+        } else {
+          addToast({
+            type: "error",
+            title: "Signup Failed",
+            message: data.error || "Failed to create account",
+          });
+        }
       }
-    });
-    const res = await fetch("/api/auth/signup", { method: "POST", body: fd });
-    if (res.ok) {
-      router.push("/dashboard");
-    } else {
-      const j = await res.json().catch(() => ({}));
-      alert(j.error ? JSON.stringify(j.error) : "Signup failed");
+    } catch {
+      addToast({
+        type: "error",
+        title: "Signup Error",
+        message: "Network error. Please try again.",
+      });
     }
   }
 

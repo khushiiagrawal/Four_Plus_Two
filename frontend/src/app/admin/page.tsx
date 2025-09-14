@@ -20,6 +20,7 @@ interface User {
   department: string;
   region: string;
   photoIdUrl?: string;
+  isAuthenticated: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -112,6 +113,30 @@ export default function AdminPage() {
       }
     } catch (err) {
       console.error("Failed to fetch S3 images:", err);
+    }
+  }
+
+  async function updateUserAuthentication(userId: string, isAuthenticated: boolean) {
+    try {
+      const res = await fetch("/api/admin/users/authenticate", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, isAuthenticated }),
+      });
+
+      if (res.ok) {
+        // Update local state
+        setUsers(prev => prev.map(user => 
+          user.id === userId 
+            ? { ...user, isAuthenticated }
+            : user
+        ));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Failed to update user status");
+      }
+    } catch (err) {
+      setError("Failed to update user status");
     }
   }
 
@@ -270,6 +295,12 @@ export default function AdminPage() {
                       Photo ID
                     </th>
                     <th className="text-left p-4 text-slate-200 font-medium">
+                      Status
+                    </th>
+                    <th className="text-left p-4 text-slate-200 font-medium">
+                      Actions
+                    </th>
+                    <th className="text-left p-4 text-slate-200 font-medium">
                       Registered
                     </th>
                   </tr>
@@ -343,6 +374,34 @@ export default function AdminPage() {
                             No file
                           </span>
                         )}
+                      </td>
+                      <td className="p-4">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          user.isAuthenticated 
+                            ? "bg-green-500/20 text-green-200 border border-green-500/30"
+                            : "bg-yellow-500/20 text-yellow-200 border border-yellow-500/30"
+                        }`}>
+                          {user.isAuthenticated ? "Approved" : "Pending"}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex gap-2">
+                          {!user.isAuthenticated ? (
+                            <button
+                              onClick={() => updateUserAuthentication(user.id, true)}
+                              className="px-3 py-1 rounded-lg bg-green-500/20 border border-green-500/30 text-green-200 hover:bg-green-500/30 transition-colors text-xs"
+                            >
+                              Approve
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => updateUserAuthentication(user.id, false)}
+                              className="px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-200 hover:bg-red-500/30 transition-colors text-xs"
+                            >
+                              Revoke
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="p-4 text-slate-400 text-sm">
                         {new Date(user.createdAt).toLocaleDateString()}

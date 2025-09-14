@@ -11,18 +11,20 @@ export type AppUser = {
   region: string;
   photoIdUrl?: string;
   role: "official";
+  isAuthenticated: boolean;
 };
 
 const encoder = new TextEncoder();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 const JWT_ISSUER = "aquashield";
 
-export async function signUserJwt(user: AppUser, expiresInSec = 60 * 60 * 8) {
+
+export async function signUserJwt(user: AppUser, expiresInSec = 60 * 60 * 24 * 7) { // 7 days instead of 8 hours
   const jwt = await new SignJWT({ user } as JWTPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
-    .setExpirationTime(expiresInSec)
+    .setExpirationTime(Math.floor(Date.now() / 1000) + expiresInSec) // Convert to absolute timestamp
     .sign(encoder.encode(JWT_SECRET));
   return jwt;
 }
@@ -43,7 +45,7 @@ export const authCookie = {
     sameSite: "lax" as const,
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 8,
+    maxAge: 60 * 60 * 24 * 7, // 7 days to match JWT expiration
   },
 };
 

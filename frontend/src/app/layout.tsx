@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalNavbar from "@/components/ui/ConditionalNavbar";
+import { ToastProvider } from "@/components/ui/Toast";
+import { UserProvider } from "@/contexts/UserContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-teal-50 via-sky-50 to-white dark:from-[#071c22] dark:via-[#08151a] dark:to-[#070d10]`}
       >
-        <div className="min-h-dvh text-[#0f172a] dark:text-[#e2e8f0]">
-          <ConditionalNavbar />
-          {children}
-        </div>
+        <ToastProvider>
+          <UserProvider>
+            <div className="min-h-dvh text-[#0f172a] dark:text-[#e2e8f0]">
+              <ConditionalNavbar />
+              {children}
+            </div>
+          </UserProvider>
+        </ToastProvider>
       </body>
     </html>
   );

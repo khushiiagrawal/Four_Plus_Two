@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
       photoIdUrl,
       invitationCode: parse.data.invitationCode,
       role: "official" as const,
+      isAuthenticated: false, // Default to false, admin must approve
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -113,6 +114,7 @@ export async function POST(req: NextRequest) {
       region: newUser.region,
       photoIdUrl: newUser.photoIdUrl,
       role: "official",
+      isAuthenticated: newUser.isAuthenticated,
     };
 
     const token = await signUserJwt(userForJwt);
@@ -121,6 +123,7 @@ export async function POST(req: NextRequest) {
       user: userForJwt,
       message: "Account created successfully" 
     });
+    
     res.cookies.set(authCookie.name, token, authCookie.options);
     return res;
 
