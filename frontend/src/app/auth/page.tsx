@@ -1,0 +1,238 @@
+"use client";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+const signupSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  employeeId: z.string().min(3),
+  designation: z.string().min(2),
+  department: z.string().min(2),
+  region: z.string().min(2),
+  password: z.string().min(8),
+  invitationCode: z.string().optional(),
+  photoId: z.any().optional(),
+});
+
+export default function AuthPage() {
+  const params = useSearchParams();
+  const router = useRouter();
+  const defaultTab = params.get("tab") === "signup" ? "signup" : "login";
+  const [tab, setTab] = useState<"login" | "signup">(defaultTab);
+  useEffect(() => {
+    setTab(defaultTab);
+  }, [defaultTab]);
+
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+  });
+  const signupForm = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
+  });
+
+  async function onLogin(values: z.infer<typeof loginSchema>) {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    if (res.ok) {
+      router.push("/dashboard");
+    } else {
+      const j = await res.json().catch(() => ({}));
+      alert(j.error || "Login failed");
+    }
+  }
+
+  async function onSignup(values: z.infer<typeof signupSchema>) {
+    const fd = new FormData();
+    Object.entries(values).forEach(([k, v]) => {
+      if (k === "photoId" && v && (v as FileList).length) {
+        fd.append("photoId", (v as FileList)[0]);
+      } else if (v != null) {
+        fd.append(k, String(v));
+      }
+    });
+    const res = await fetch("/api/auth/signup", { method: "POST", body: fd });
+    if (res.ok) {
+      router.push("/dashboard");
+    } else {
+      const j = await res.json().catch(() => ({}));
+      alert(j.error ? JSON.stringify(j.error) : "Signup failed");
+    }
+  }
+
+  const cardSizeClass =
+    tab === "login" ? "max-w-lg min-h-[560px]" : "max-w-2xl min-h-[460px]";
+  const outerPadClass = tab === "signup" ? "pt-16 md:pt-24" : "";
+
+  return (
+    <div
+      className={`min-h-dvh flex items-center justify-center overflow-hidden p-6 ${outerPadClass}`}
+    >
+      <div
+        className={`w-full mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur shadow-lg p-4 flex flex-col ${cardSizeClass}`}
+      >
+        <div className="flex gap-2 bg-white/60 dark:bg-white/[0.06] backdrop-blur p-1 rounded-2xl shadow border border-slate-200/60 dark:border-white/10">
+          <button
+            onClick={() => setTab("login")}
+            className={`flex-1 rounded-xl px-4 py-2 text-sm ${
+              tab === "login"
+                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                : "text-slate-600 dark:text-slate-300"
+            }`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setTab("signup")}
+            className={`flex-1 rounded-xl px-4 py-2 text-sm ${
+              tab === "signup"
+                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                : "text-slate-600 dark:text-slate-300"
+            }`}
+          >
+            Sign up
+          </button>
+        </div>
+
+        {tab === "login" ? (
+          <form
+            className="mt-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative flex flex-col"
+            onSubmit={loginForm.handleSubmit(onLogin)}
+          >
+            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
+            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow" />
+            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow" />
+            <div className="flex-1 space-y-8 md:space-y-10">
+              <div>
+                <label className="block text-sm mb-1">Official Email</label>
+                <input
+                  type="email"
+                  {...loginForm.register("email")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-400"
+                  placeholder="name@district.gov.in"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Secure Password</label>
+                <input
+                  type="password"
+                  {...loginForm.register("password")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-teal-400"
+                  placeholder="••••••••"
+                />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                Note: Use your official email and valid credentials. Access is
+                limited to authorized government/legal authorities. Keep your
+                password confidential.
+              </p>
+            </div>
+            <button className="mt-8 w-full rounded-xl bg-gradient-to-r from-teal-500 to-sky-500 text-white py-2.5 shadow-lg">
+              Log in
+            </button>
+          </form>
+        ) : (
+          <form
+            className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-5 shadow relative flex-1"
+            onSubmit={signupForm.handleSubmit(onSignup)}
+          >
+            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
+            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow" />
+            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-1">Full Name</label>
+                <input
+                  {...signupForm.register("name")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Official Email</label>
+                <input
+                  type="email"
+                  {...signupForm.register("email")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Employee ID/Number</label>
+                <input
+                  {...signupForm.register("employeeId")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Designation</label>
+                <input
+                  {...signupForm.register("designation")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">
+                  Department/Organization
+                </label>
+                <input
+                  {...signupForm.register("department")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Region/District</label>
+                <input
+                  {...signupForm.register("region")}
+                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Secure Password</label>
+              <input
+                type="password"
+                {...signupForm.register("password")}
+                className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1">
+                Invitation Code (if pre-approved)
+              </label>
+              <input
+                {...signupForm.register("invitationCode")}
+                className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1">Photo ID Upload</label>
+              <input
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={(e) =>
+                  signupForm.setValue("photoId", e.target.files as FileList)
+                }
+                className="block w-full text-sm"
+              />
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Access limited to legal/government authorities.
+            </p>
+            <button className="w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white py-2.5 shadow-lg">
+              Request Access
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
