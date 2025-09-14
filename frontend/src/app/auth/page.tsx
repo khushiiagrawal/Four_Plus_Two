@@ -77,27 +77,32 @@ export default function AuthPage() {
   return (
     <div
       className={`min-h-dvh flex items-center justify-center overflow-hidden p-6 ${outerPadClass}`}
+      style={{
+        background:
+          "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
+      }}
     >
       <div
-        className={`w-full mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur shadow-lg p-4 flex flex-col ${cardSizeClass}`}
+        className={`w-full mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur shadow-lg p-4 flex flex-col transition-all duration-300 ${cardSizeClass}`}
       >
-        <div className="flex gap-2 bg-white/60 dark:bg-white/[0.06] backdrop-blur p-1 rounded-2xl shadow border border-slate-200/60 dark:border-white/10">
+        <div className="relative grid grid-cols-2 bg-white/60 dark:bg-white/[0.06] backdrop-blur p-1 rounded-2xl shadow border border-slate-200/60 dark:border-white/10">
+          <div
+            className="absolute inset-y-1 left-1 w-1/2 rounded-xl bg-white shadow-sm border border-white/40 transition-transform duration-300 ease-out"
+            style={{ transform: tab === "login" ? "translateX(0%)" : "translateX(100%)" }}
+            aria-hidden
+          />
           <button
             onClick={() => setTab("login")}
-            className={`flex-1 rounded-xl px-4 py-2 text-sm ${
-              tab === "login"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                : "text-slate-600 dark:text-slate-300"
+            className={`relative z-10 flex-1 rounded-xl px-4 py-2 text-sm transition-colors ${
+              tab === "login" ? "text-slate-900" : "text-slate-600 dark:text-slate-300"
             }`}
           >
             Login
           </button>
           <button
             onClick={() => setTab("signup")}
-            className={`flex-1 rounded-xl px-4 py-2 text-sm ${
-              tab === "signup"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                : "text-slate-600 dark:text-slate-300"
+            className={`relative z-10 flex-1 rounded-xl px-4 py-2 text-sm transition-colors ${
+              tab === "signup" ? "text-slate-900" : "text-slate-600 dark:text-slate-300"
             }`}
           >
             Sign up
@@ -106,7 +111,7 @@ export default function AuthPage() {
 
         {tab === "login" ? (
           <form
-            className="mt-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative flex flex-col"
+            className="mt-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative flex flex-col fade-up"
             onSubmit={loginForm.handleSubmit(onLogin)}
           >
             <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
@@ -143,7 +148,7 @@ export default function AuthPage() {
           </form>
         ) : (
           <form
-            className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-5 shadow relative flex-1"
+            className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-5 shadow relative flex-1 fade-up"
             onSubmit={signupForm.handleSubmit(onSignup)}
           >
             <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
