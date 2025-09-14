@@ -5,6 +5,7 @@ import { useState } from "react";
 import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
 import QualityGauge from "@/components/widgets/QualityGauge";
+import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
 
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
@@ -66,12 +67,8 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-        <div className="lg:col-span-2 rounded-2xl bg-gradient-to-br from-sky-50 to-emerald-50 dark:from-white/5 dark:to-white/0 backdrop-blur border border-slate-200/60 dark:border-white/10 shadow-sm p-6">
-          <h3 className="text-sm font-medium">Northeast India — Overview</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-            Interactive map removed for performance. Data remains available via
-            counters and reports.
-          </p>
+        <div className="lg:col-span-2">
+          <GrafanaEmbed title="Sensor Overview (Grafana)" />
         </div>
         <div className="rounded-2xl bg-white/70 dark:bg-white/5 backdrop-blur border border-slate-200/60 dark:border-white/10 shadow-sm p-4">
           <h3 className="text-sm font-medium">Water Quality</h3>
