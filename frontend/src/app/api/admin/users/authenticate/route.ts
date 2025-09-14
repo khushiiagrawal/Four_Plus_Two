@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { getUsersCollection } from "@/lib/mongodb";
+import { getUsersCollection } from "@/lib/firestore";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret-change-me");
 
@@ -27,20 +27,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Update user authentication status
-    const usersCollection = await getUsersCollection();
-    const result = await usersCollection.updateOne(
-      { id: userId },
-      { 
-        $set: { 
-          isAuthenticated,
-          updatedAt: new Date()
-        }
-      }
-    );
-
-    if (result.matchedCount === 0) {
+    const usersCollection = getUsersCollection();
+    const userDoc = await usersCollection.doc(userId).get();
+    
+    if (!userDoc.exists) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    
+    await userDoc.ref.update({
+      isAuthenticated,
+      updatedAt: new Date()
+    });
 
     return NextResponse.json({ 
       ok: true, 

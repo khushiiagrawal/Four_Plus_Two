@@ -1,0 +1,66 @@
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore, Firestore, Timestamp } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin SDK
+let db: Firestore;
+
+export function initializeFirestore(): Firestore {
+  if (db) {
+    return db;
+  }
+
+  try {
+    // Check if Firebase app is already initialized
+    if (getApps().length === 0) {
+      // Initialize with service account credentials
+      const serviceAccount = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      };
+
+      if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
+        throw new Error('Missing Firebase configuration. Please check your environment variables.');
+      }
+
+      initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.projectId,
+      });
+    }
+
+    db = getFirestore();
+    return db;
+  } catch (error) {
+    console.error('Failed to initialize Firestore:', error);
+    throw error;
+  }
+}
+
+// Collection references
+export function getUsersCollection() {
+  const firestore = initializeFirestore();
+  return firestore.collection('users');
+}
+
+// Helper function to convert Firestore timestamp to Date
+export function convertTimestamp(timestamp: Timestamp | Date | string | number): Date {
+  if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp) {
+    return timestamp.toDate();
+  }
+  return timestamp instanceof Date ? timestamp : new Date(timestamp);
+}
+
+// Helper function to convert user data from Firestore
+export function convertFirestoreUser(doc: FirebaseFirestore.DocumentSnapshot) {
+  if (!doc.exists) return null;
+  
+  const data = doc.data();
+  if (!data) return null;
+  
+  return {
+    ...data,
+    createdAt: convertTimestamp(data.createdAt),
+    updatedAt: convertTimestamp(data.updatedAt),
+  };
+}
