@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 
 const adminLoginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -22,11 +24,26 @@ interface User {
   updatedAt: string;
 }
 
+interface S3Image {
+  key: string;
+  fileName: string;
+  signedUrl: string;
+  size: number;
+  lastModified: string | null;
+  userId: string | null;
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [s3Images, setS3Images] = useState<S3Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedImage, setSelectedImage] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
+  const router = useRouter();
 
   const adminForm = useForm<z.infer<typeof adminLoginSchema>>({
     resolver: zodResolver(adminLoginSchema),
@@ -43,6 +60,7 @@ export default function AdminPage() {
         const data = await res.json();
         setUsers(data.users);
         setIsAuthenticated(true);
+        await fetchS3Images(); // Fetch S3 images after authentication
       }
     } catch (err) {
       console.error("Auth check failed:", err);
@@ -63,6 +81,7 @@ export default function AdminPage() {
       if (res.ok) {
         setIsAuthenticated(true);
         await fetchUsers();
+        await fetchS3Images();
       } else {
         const data = await res.json().catch(() => ({}));
         setError(data.error || "Authentication failed");
@@ -84,12 +103,26 @@ export default function AdminPage() {
     }
   }
 
+  async function fetchS3Images() {
+    try {
+      const res = await fetch("/api/admin/s3-images");
+      if (res.ok) {
+        const data = await res.json();
+        setS3Images(data.images || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch S3 images:", err);
+    }
+  }
+
   function handleLogout() {
     document.cookie =
       "admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setIsAuthenticated(false);
     setUsers([]);
+    setS3Images([]);
     adminForm.reset();
+    router.push("/");
   }
 
   if (loading) {
@@ -171,7 +204,7 @@ export default function AdminPage() {
 
   return (
     <div
-      className="min-h-dvh pt-20 p-6"
+      className="min-h-dvh p-6"
       style={{
         background:
           "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
@@ -264,14 +297,46 @@ export default function AdminPage() {
                               Mock File
                             </span>
                           ) : (
-                            <a
-                              href={user.photoIdUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sky-400 hover:text-sky-300 text-sm underline"
-                            >
-                              View File
-                            </a>
+                            (() => {
+                              // Find the corresponding S3 image for this user
+                              const userImage = s3Images.find(
+                                (img) =>
+                                  img.userId === user.id ||
+                                  img.key.includes(user.id)
+                              );
+
+                              return userImage ? (
+                                <div className="flex items-center space-x-2">
+                                  <button
+                                    onClick={() =>
+                                      setSelectedImage({
+                                        url: userImage.signedUrl,
+                                        name: `${user.name}'s Photo ID`,
+                                      })
+                                    }
+                                    className="hover:opacity-80 transition-opacity"
+                                  >
+                                    <Image
+                                      src={userImage.signedUrl}
+                                      alt={`${user.name}'s ID`}
+                                      width={48}
+                                      height={48}
+                                      className="w-12 h-12 object-cover rounded-lg border border-white/20 cursor-pointer"
+                                      unoptimized
+                                    />
+                                  </button>
+                                </div>
+                              ) : (
+                                <a
+                                  href={user.photoIdUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sky-400 hover:text-sky-300 text-sm underline"
+                                >
+                                  View File
+                                </a>
+                              );
+                            })()
                           )
                         ) : (
                           <span className="text-slate-500 text-sm">
@@ -290,6 +355,37 @@ export default function AdminPage() {
           )}
         </div>
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative max-w-4xl max-h-[90vh] mx-4">
+            <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur shadow-2xl overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b border-white/10">
+                <h3 className="text-lg font-semibold text-white">
+                  {selectedImage.name}
+                </h3>
+                <button
+                  onClick={() => setSelectedImage(null)}
+                  className="text-white/70 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="p-4">
+                <Image
+                  src={selectedImage.url}
+                  alt={selectedImage.name}
+                  width={800}
+                  height={600}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                  unoptimized
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
