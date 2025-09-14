@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 import { authCookie, signUserJwt, type AppUser } from "@/lib/jwt";
+import { getUsersCollection } from "@/lib/mongodb";
+import { uploadFileToS3 } from "@/lib/s3";
 
 const SignupSchema = z.object({
   name: z.string().min(2),
@@ -14,50 +18,119 @@ const SignupSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const form = await req.formData();
-  const payload = Object.fromEntries(form.entries());
-  const parse = SignupSchema.safeParse({
-    name: payload.name,
-    email: payload.email,
-    employeeId: payload.employeeId,
-    designation: payload.designation,
-    department: payload.department,
-    region: payload.region,
-    password: payload.password,
-    invitationCode: payload.invitationCode,
-  });
+  try {
+    const form = await req.formData();
+    const payload = Object.fromEntries(form.entries());
+    const photoIdFile = form.get("photoId") as File | null;
+    
+    const parse = SignupSchema.safeParse({
+      name: payload.name,
+      email: payload.email,
+      employeeId: payload.employeeId,
+      designation: payload.designation,
+      department: payload.department,
+      region: payload.region,
+      password: payload.password,
+      invitationCode: payload.invitationCode,
+    });
 
-  if (!parse.success) {
-    return NextResponse.json({ error: parse.error.flatten() }, { status: 400 });
-  }
+    if (!parse.success) {
+      return NextResponse.json({ error: parse.error.flatten() }, { status: 400 });
+    }
 
-  // Validate official domain or invitation code
-  const isOfficial = /(@gov\.in|@nic\.in|@health\.in|@official\.in|@example\.gov)$/i.test(
-    parse.data.email,
-  );
-  const hasInvite = !!parse.data.invitationCode && parse.data.invitationCode === "APPROVED-2025";
-  if (!isOfficial && !hasInvite) {
+    // Email validation (basic format check only)
+    // Removed domain restrictions - anyone can sign up now
+
+    // Check if user already exists
+    const usersCollection = await getUsersCollection();
+    const existingUser = await usersCollection.findOne({
+      $or: [
+        { email: parse.data.email },
+        { employeeId: parse.data.employeeId }
+      ]
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "User with this email or employee ID already exists" },
+        { status: 409 }
+      );
+    }
+
+    // Generate user ID and hash password
+    const userId = "u-" + uuidv4();
+    const hashedPassword = await bcrypt.hash(parse.data.password, 12);
+
+    // Upload photo ID to S3 if provided
+    let photoIdUrl: string | undefined;
+    if (photoIdFile && photoIdFile.size > 0) {
+      try {
+        photoIdUrl = await uploadFileToS3(photoIdFile, userId);
+      } catch (error) {
+        console.error("Error uploading file to S3:", error);
+        return NextResponse.json(
+          { error: "Failed to upload photo ID. Please try again." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Create user document
+    const newUser = {
+      id: userId,
+      name: parse.data.name,
+      email: parse.data.email,
+      employeeId: parse.data.employeeId,
+      designation: parse.data.designation,
+      department: parse.data.department,
+      region: parse.data.region,
+      password: hashedPassword,
+      photoIdUrl,
+      invitationCode: parse.data.invitationCode,
+      role: "official" as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    // Save user to MongoDB
+    const result = await usersCollection.insertOne(newUser);
+    
+    if (!result.insertedId) {
+      return NextResponse.json(
+        { error: "Failed to create user account" },
+        { status: 500 }
+      );
+    }
+
+    // Create JWT payload (without sensitive data)
+    const userForJwt: AppUser = {
+      id: userId,
+      name: newUser.name,
+      email: newUser.email,
+      employeeId: newUser.employeeId,
+      designation: newUser.designation,
+      department: newUser.department,
+      region: newUser.region,
+      photoIdUrl: newUser.photoIdUrl,
+      role: "official",
+    };
+
+    const token = await signUserJwt(userForJwt);
+    const res = NextResponse.json({ 
+      ok: true, 
+      user: userForJwt,
+      message: "Account created successfully" 
+    });
+    res.cookies.set(authCookie.name, token, authCookie.options);
+    return res;
+
+  } catch (error) {
+    console.error("Signup error:", error);
     return NextResponse.json(
-      { error: "Access restricted to legal/government authorities" },
-      { status: 403 },
+      { error: "Internal server error. Please try again." },
+      { status: 500 }
     );
   }
-
-  // Photo ID file is optional in mock (would be uploaded to storage in real app)
-  const user: AppUser = {
-    id: "u-" + Math.random().toString(36).slice(2, 8),
-    name: String(parse.data.name),
-    email: String(parse.data.email),
-    designation: String(parse.data.designation),
-    department: String(parse.data.department),
-    region: String(parse.data.region),
-    role: "official",
-  };
-
-  const token = await signUserJwt(user);
-  const res = NextResponse.json({ ok: true, user });
-  res.cookies.set(authCookie.name, token, authCookie.options);
-  return res;
 }
 
 
