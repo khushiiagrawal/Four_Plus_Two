@@ -113,4 +113,5 @@ body {
   }
 }
 .border-animate {
-  animation:
+  animation: subtleBorderGlow 4s ease-in-out infinite;
+}
