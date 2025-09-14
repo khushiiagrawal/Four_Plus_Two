@@ -16,7 +16,20 @@ export default function GrafanaEmbed({
 }: GrafanaEmbedProps) {
   const { data } = useSWR(src ? null : `/api/grafana/url?title=Sensor%20Overview`, (u) => fetch(u, { cache: "no-store" }).then((r) => r.json()));
   const resolved = data?.url as string | undefined;
-  const embedSrc = src || resolved || process.env.NEXT_PUBLIC_GRAFANA_EMBED_URL || "http://localhost:3001/dashboards";
+  const rawSrc = src || resolved || process.env.NEXT_PUBLIC_GRAFANA_EMBED_URL || "http://localhost:3001/dashboards";
+
+  // Ensure kiosk + auto-refresh defaults are present
+  const withDefaults = (u: string) => {
+    const hasKiosk = u.includes("kiosk=");
+    const hasRefresh = u.includes("refresh=");
+    if (hasKiosk && hasRefresh) return u;
+    const sep = u.includes("?") ? "&" : "?";
+    const params: string[] = [];
+    if (!hasKiosk) params.push("kiosk=tv");
+    if (!hasRefresh) params.push("refresh=30s");
+    return `${u}${sep}${params.join("&")}`;
+  };
+  const embedSrc = withDefaults(rawSrc);
 
   return (
     <div className="rounded-2xl bg-white/70 dark:bg-white/5 backdrop-blur border border-slate-200/60 dark:border-white/10 shadow-sm p-4">
