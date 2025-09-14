@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import useSWR from "swr";
 
 type GrafanaEmbedProps = {
   src?: string;
@@ -13,10 +14,9 @@ export default function GrafanaEmbed({
   title = "Sensor Overview (Grafana)",
   height = 520,
 }: GrafanaEmbedProps) {
-  const embedSrc =
-    src ||
-    process.env.NEXT_PUBLIC_GRAFANA_EMBED_URL ||
-    "http://localhost:3001/d/sensor-overview";
+  const { data } = useSWR(src ? null : `/api/grafana/url?title=Sensor%20Overview`, (u) => fetch(u, { cache: "no-store" }).then((r) => r.json()));
+  const resolved = data?.url as string | undefined;
+  const embedSrc = src || resolved || process.env.NEXT_PUBLIC_GRAFANA_EMBED_URL || "http://localhost:3001/dashboards";
 
   return (
     <div className="rounded-2xl bg-white/70 dark:bg-white/5 backdrop-blur border border-slate-200/60 dark:border-white/10 shadow-sm p-4">

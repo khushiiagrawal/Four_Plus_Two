@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifyUserJwt } from "@/lib/jwt";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/api/data"] as const;
+const PROTECTED_PREFIXES = ["/api/data"] as const;
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -22,6 +22,6 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-export const config = { matcher: ["/dashboard/:path*", "/api/data/:path*"] };
+export const config = { matcher: ["/api/data/:path*"] };
 
 
