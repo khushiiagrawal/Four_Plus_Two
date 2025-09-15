@@ -184,9 +184,9 @@ export default function AuthPage() {
             className="mt-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative flex flex-col fade-up"
             onSubmit={loginForm.handleSubmit(onLogin)}
           >
-            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
-            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow" />
-            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow" />
+            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow water-float animation-delay-100" />
+            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow water-float-2 animation-delay-200" />
+            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="flex-1 space-y-8 md:space-y-10">
               <div>
                 <label className="block text-sm mb-1">Official Email</label>
@@ -221,9 +221,9 @@ export default function AuthPage() {
             className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-5 shadow relative flex-1 fade-up"
             onSubmit={signupForm.handleSubmit(onSignup)}
           >
-            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
-            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow" />
-            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow" />
+            <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow water-float animation-delay-100" />
+            <div className="pointer-events-none absolute -top-1 right-10 h-1.5 w-1.5 rounded-full bg-white/60 shadow water-float-2 animation-delay-200" />
+            <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm mb-1">Full Name</label>
@@ -290,14 +290,20 @@ export default function AuthPage() {
             </div>
             <div>
               <label className="block text-sm mb-1">Photo ID Upload</label>
-              <input
-                type="file"
-                accept="image/*,application/pdf"
-                onChange={(e) =>
-                  signupForm.setValue("photoId", e.target.files as FileList)
-                }
-                className="block w-full text-sm"
-              />
+              <label className="block w-full">
+                <span className="sr-only">Choose photo ID file</span>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={(e) =>
+                    signupForm.setValue("photoId", e.target.files as FileList)
+                  }
+                  className="block w-full text-sm cursor-pointer file:mr-4 file:rounded-lg file:border-0 file:bg-slate-200/80 dark:file:bg-white/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 dark:file:text-slate-200 hover:file:bg-slate-300/80 dark:hover:file:bg-white/20"
+                />
+              </label>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Accepted: images only JPG . Click the field to select a file.
+              </p>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Access limited to legal/government authorities.
