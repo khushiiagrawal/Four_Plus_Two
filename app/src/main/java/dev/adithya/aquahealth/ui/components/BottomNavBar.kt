@@ -21,7 +21,7 @@ fun AppBottomNavBar(
     NavigationBar {
         NavItem.entries.forEach { navItem ->
             NavigationBarItem(
-                selected = currentRoute == navItem.route.route,
+                selected = currentRoute == navItem.route.key,
                 onClick = {
                     navController.navigate(navItem.route) {
                         popUpTo(navController.graph.findStartDestination().id) {

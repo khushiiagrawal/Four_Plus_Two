@@ -20,22 +20,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                AppContent()
+                AppNavHost()
             }
         }
-    }
-}
-
-@Composable
-fun AppContent() {
-    val navController = rememberNavController()
-
-    AppScaffold(
-        navController = navController
-    ) { innerPadding ->
-        AppNavHost(
-            navController = navController,
-            modifier = Modifier.padding(innerPadding)
-        )
     }
 }
