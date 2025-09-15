@@ -4,6 +4,7 @@ import "./globals.css";
 import ConditionalNavbar from "@/components/ui/ConditionalNavbar";
 import { ToastProvider } from "@/components/ui/Toast";
 import { UserProvider } from "@/contexts/UserContext";
+import PageTransition from "@/components/ui/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,7 @@ export default function RootLayout({
           <UserProvider>
             <div className="min-h-dvh text-[#0f172a] dark:text-[#e2e8f0]">
               <ConditionalNavbar />
-              {children}
+              <PageTransition>{children}</PageTransition>
             </div>
           </UserProvider>
         </ToastProvider>

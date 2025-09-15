@@ -170,3 +170,47 @@ body {
 .animation-delay-300 {
   animation-delay: 300ms;
 }
+
+/* Page transition animations */
+@keyframes pageFadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pageFadeSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.995);
+  }
+}
+
+.page-transition {
+  animation: pageFadeSlideIn 560ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+/* Ensure pointer cursor for all button-like elements on hover */
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+[role="button"]:hover,
+a[role="button"]:hover {
+  cursor: pointer;
+}
+
+/* File inputs should show pointer to indicate clickability */
+input[type="file"],
+input[type="file"]:hover {
+  cursor: pointer;
+}
