@@ -72,6 +72,18 @@ body {
   animation: shimmerMove 16s linear infinite;
   will-change: background-position;
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
 @keyframes bgDrift {
   0% {
     background-position: 0% 0%;
@@ -114,4 +126,40 @@ body {
 }
 .border-animate {
   animation: subtleBorderGlow 4s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(360deg);
+  }
+}
+.animate-float-slow {
+  animation: floatSlow 20s ease-in-out infinite;
+}
+
+@keyframes floatReverse {
+  0% {
+    transform: translate(0px, 0px) rotate(360deg);
+  }
+  33% {
+    transform: translate(-25px, 25px) rotate(240deg);
+  }
+  66% {
+    transform: translate(35px, -35px) rotate(120deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+.animate-float-reverse {
+  animation: floatReverse 25s ease-in-out infinite;
 }
