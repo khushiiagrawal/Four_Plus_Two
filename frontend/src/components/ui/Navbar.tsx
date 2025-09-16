@@ -1,11 +1,9 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
 import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const { user, isLoading, logout } = useUser();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,7 +40,18 @@ export default function Navbar() {
     <div className="fixed top-0 left-0 right-0 z-40 flex justify-center px-3">
       <div className="mt-3 w-full max-w-6xl rounded-2xl border border-white/30 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur supports-[backdrop-filter]:bg-white/30 dark:supports-[backdrop-filter]:bg-white/5 shadow-sm px-4 py-2 flex items-center justify-between">
         <Link href={"/"} className="font-semibold tracking-tight">
-          AquaShield
+          <span className="inline-flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+              aria-hidden="true"
+            >
+              <path d="M12.22 2.22a.75.75 0 0 0-1.44 0C9.73 6.2 6 8.6 6 12.25 6 16.22 8.86 19 12 19s6-2.78 6-6.75c0-3.65-3.73-6.05-5.78-10.03z" />
+            </svg>
+            <span>JalSurakshak</span>
+          </span>
         </Link>
         
         <nav className="flex items-center gap-2 text-sm">
