@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { SignJWT } from "jose";
 
 const LEGAL_CREDENTIALS = {
-  username: "legal",
-  password: "legal24"
+  username: process.env.LEGAL_USERNAME,
+  password: process.env.LEGAL_PASSWORD
 };
 
 const LEGAL_COOKIE_NAME = "legal_auth_token";
