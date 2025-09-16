@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
 import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
+import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/Toast";
 
@@ -13,7 +14,7 @@ const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
 
 export default function DashboardPage() {
-  const { user, isLoading, refreshUser } = useUser();
+  const { user, isLoading } = useUser();
   const router = useRouter();
   const { addToast } = useToast();
 
@@ -48,13 +49,14 @@ export default function DashboardPage() {
       refreshInterval: 30_000,
     }
   );
-  const { data: map } = useSWR(
-    user?.isAuthenticated ? "/api/data/map" : null,
-    fetcher,
-    {
-      refreshInterval: 30_000,
-    }
-  );
+  // Note: map data is available but not currently used in the UI
+  // const { data: map } = useSWR(
+  //   user?.isAuthenticated ? "/api/data/map" : null,
+  //   fetcher,
+  //   {
+  //     refreshInterval: 30_000,
+  //   }
+  // );
 
   const counters = useMemo(
     () => [
@@ -73,6 +75,7 @@ export default function DashboardPage() {
     query: "",
     region: "All Regions",
   });
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
 
   const scrollToReports = () => {
     const reportsSection = document.getElementById("reports-section");
@@ -116,9 +119,17 @@ export default function DashboardPage() {
         <h1 className="text-2xl md:text-3xl font-semibold text-white">
           District Dashboard
         </h1>
-        <span className="inline-flex items-center text-xs rounded-full bg-emerald-500/15 text-emerald-300 px-2 py-1 border border-emerald-500/20">
-          Live
-        </span>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsAlertModalOpen(true)}
+            className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg border border-red-500/30 transition-colors flex items-center gap-2"
+          >
+            🚨 Create Report
+          </button>
+          <span className="inline-flex items-center text-xs rounded-full bg-emerald-500/15 text-emerald-300 px-2 py-1 border border-emerald-500/20">
+            Live
+          </span>
+        </div>
       </header>
 
       <section className="mt-4">
@@ -150,6 +161,20 @@ export default function DashboardPage() {
       <section id="reports-section" className="mt-6">
         <ReportsList regionFilter={filters.region} query={filters.query} />
       </section>
+
+      <CreateAlertModal
+        isOpen={isAlertModalOpen}
+        onClose={() => setIsAlertModalOpen(false)}
+        onAlertCreated={() => {
+          // Optionally refresh data or show success message
+          addToast({
+            type: "success",
+            title: "Report Created",
+            message:
+              "Emergency report has been created and sent to legal authorities.",
+          });
+        }}
+      />
     </div>
   );
 }
