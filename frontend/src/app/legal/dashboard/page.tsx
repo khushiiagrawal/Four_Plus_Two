@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
+
+const fetcher = (url: string) =>
+  fetch(url, { cache: "no-store" }).then((r) => r.json());
 
 export default function LegalDashboardPage() {
   const router = useRouter();
@@ -16,6 +20,15 @@ export default function LegalDashboardPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Fetch alerts from API
+  const {
+    data: alertsFromAPI,
+    error: alertsError,
+    mutate: mutateAlerts,
+  } = useSWR("/api/alerts", fetcher, {
+    refreshInterval: 30_000, // Refresh every 30 seconds
+  });
 
   const handleLogout = async () => {
     try {
@@ -35,36 +48,19 @@ export default function LegalDashboardPage() {
     }
   };
 
-  // Mock data for demonstration - will be replaced with real API calls
-  const alertsData = [
-    {
-      id: 1,
-      type: "critical",
-      title: "Pollution Level Alert",
-      message: "Critical pollution levels detected in Industrial Zone A",
-      timestamp: "2024-01-15 14:30:00",
-      region: "Zone A",
-      status: "active",
-    },
-    {
-      id: 2,
-      type: "warning",
-      title: "Sensor Malfunction",
-      message: "Multiple sensors offline in Residential Area B",
-      timestamp: "2024-01-15 13:45:00",
-      region: "Zone B",
-      status: "investigating",
-    },
-    {
-      id: 3,
-      type: "info",
-      title: "Routine Report",
-      message: "Weekly environmental compliance report available",
-      timestamp: "2024-01-15 12:00:00",
-      region: "All Zones",
-      status: "completed",
-    },
-  ];
+  // Use real alerts from API, fallback to empty array
+  const alertsData = alertsFromAPI || [];
+
+  // Show error toast if there's an error fetching alerts
+  useEffect(() => {
+    if (alertsError) {
+      addToast({
+        type: "error",
+        title: "Error Loading Alerts",
+        message: "Failed to load alerts from server.",
+      });
+    }
+  }, [alertsError, addToast]);
 
   const reportsData = [
     {
@@ -109,10 +105,10 @@ export default function LegalDashboardPage() {
   ).length;
   const uniqueZones = [
     ...new Set([
-      ...alertsData.map((a) => a.region),
+      ...alertsData.map((a) => a.location),
       ...reportsData.map((r) => r.region),
     ]),
-  ].filter((zone) => zone !== "All Zones").length;
+  ].filter((zone) => zone && zone !== "All Zones").length;
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -240,31 +236,57 @@ export default function LegalDashboardPage() {
           </span>
         </div>
         <div className="space-y-3">
-          {alertsData.map((alert) => (
-            <div
-              key={alert.id}
-              className={`rounded-xl p-4 backdrop-blur border ${getAlertColor(
-                alert.type
-              )} shadow-sm`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="text-xl">{getAlertIcon(alert.type)}</span>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-white text-sm">
-                      {alert.title}
-                    </h3>
-                    <p className="text-slate-300 text-xs mt-1">
-                      {alert.message}
-                    </p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
-                      <span>📍 {alert.region}</span>
-                      <span>🕒 {alert.timestamp}</span>
+          {!alertsFromAPI && !alertsError ? (
+            // Loading state
+            <div className="rounded-xl p-4 bg-white/20 backdrop-blur border border-white/10 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-white/20 animate-pulse" />
+                <div className="flex-1">
+                  <div className="w-3/4 h-4 bg-white/20 rounded animate-pulse mb-2" />
+                  <div className="w-full h-3 bg-white/20 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          ) : alertsData.length === 0 ? (
+            // No alerts state
+            <div className="rounded-xl p-8 bg-white/20 backdrop-blur border border-white/10 shadow-sm text-center">
+              <div className="text-4xl mb-2">🔕</div>
+              <p className="text-white/70">No alerts at this time</p>
+              <p className="text-white/50 text-xs mt-1">
+                All systems are operating normally
+              </p>
+            </div>
+          ) : (
+            alertsData.map((alert) => (
+              <div
+                key={alert._id || alert.id}
+                className={`rounded-xl p-4 backdrop-blur border ${getAlertColor(
+                  alert.type
+                )} shadow-sm`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <span className="text-xl">{getAlertIcon(alert.type)}</span>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-white text-sm">
+                        {alert.title}
+                      </h3>
+                      <p className="text-slate-300 text-xs mt-1">
+                        {alert.description || alert.message}
+                      </p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                        <span>📍 {alert.location || alert.region}</span>
+                        <span>
+                          🕒{" "}
+                          {alert.createdAt
+                            ? new Date(alert.createdAt).toLocaleString()
+                            : alert.timestamp}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium capitalize
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium capitalize
                   ${
                     alert.status === "active"
                       ? "bg-red-500/20 text-red-300"
@@ -272,12 +294,13 @@ export default function LegalDashboardPage() {
                       ? "bg-yellow-500/20 text-yellow-300"
                       : "bg-green-500/20 text-green-300"
                   }`}
-                >
-                  {alert.status}
-                </span>
+                  >
+                    {alert.status}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
