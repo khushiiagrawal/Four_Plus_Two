@@ -1,29 +1,24 @@
 package dev.adithya.aquahealth.onboarding.ui
 
-import android.R.attr.name
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,11 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import dev.adithya.aquahealth.ui.navigation.NavItem
+import dev.adithya.aquahealth.R
+import dev.adithya.aquahealth.onboarding.model.VerificationError
+import dev.adithya.aquahealth.onboarding.model.VerificationStatus
+import dev.adithya.aquahealth.onboarding.viewmodel.SignOnViewModel
+import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
+import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 
 /**
  * Consists of a:
@@ -46,12 +49,40 @@ import dev.adithya.aquahealth.ui.navigation.NavItem
 @Composable
 fun SignOnScreen(
     navController: NavHostController,
-    onSubmit: () -> Unit
+    viewModel: SignOnViewModel = hiltViewModel(),
 ) {
+    val verificationState by viewModel.verificationStatus.collectAsState()
     var phone by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
     var isOtpSent by remember { mutableStateOf(false) }
-    val isVerified = remember { derivedStateOf { isOtpSent && otp == "12345" } }
+    val isOtpSending by remember { derivedStateOf { verificationState is VerificationStatus.SendingCode } }
+    val isVerifying by remember { derivedStateOf { verificationState is VerificationStatus.Verifying } }
+    val errorMsg = remember {
+        derivedStateOf {
+            if (verificationState is VerificationStatus.Error) {
+                val reason = (verificationState as VerificationStatus.Error).reason
+                when (reason) {
+                    is VerificationError.InvalidCredentials -> "Invalid credentials"
+                    is VerificationError.RateLimited -> "Please try again later"
+                    is VerificationError.Unknown -> "Unknown error: ${reason.exception?.message}"
+                }
+            } else {
+                null
+            }
+        }
+    }
+
+    LaunchedEffect(verificationState) {
+        if (verificationState is VerificationStatus.CodeSent) {
+            isOtpSent = true
+            // TODO: resend otp
+        }
+        if (verificationState is VerificationStatus.Verified) {
+            navController.navigate(MAIN_ROUTE) {
+                popUpTo(ONBOARDING_ROUTE) { inclusive = true }
+            }
+        }
+    }
 
     Scaffold { innerPadding ->
         Column(
@@ -75,8 +106,9 @@ fun SignOnScreen(
                         .size(48.dp)
                 )
                 Text(
-                    text = "A Q U A H E A L T H",
-                    style = MaterialTheme.typography.titleLarge
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
             Text(
@@ -94,32 +126,48 @@ fun SignOnScreen(
             )
 
             if (isOtpSent) {
+                Text(
+                    text = "Please enter the code sent via SMS."
+                )
                 OutlinedTextField(
                     value = otp,
                     onValueChange = { otp = it },
-                    label = { Text("Enter OTP") },
+                    label = { Text("6-digit OTP") },
                     singleLine = true,
                     modifier = Modifier.width(300.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
                 )
             }
 
+            errorMsg.value?.let {
+                Text(
+                    text = it,
+                    color = Color.Red
+                )
+            }
+
             FilledTonalButton(
                 onClick = {
-                    /* TODO */
                     if (!isOtpSent) {
-                        isOtpSent = true
+                        viewModel.verifyPhone(phone)
                     } else {
-                        onSubmit()
+                        viewModel.verifyCode(otp)
                     }
-                          },
-                enabled = if (!isVerified.value) phone.length == 10 && !isOtpSent else isVerified.value
-            ) {
-                if (!isOtpSent) {
-                    Text("Send OTP")
+                },
+                enabled = if (!isOtpSent) {
+                    phone.length == 10 && !isOtpSending
                 } else {
-                    Icon(Icons.Default.ArrowForward, contentDescription = null)
-                }
+                    otp.length == 6 && !isVerifying
+                },
+            ) {
+                Text(
+                    text = when {
+                        isOtpSending -> "Sending OTP..."
+                        isVerifying -> "Verifying..."
+                        !isOtpSent -> "Next"
+                        else -> "Verify"
+                    }
+                )
             }
         }
     }
