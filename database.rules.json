@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "sensor_data_continuous": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "sensor_data_cron": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "sensor_data_on_demand": {
+      ".read": "auth != null",
+      ".write": false
+    }
+  }
+}

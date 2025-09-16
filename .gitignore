@@ -5,3 +5,9 @@ sensors/venv
 sensors/.DS_Store
 .DS_Store
 __pycache__
+
+# Firebase
+functions/node_modules/
+functions/lib/
+functions/.runtimeconfig.json
+.firebase/
