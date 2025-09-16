@@ -1,0 +1,356 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
+
+export default function LegalDashboardPage() {
+  const router = useRouter();
+  const { addToast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate checking authentication
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/legal/logout", { method: "POST" });
+      addToast({
+        type: "success",
+        title: "Logged Out",
+        message: "You have been successfully logged out.",
+      });
+      router.push("/legal");
+    } catch {
+      addToast({
+        type: "error",
+        title: "Logout Error",
+        message: "Failed to logout. Please try again.",
+      });
+    }
+  };
+
+  // Mock data for demonstration - will be replaced with real API calls
+  const alertsData = [
+    {
+      id: 1,
+      type: "critical",
+      title: "Pollution Level Alert",
+      message: "Critical pollution levels detected in Industrial Zone A",
+      timestamp: "2024-01-15 14:30:00",
+      region: "Zone A",
+      status: "active",
+    },
+    {
+      id: 2,
+      type: "warning",
+      title: "Sensor Malfunction",
+      message: "Multiple sensors offline in Residential Area B",
+      timestamp: "2024-01-15 13:45:00",
+      region: "Zone B",
+      status: "investigating",
+    },
+    {
+      id: 3,
+      type: "info",
+      title: "Routine Report",
+      message: "Weekly environmental compliance report available",
+      timestamp: "2024-01-15 12:00:00",
+      region: "All Zones",
+      status: "completed",
+    },
+  ];
+
+  const reportsData = [
+    {
+      id: 1,
+      title: "Environmental Violation Report - Factory XYZ",
+      type: "Violation",
+      severity: "High",
+      reportedBy: "Environmental Officer J. Smith",
+      timestamp: "2024-01-15 10:30:00",
+      region: "Industrial Zone A",
+      status: "Under Review",
+    },
+    {
+      id: 2,
+      title: "Air Quality Compliance Check",
+      type: "Compliance",
+      severity: "Medium",
+      reportedBy: "Inspector M. Johnson",
+      timestamp: "2024-01-15 09:15:00",
+      region: "Commercial District",
+      status: "Approved",
+    },
+    {
+      id: 3,
+      title: "Water Quality Assessment",
+      type: "Assessment",
+      severity: "Low",
+      reportedBy: "Lab Technician R. Davis",
+      timestamp: "2024-01-15 08:00:00",
+      region: "Residential Area C",
+      status: "Completed",
+    },
+  ];
+
+  // Calculate dynamic metrics from actual data
+  const activeAlerts = alertsData.filter((a) => a.status === "active").length;
+  const pendingReports = reportsData.filter(
+    (r) => r.status === "Under Review"
+  ).length;
+  const highPriorityReports = reportsData.filter(
+    (r) => r.severity === "High"
+  ).length;
+  const uniqueZones = [
+    ...new Set([
+      ...alertsData.map((a) => a.region),
+      ...reportsData.map((r) => r.region),
+    ]),
+  ].filter((zone) => zone !== "All Zones").length;
+
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case "critical":
+        return "🚨";
+      case "warning":
+        return "⚠️";
+      case "info":
+        return "ℹ️";
+      default:
+        return "📢";
+    }
+  };
+
+  const getAlertColor = (type: string) => {
+    switch (type) {
+      case "critical":
+        return "border-red-500/50 bg-red-500/10";
+      case "warning":
+        return "border-yellow-500/50 bg-yellow-500/10";
+      case "info":
+        return "border-blue-500/50 bg-blue-500/10";
+      default:
+        return "border-gray-500/50 bg-gray-500/10";
+    }
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "High":
+        return "text-red-400 bg-red-500/10";
+      case "Medium":
+        return "text-yellow-400 bg-yellow-500/10";
+      case "Low":
+        return "text-green-400 bg-green-500/10";
+      default:
+        return "text-gray-400 bg-gray-500/10";
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-dvh flex items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
+        }}
+      >
+        <div className="text-center">
+          <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
+          <p className="text-white/70">Loading Legal Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="min-h-dvh p-4 md:p-6"
+      style={{
+        background:
+          "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
+      }}
+    >
+      {/* Header */}
+      <header className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">
+            Legal Authorities Dashboard
+          </h1>
+          <p className="text-slate-300 text-sm mt-1">
+            Environmental Monitoring & Compliance Oversight
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="inline-flex items-center text-xs rounded-full bg-red-500/15 text-red-300 px-3 py-1 border border-red-500/20">
+            🔒 Secure Access
+          </span>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg border border-red-500/30 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
+      {/* Stats Overview */}
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur border border-white/20 shadow-sm">
+          <div className="text-xs text-slate-200">Active Alerts</div>
+          <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
+            {activeAlerts}
+          </div>
+        </div>
+        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur border border-white/20 shadow-sm">
+          <div className="text-xs text-slate-200">Pending Reports</div>
+          <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
+            {pendingReports}
+          </div>
+        </div>
+        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur border border-white/20 shadow-sm">
+          <div className="text-xs text-slate-200">High Priority</div>
+          <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
+            {highPriorityReports}
+          </div>
+        </div>
+        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur border border-white/20 shadow-sm">
+          <div className="text-xs text-slate-200">Zones Monitored</div>
+          <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
+            {uniqueZones}
+          </div>
+        </div>
+      </section>
+
+      {/* Real-time Alerts Section */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            🚨 Real-time Alerts
+          </h2>
+          <span className="text-xs text-slate-400">
+            Last updated: {new Date().toLocaleTimeString()}
+          </span>
+        </div>
+        <div className="space-y-3">
+          {alertsData.map((alert) => (
+            <div
+              key={alert.id}
+              className={`rounded-xl p-4 backdrop-blur border ${getAlertColor(
+                alert.type
+              )} shadow-sm`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3 flex-1">
+                  <span className="text-xl">{getAlertIcon(alert.type)}</span>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-white text-sm">
+                      {alert.title}
+                    </h3>
+                    <p className="text-slate-300 text-xs mt-1">
+                      {alert.message}
+                    </p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <span>📍 {alert.region}</span>
+                      <span>🕒 {alert.timestamp}</span>
+                    </div>
+                  </div>
+                </div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium capitalize
+                  ${
+                    alert.status === "active"
+                      ? "bg-red-500/20 text-red-300"
+                      : alert.status === "investigating"
+                      ? "bg-yellow-500/20 text-yellow-300"
+                      : "bg-green-500/20 text-green-300"
+                  }`}
+                >
+                  {alert.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Reports Section */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            📋 Environmental Reports
+          </h2>
+          <button className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded-lg border border-blue-500/30 text-sm transition-colors">
+            View All Reports
+          </button>
+        </div>
+        <div className="space-y-3">
+          {reportsData.map((report) => (
+            <div
+              key={report.id}
+              className="rounded-xl p-4 bg-white/20 backdrop-blur border border-white/10 shadow-sm hover:bg-white/25 transition-colors"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-medium text-white text-sm">
+                      {report.title}
+                    </h3>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
+                        report.severity
+                      )}`}
+                    >
+                      {report.severity}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-300">
+                    <div>
+                      <span className="text-slate-400">Type:</span>{" "}
+                      {report.type}
+                    </div>
+                    <div>
+                      <span className="text-slate-400">Reporter:</span>{" "}
+                      {report.reportedBy}
+                    </div>
+                    <div>
+                      <span className="text-slate-400">Region:</span>{" "}
+                      {report.region}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                    <span>🕒 {report.timestamp}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium
+                    ${
+                      report.status === "Under Review"
+                        ? "bg-yellow-500/20 text-yellow-300"
+                        : report.status === "Approved"
+                        ? "bg-green-500/20 text-green-300"
+                        : "bg-blue-500/20 text-blue-300"
+                    }`}
+                  >
+                    {report.status}
+                  </span>
+                  <button className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-300 rounded text-xs transition-colors">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

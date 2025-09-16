@@ -5,8 +5,8 @@ import Navbar from "./Navbar";
 export default function ConditionalNavbar() {
   const pathname = usePathname();
 
-  // Hide navbar on admin page
-  if (pathname === "/admin") {
+  // Hide navbar on admin page and legal authorities routes
+  if (pathname === "/admin" || pathname.startsWith("/legal")) {
     return null;
   }
 

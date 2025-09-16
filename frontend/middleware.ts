@@ -4,9 +4,33 @@ import { jwtVerify } from "jose";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/api/data"] as const;
 const ADMIN_PREFIXES = ["/api/admin"] as const;
+const LEGAL_PREFIXES = ["/legal/dashboard"] as const;
+const LEGAL_COOKIE_NAME = "legal_auth_token";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  
+  // Check if it's a legal authorities route
+  const isLegalRoute = LEGAL_PREFIXES.some((p) => pathname.startsWith(p));
+  if (isLegalRoute) {
+    const legalToken = req.cookies.get(LEGAL_COOKIE_NAME)?.value;
+    if (!legalToken) {
+      return NextResponse.redirect(new URL(`/legal?next=${encodeURIComponent(pathname)}`, req.url));
+    }
+    
+    try {
+      const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret-change-me");
+      const { payload } = await jwtVerify(legalToken, JWT_SECRET);
+      if (payload.type !== "legal") {
+        throw new Error("Invalid token type");
+      }
+      return NextResponse.next();
+    } catch {
+      const res = NextResponse.redirect(new URL(`/legal?next=${encodeURIComponent(pathname)}`, req.url));
+      res.cookies.delete(LEGAL_COOKIE_NAME);
+      return res;
+    }
+  }
   
   // Check if it's an admin route
   const isAdminRoute = ADMIN_PREFIXES.some((p) => pathname.startsWith(p));
@@ -49,6 +73,6 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-export const config = { matcher: ["/dashboard/:path*", "/api/data/:path*", "/api/admin/:path*"] };
+export const config = { matcher: ["/dashboard/:path*", "/api/data/:path*", "/api/admin/:path*", "/legal/dashboard/:path*"] };
 
 
