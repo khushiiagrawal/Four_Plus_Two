@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AquaShield | Digital Health Surveillance",
+  title: "JalSurakshak | Digital Health Surveillance",
   description:
     "Smart Community Health Monitoring—AI and IoT powered Early Warning for Water-Borne Diseases in Rural India.",
 };
