@@ -147,15 +147,12 @@ export default function AuthPage() {
   return (
     <div
       className={`min-h-dvh flex items-center justify-center overflow-hidden p-6 ${outerPadClass}`}
-      style={{
-        background:
-          "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-      }}
+      style={{ background: "linear-gradient(180deg, #a8e9f2 0%, #7fd3e6 45%, #bfeff7 100%)" }}
     >
       <div
-        className={`w-full mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur shadow-lg p-4 flex flex-col transition-all duration-300 ${cardSizeClass}`}
+        className={`w-full mx-auto rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md shadow-lg p-4 flex flex-col transition-all duration-300 ${cardSizeClass}`}
       >
-        <div className="relative grid grid-cols-2 bg-white/60 dark:bg-white/[0.06] backdrop-blur p-1 rounded-2xl shadow border border-slate-200/60 dark:border-white/10">
+        <div className="relative grid grid-cols-2 bg-white/30 backdrop-blur-md p-1 rounded-2xl shadow border border-white/40">
           <div
             className="absolute inset-y-1 left-1 w-1/2 rounded-xl bg-white shadow-sm border border-white/40 transition-transform duration-300 ease-out"
             style={{ transform: tab === "login" ? "translateX(0%)" : "translateX(100%)" }}
@@ -164,7 +161,7 @@ export default function AuthPage() {
           <button
             onClick={() => setTab("login")}
             className={`relative z-10 flex-1 rounded-xl px-4 py-2 text-sm transition-colors ${
-              tab === "login" ? "text-slate-900" : "text-slate-600 dark:text-slate-300"
+              tab === "login" ? "text-slate-900" : "text-slate-600"
             }`}
           >
             Login
@@ -172,7 +169,7 @@ export default function AuthPage() {
           <button
             onClick={() => setTab("signup")}
             className={`relative z-10 flex-1 rounded-xl px-4 py-2 text-sm transition-colors ${
-              tab === "signup" ? "text-slate-900" : "text-slate-600 dark:text-slate-300"
+              tab === "signup" ? "text-slate-900" : "text-slate-600"
             }`}
           >
             Sign up
@@ -181,7 +178,7 @@ export default function AuthPage() {
 
         {tab === "login" ? (
           <form
-            className="mt-8 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative flex flex-col fade-up"
+            className="mt-8 rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md p-6 pb-8 shadow relative flex flex-col fade-up"
             onSubmit={loginForm.handleSubmit(onLogin)}
           >
             <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow water-float animation-delay-100" />
@@ -189,36 +186,36 @@ export default function AuthPage() {
             <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="flex-1 space-y-8 md:space-y-10">
               <div>
-                <label className="block text-sm mb-1">Official Email</label>
+                <label className="block text-sm mb-1 text-slate-700">Official Email</label>
                 <input
                   type="email"
                   {...loginForm.register("email")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-400"
+                  className="w-full rounded-xl border border-white/40 bg-white/30 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-400 text-slate-800 placeholder-slate-500"
                   placeholder="name@district.gov.in"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">Secure Password</label>
+                <label className="block text-sm mb-1 text-slate-700">Secure Password</label>
                 <input
                   type="password"
                   {...loginForm.register("password")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-teal-400"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-teal-400 text-slate-800"
                   placeholder="••••••••"
                 />
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+              <p className="text-xs text-slate-700 mt-2">
                 Note: Use your official email and valid credentials. Access is
                 limited to authorized government/legal authorities. Keep your
                 password confidential.
               </p>
             </div>
-            <button className="mt-8 w-full rounded-xl bg-sky-600 hover:bg-sky-700 text-white py-2.5 shadow-lg">
+            <button className="mt-8 w-full rounded-xl bg-cyan-400/60 text-slate-800 border border-white/40 py-2.5 shadow-md hover:shadow-lg backdrop-blur-md">
               Log in
             </button>
           </form>
         ) : (
           <form
-            className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-5 shadow relative flex-1 fade-up"
+            className="mt-10 pt-8 space-y-4 rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md p-5 shadow relative flex-1 fade-up"
             onSubmit={signupForm.handleSubmit(onSignup)}
           >
             <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow water-float animation-delay-100" />
@@ -226,70 +223,70 @@ export default function AuthPage() {
             <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm mb-1">Full Name</label>
+                <label className="block text-sm mb-1 text-slate-700">Full Name</label>
                 <input
                   {...signupForm.register("name")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">Official Email</label>
+                <label className="block text-sm mb-1 text-slate-700">Official Email</label>
                 <input
                   type="email"
                   {...signupForm.register("email")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">Employee ID/Number</label>
+                <label className="block text-sm mb-1 text-slate-700">Employee ID/Number</label>
                 <input
                   {...signupForm.register("employeeId")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">Designation</label>
+                <label className="block text-sm mb-1 text-slate-700">Designation</label>
                 <input
                   {...signupForm.register("designation")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">
+                <label className="block text-sm mb-1 text-slate-700">
                   Department/Organization
                 </label>
                 <input
                   {...signupForm.register("department")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">Region/District</label>
+                <label className="block text-sm mb-1 text-slate-700">Region/District</label>
                 <input
                   {...signupForm.register("region")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm mb-1">Secure Password</label>
+              <label className="block text-sm mb-1 text-slate-700">Secure Password</label>
               <input
                 type="password"
                 {...signupForm.register("password")}
-                className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">
+              <label className="block text-sm mb-1 text-slate-700">
                 Invitation Code (if pre-approved)
               </label>
               <input
                 {...signupForm.register("invitationCode")}
-                className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none"
+                className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">Photo ID Upload</label>
+              <label className="block text-slate-700 text-sm mb-1">Photo ID Upload</label>
               <label className="block w-full">
                 <span className="sr-only">Choose photo ID file</span>
                 <input
@@ -298,17 +295,17 @@ export default function AuthPage() {
                   onChange={(e) =>
                     signupForm.setValue("photoId", e.target.files as FileList)
                   }
-                  className="block w-full text-sm cursor-pointer file:mr-4 file:rounded-lg file:border-0 file:bg-slate-200/80 dark:file:bg-white/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 dark:file:text-slate-200 hover:file:bg-slate-300/80 dark:hover:file:bg-white/20"
+                  className="block w-full text-sm cursor-pointer file:mr-4 file:rounded-lg file:border-0 file:bg-slate-600 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-700"
                 />
               </label>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-xs text-slate-600">
                 Accepted: images only JPG . Click the field to select a file.
               </p>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-600">
               Access limited to legal/government authorities.
             </p>
-            <button className="w-full rounded-xl bg-sky-600 hover:bg-sky-700 text-white py-2.5 shadow-lg">
+            <button className="w-full rounded-xl bg-cyan-400/60 text-slate-800 border border-white/40 py-2.5 shadow-md hover:shadow-lg backdrop-blur-md">
               Request Access
             </button>
           </form>

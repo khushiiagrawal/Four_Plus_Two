@@ -127,15 +127,15 @@ export default function CreateAlertModal({
 
       {/* Modal */}
       <div className="relative w-full max-w-md mx-4">
-        <div className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg p-6">
+        <div className="rounded-2xl border border-slate-300/60 bg-white/95 backdrop-blur shadow-lg p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
               🚨 Send Emergency Report
             </h2>
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="text-white/70 hover:text-white transition-colors disabled:opacity-50"
+              className="text-slate-600 hover:text-slate-800 transition-colors disabled:opacity-50"
             >
               ✕
             </button>
@@ -143,12 +143,12 @@ export default function CreateAlertModal({
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-slate-800 mb-2">
                 Report Title *
               </label>
               <input
                 {...form.register("title")}
-                className="w-full rounded-xl border border-slate-300/70 bg-white/70 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-slate-500"
+                className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-slate-500 text-slate-800"
                 placeholder="e.g., Critical Pollution Level Alert"
                 disabled={isSubmitting}
               />
@@ -160,13 +160,13 @@ export default function CreateAlertModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-slate-800 mb-2">
                 Description *
               </label>
               <textarea
                 {...form.register("description")}
                 rows={4}
-                className="w-full rounded-xl border border-slate-300/70 bg-white/70 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 resize-none placeholder:text-slate-500"
+                className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 resize-none placeholder:text-slate-500 text-slate-800"
                 placeholder="Describe the emergency situation, severity, and any immediate actions required..."
                 disabled={isSubmitting}
               />
@@ -178,12 +178,12 @@ export default function CreateAlertModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-slate-800 mb-2">
                 Location *
               </label>
               <input
                 {...form.register("location")}
-                className="w-full rounded-xl border border-slate-300/70 bg-white/70 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-slate-500"
+                className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-slate-500 text-slate-800"
                 placeholder="e.g., Industrial Zone A, Sector 12"
                 disabled={isSubmitting}
               />
@@ -207,7 +207,7 @@ export default function CreateAlertModal({
                 type="button"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 rounded-xl border border-slate-300/70 bg-white/20 text-white hover:bg-white/30 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 rounded-xl border border-slate-300/70 bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>

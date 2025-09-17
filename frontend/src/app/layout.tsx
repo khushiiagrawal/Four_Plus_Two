@@ -28,13 +28,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-teal-50 via-sky-50 to-white dark:from-[#071c22] dark:via-[#08151a] dark:to-[#070d10]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-cyan-200 via-sky-200 to-cyan-100`}
       >
         <ToastProvider>
           <UserProvider>
-            <div className="min-h-dvh text-[#0f172a] dark:text-[#e2e8f0]">
+            <div className="min-h-dvh text-slate-800">
               <ConditionalNavbar />
               <PageTransition>{children}</PageTransition>
             </div>

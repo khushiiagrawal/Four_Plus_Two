@@ -51,7 +51,7 @@ export default function Home() {
             <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/20 backdrop-blur-md px-4 py-1.5 text-sm text-white drop-shadow-md shadow-sm">
               AI & IoT • Water Health • Early Warning
             </span>
-            <h1 className="mt-4 text-4xl md:text-6xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 max-w-3xl">
+            <h1 className="mt-4 text-4xl md:text-6xl font-semibold tracking-tight text-white max-w-3xl">
               Smart Community Health Monitoring
             </h1>
             <p className="mt-4 text-lg md:text-xl text-white/90 drop-shadow-md max-w-2xl">
@@ -73,30 +73,30 @@ export default function Home() {
               </Link>
             </div>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl p-5 bg-gradient-to-br from-white to-slate-50 dark:from-white/10 dark:to-white/5 backdrop-blur-xl border border-sky-200/70 dark:border-teal-500/20 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border-animate">
-                <div className="text-sm font-semibold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <div className="rounded-2xl p-5 bg-white/20 backdrop-blur-md border border-white/30 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="text-sm font-semibold flex items-center gap-2 text-white">
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500" />
                   Legal Authorities Only
                 </div>
-                <div className="text-xs text-slate-700 dark:text-slate-200 mt-2">
+                <div className="text-xs text-white/90 mt-2">
                   Verified access for district health officials
                 </div>
               </div>
-              <div className="rounded-2xl p-5 bg-gradient-to-br from-white to-slate-50 dark:from-white/10 dark:to-white/5 backdrop-blur-xl border border-sky-200/70 dark:border-teal-500/20 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border-animate">
-                <div className="text-sm font-semibold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <div className="rounded-2xl p-5 bg-white/20 backdrop-blur-md border border-white/30 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="text-sm font-semibold flex items-center gap-2 text-white">
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-sky-500 to-teal-500" />
                   Real-time Signals
                 </div>
-                <div className="text-xs text-slate-700 dark:text-slate-200 mt-2">
+                <div className="text-xs text-white/90 mt-2">
                   Field reports and IoT water sensors
                 </div>
               </div>
-              <div className="rounded-2xl p-5 bg-gradient-to-br from-white to-slate-50 dark:from-white/10 dark:to-white/5 backdrop-blur-xl border border-sky-200/70 dark:border-teal-500/20 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border-animate">
-                <div className="text-sm font-semibold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <div className="rounded-2xl p-5 bg-white/20 backdrop-blur-md border border-white/30 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="text-sm font-semibold flex items-center gap-2 text-white">
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500" />
                   Actionable Insights
                 </div>
-                <div className="text-xs text-slate-700 dark:text-slate-200 mt-2">
+                <div className="text-xs text-white/90 mt-2">
                   Outbreak hotspots and areas at risk
                 </div>
               </div>

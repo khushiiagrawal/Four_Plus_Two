@@ -33,7 +33,7 @@ export default function FiltersBar({
         onChange={(e) => setQ(e.target.value)}
         onBlur={() => onChange({ query: q, region: r })}
         placeholder="Search reports..."
-        className="flex-1 rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
+        className="flex-1 rounded-xl border border-white/50 bg-white/30 px-3 py-2 outline-none text-slate-800 placeholder-slate-500"
       />
       <select
         value={r}
@@ -45,7 +45,7 @@ export default function FiltersBar({
             onRegionChange();
           }
         }}
-        className="rounded-xl border border-slate-200/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 text-slate-900 dark:text-slate-100"
+        className="rounded-xl border border-white/50 bg-white/30 px-3 py-2 text-slate-800"
       >
         {regions.map((rr) => (
           <option

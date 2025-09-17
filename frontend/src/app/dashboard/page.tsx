@@ -91,15 +91,11 @@ export default function DashboardPage() {
   if (isLoading || !user || !user.isAuthenticated) {
     return (
       <div
-        className="min-h-dvh flex items-center justify-center"
-        style={{
-          background:
-            "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-        }}
+        className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-cyan-400 via-sky-300 to-cyan-200"
       >
         <div className="text-center">
           <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
-          <p className="text-white/70">
+          <p className="text-slate-600">
             {isLoading ? "Loading..." : "Checking access..."}
           </p>
         </div>
@@ -109,24 +105,20 @@ export default function DashboardPage() {
 
   return (
     <div
-      className="min-h-dvh p-4 md:p-6"
-      style={{
-        background:
-          "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-      }}
+      className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90"
     >
       <header className="flex items-center justify-between mt-20">
-        <h1 className="text-2xl md:text-3xl font-semibold text-slate-50">
+        <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
           District Dashboard
         </h1>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsAlertModalOpen(true)}
-            className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg border border-red-500/30 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center gap-2 shadow-sm"
           >
             🚨 Create Alert
           </button>
-          <span className="inline-flex items-center text-xs rounded-full bg-emerald-500/15 text-emerald-300 px-2 py-1 border border-emerald-500/20">
+          <span className="inline-flex items-center text-xs rounded-full bg-emerald-600 text-white px-2 py-1 border border-emerald-700 shadow-sm">
             Live
           </span>
         </div>
@@ -144,10 +136,10 @@ export default function DashboardPage() {
         {counters.map((c) => (
           <div
             key={c.label}
-            className="rounded-2xl p-4 bg-white/35 backdrop-blur border border-white/25 shadow-sm"
+            className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm"
           >
-            <div className="text-xs text-slate-100">{c.label}</div>
-            <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
+            <div className="text-xs text-slate-600">{c.label}</div>
+            <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
               {c.value}
             </div>
           </div>

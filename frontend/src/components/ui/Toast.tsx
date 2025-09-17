@@ -80,15 +80,15 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   const getToastStyles = (type: ToastType) => {
     switch (type) {
       case "success":
-        return "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200";
+        return "bg-emerald-600 border-emerald-700 text-white";
       case "error":
-        return "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200";
+        return "bg-red-600 border-red-700 text-white";
       case "warning":
-        return "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200";
+        return "bg-amber-600 border-amber-700 text-white";
       case "info":
-        return "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200";
+        return "bg-cyan-600 border-cyan-700 text-white";
       default:
-        return "bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900/20 dark:border-gray-800 dark:text-gray-200";
+        return "bg-slate-600 border-slate-700 text-white";
     }
   };
 
@@ -109,7 +109,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 
   return (
     <div
-      className={`max-w-sm w-full rounded-lg border p-4 shadow-lg backdrop-blur-sm ${getToastStyles(toast.type)} animate-in slide-in-from-right-full duration-300`}
+      className={`max-w-sm w-full rounded-lg border p-4 shadow-lg backdrop-blur-md ${getToastStyles(toast.type)} animate-in slide-in-from-right-full duration-300`}
     >
       <div className="flex items-start">
         <div className="flex-shrink-0">
@@ -124,7 +124,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
         <div className="ml-4 flex-shrink-0">
           <button
             onClick={() => onRemove(toast.id)}
-            className="inline-flex rounded-md p-1.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="inline-flex rounded-md p-1.5 hover:bg-white/20 transition-colors"
           >
             <span className="sr-only">Close</span>
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">

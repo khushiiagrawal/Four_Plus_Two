@@ -116,40 +116,40 @@ export default function ReportsList({
   };
 
   return (
-    <div className="rounded-2xl bg-white/70 dark:bg-white/5 backdrop-blur border border-slate-200/60 dark:border-white/10 shadow-sm">
+    <div className="rounded-2xl bg-white/40 backdrop-blur border border-white/50 shadow-sm">
       <div className="p-4 border-b border-slate-200/60 dark:border-white/10">
-        <h3 className="text-sm font-medium">Health Reports</h3>
+        <h3 className="text-sm font-medium text-slate-800">Health Reports</h3>
         {error && (
           <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-xs">
             API Error: {error.message || "Failed to fetch reports"}
           </div>
         )}
       </div>
-      <ul className="divide-y divide-slate-200/60 dark:divide-white/10">
+      <ul className="divide-y divide-slate-200/60">
         {items.map((it) => (
           <li key={it.id} className="p-4">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="text-sm font-medium text-slate-900 dark:text-white">
+                <div className="text-sm font-medium text-slate-800">
                   {it.symptoms || it.title}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <div className="text-xs text-slate-600 mt-1">
                   📍 {it.location || it.region}
                 </div>
-                <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-4 mt-2 text-xs text-slate-600">
                   {it.age && <span>👤 Age: {it.age}</span>}
                   {it.userID && <span>🆔 User: {it.userID}</span>}
                   {it.waterID && <span>💧 Water: {it.waterID}</span>}
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2 ml-4">
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-slate-700 font-medium">
                   {new Date(it.time).toLocaleString()}
                 </div>
                 <button
                   onClick={() => sendReportToLegal(it)}
                   disabled={sendingReports.has(it.id)}
-                  className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 disabled:bg-gray-600/20 text-blue-300 disabled:text-gray-400 rounded-lg border border-blue-500/30 disabled:border-gray-500/30 text-xs transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-400 text-white disabled:text-gray-300 rounded-lg border border-blue-700 disabled:border-gray-500 text-xs transition-colors flex items-center gap-1 shadow-sm"
                 >
                   {sendingReports.has(it.id) ? (
                     <>
@@ -165,7 +165,7 @@ export default function ReportsList({
           </li>
         ))}
         {items.length === 0 && (
-          <li className="p-6 text-sm text-slate-500 dark:text-slate-400 text-center">
+          <li className="p-6 text-sm text-slate-600 text-center">
             <div className="text-4xl mb-2">📋</div>
             <div>No health reports found</div>
             <div className="text-xs mt-1">
