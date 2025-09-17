@@ -4,6 +4,54 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
 
+interface Alert {
+  _id?: string;
+  id?: string;
+  title: string;
+  description?: string;
+  message?: string;
+  type: string;
+  status: string;
+  location?: string;
+  region?: string;
+  createdAt?: string;
+  timestamp?: string;
+  metadata?: {
+    source?: string;
+    reportData?: {
+      age?: number;
+      userID?: string;
+      waterID?: string;
+      symptoms?: string;
+    };
+  };
+}
+
+interface LegalReport {
+  id: string;
+  title: string;
+  type: string;
+  severity: string;
+  reportedBy: string;
+  timestamp: string;
+  region: string;
+  status: string;
+  sentAt?: string;
+  sentBy?: string;
+  reportData?: {
+    age?: number;
+    userID?: string;
+    waterID?: string;
+    symptoms?: string;
+    location?: string;
+    originalCreatedAt?: Date;
+  };
+  metadata?: {
+    source?: string;
+    originalReportId?: string;
+  };
+}
+
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
 
@@ -22,13 +70,22 @@ export default function LegalDashboardPage() {
   }, []);
 
   // Fetch alerts from API
-  const {
-    data: alertsFromAPI,
-    error: alertsError,
-    mutate: mutateAlerts,
-  } = useSWR("/api/alerts", fetcher, {
-    refreshInterval: 30_000, // Refresh every 30 seconds
-  });
+  const { data: alertsFromAPI, error: alertsError } = useSWR(
+    "/api/alerts",
+    fetcher,
+    {
+      refreshInterval: 30_000, // Refresh every 30 seconds
+    }
+  );
+
+  // Fetch legal reports from MongoDB
+  const { data: legalReportsData, error: reportsError } = useSWR(
+    "/api/legal-reports",
+    fetcher,
+    {
+      refreshInterval: 30_000, // Refresh every 30 seconds
+    }
+  );
 
   const handleLogout = async () => {
     try {
@@ -51,7 +108,7 @@ export default function LegalDashboardPage() {
   // Use real alerts from API, fallback to empty array
   const alertsData = alertsFromAPI || [];
 
-  // Show error toast if there's an error fetching alerts
+  // Show error toast if there's an error fetching alerts or reports
   useEffect(() => {
     if (alertsError) {
       addToast({
@@ -60,53 +117,32 @@ export default function LegalDashboardPage() {
         message: "Failed to load alerts from server.",
       });
     }
-  }, [alertsError, addToast]);
+    if (reportsError) {
+      addToast({
+        type: "error",
+        title: "Error Loading Reports",
+        message: "Failed to load environmental reports from server.",
+      });
+    }
+  }, [alertsError, reportsError, addToast]);
 
-  const reportsData = [
-    {
-      id: 1,
-      title: "Environmental Violation Report - Factory XYZ",
-      type: "Violation",
-      severity: "High",
-      reportedBy: "Environmental Officer J. Smith",
-      timestamp: "2024-01-15 10:30:00",
-      region: "Industrial Zone A",
-      status: "Under Review",
-    },
-    {
-      id: 2,
-      title: "Air Quality Compliance Check",
-      type: "Compliance",
-      severity: "Medium",
-      reportedBy: "Inspector M. Johnson",
-      timestamp: "2024-01-15 09:15:00",
-      region: "Commercial District",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      title: "Water Quality Assessment",
-      type: "Assessment",
-      severity: "Low",
-      reportedBy: "Lab Technician R. Davis",
-      timestamp: "2024-01-15 08:00:00",
-      region: "Residential Area C",
-      status: "Completed",
-    },
-  ];
+  // Use real reports from MongoDB, fallback to empty array
+  const reportsData: LegalReport[] = legalReportsData?.reports || [];
 
   // Calculate dynamic metrics from actual data
-  const activeAlerts = alertsData.filter((a) => a.status === "active").length;
+  const activeAlerts = alertsData.filter(
+    (a: Alert) => a.status === "active"
+  ).length;
   const pendingReports = reportsData.filter(
-    (r) => r.status === "Under Review"
+    (r: LegalReport) => r.status === "Under Review"
   ).length;
   const highPriorityReports = reportsData.filter(
-    (r) => r.severity === "High"
+    (r: LegalReport) => r.severity === "High"
   ).length;
   const uniqueZones = [
     ...new Set([
-      ...alertsData.map((a) => a.location),
-      ...reportsData.map((r) => r.region),
+      ...alertsData.map((a: Alert) => a.location),
+      ...reportsData.map((r: LegalReport) => r.region),
     ]),
   ].filter((zone) => zone && zone !== "All Zones").length;
 
@@ -257,7 +293,7 @@ export default function LegalDashboardPage() {
               </p>
             </div>
           ) : (
-            alertsData.map((alert) => (
+            alertsData.map((alert: Alert) => (
               <div
                 key={alert._id || alert.id}
                 className={`rounded-xl p-4 backdrop-blur border ${getAlertColor(
@@ -282,7 +318,40 @@ export default function LegalDashboardPage() {
                             ? new Date(alert.createdAt).toLocaleString()
                             : alert.timestamp}
                         </span>
+                        {alert.metadata?.source === "health_report" && (
+                          <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded-full text-xs">
+                            Health Report
+                          </span>
+                        )}
                       </div>
+                      {alert.metadata?.reportData && (
+                        <div className="mt-2 p-2 bg-slate-500/10 rounded-lg">
+                          <div className="text-xs text-slate-300 font-medium mb-1">
+                            Health Report Details:
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 text-xs text-slate-400">
+                            {alert.metadata.reportData.age && (
+                              <div>👤 Age: {alert.metadata.reportData.age}</div>
+                            )}
+                            {alert.metadata.reportData.userID && (
+                              <div>
+                                🆔 User: {alert.metadata.reportData.userID}
+                              </div>
+                            )}
+                            {alert.metadata.reportData.waterID && (
+                              <div>
+                                💧 Water: {alert.metadata.reportData.waterID}
+                              </div>
+                            )}
+                            {alert.metadata.reportData.symptoms && (
+                              <div className="col-span-2">
+                                🩺 Symptoms:{" "}
+                                {alert.metadata.reportData.symptoms}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <span
@@ -315,46 +384,92 @@ export default function LegalDashboardPage() {
           </button>
         </div>
         <div className="space-y-3">
-          {reportsData.map((report) => (
-            <div
-              key={report.id}
-              className="rounded-xl p-4 bg-white/20 backdrop-blur border border-white/10 shadow-sm hover:bg-white/25 transition-colors"
-            >
-              <div className="flex items-start justify-between">
+          {!legalReportsData && !reportsError ? (
+            // Loading state
+            <div className="rounded-xl p-4 bg-white/20 backdrop-blur border border-white/10 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-white/20 animate-pulse" />
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-medium text-white text-sm">
-                      {report.title}
-                    </h3>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
-                        report.severity
-                      )}`}
-                    >
-                      {report.severity}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-300">
-                    <div>
-                      <span className="text-slate-400">Type:</span>{" "}
-                      {report.type}
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Reporter:</span>{" "}
-                      {report.reportedBy}
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Region:</span>{" "}
-                      {report.region}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
-                    <span>🕒 {report.timestamp}</span>
-                  </div>
+                  <div className="w-3/4 h-4 bg-white/20 rounded animate-pulse mb-2" />
+                  <div className="w-full h-3 bg-white/20 rounded animate-pulse" />
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium
+              </div>
+            </div>
+          ) : reportsData.length === 0 ? (
+            // No reports state
+            <div className="rounded-xl p-8 bg-white/20 backdrop-blur border border-white/10 shadow-sm text-center">
+              <div className="text-4xl mb-2">📋</div>
+              <p className="text-white/70">No environmental reports yet</p>
+              <p className="text-white/50 text-xs mt-1">
+                Reports will appear here when sent from the field dashboard
+              </p>
+            </div>
+          ) : (
+            reportsData.map((report: LegalReport) => (
+              <div
+                key={report.id}
+                className="rounded-xl p-4 bg-white/20 backdrop-blur border border-white/10 shadow-sm hover:bg-white/25 transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-medium text-white text-sm">
+                        {report.title}
+                      </h3>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
+                          report.severity
+                        )}`}
+                      >
+                        {report.severity}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-300">
+                      <div>
+                        <span className="text-slate-400">Type:</span>{" "}
+                        {report.type}
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Reporter:</span>{" "}
+                        {report.reportedBy}
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Region:</span>{" "}
+                        {report.region}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <span>🕒 {report.timestamp}</span>
+                      {report.sentAt && (
+                        <span>
+                          📤 Sent: {new Date(report.sentAt).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                    {report.reportData && (
+                      <div className="mt-2 p-2 bg-slate-500/10 rounded-lg">
+                        <div className="text-xs text-slate-300 font-medium mb-1">
+                          Health Report Details:
+                        </div>
+                        <div className="grid grid-cols-2 gap-1 text-xs text-slate-400">
+                          {report.reportData.age && (
+                            <div>👤 Age: {report.reportData.age}</div>
+                          )}
+                          {report.reportData.waterID && (
+                            <div>💧 Water: {report.reportData.waterID}</div>
+                          )}
+                          {report.reportData.symptoms && (
+                            <div className="col-span-2">
+                              🩺 Symptoms: {report.reportData.symptoms}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium
                     ${
                       report.status === "Under Review"
                         ? "bg-yellow-500/20 text-yellow-300"
@@ -362,16 +477,17 @@ export default function LegalDashboardPage() {
                         ? "bg-green-500/20 text-green-300"
                         : "bg-blue-500/20 text-blue-300"
                     }`}
-                  >
-                    {report.status}
-                  </span>
-                  <button className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-300 rounded text-xs transition-colors">
-                    View Details
-                  </button>
+                    >
+                      {report.status}
+                    </span>
+                    <button className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-300 rounded text-xs transition-colors">
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
     </div>

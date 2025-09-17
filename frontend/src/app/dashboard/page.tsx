@@ -124,7 +124,7 @@ export default function DashboardPage() {
             onClick={() => setIsAlertModalOpen(true)}
             className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg border border-red-500/30 transition-colors flex items-center gap-2"
           >
-            🚨 Create Report
+            🚨 Create Alert
           </button>
           <span className="inline-flex items-center text-xs rounded-full bg-emerald-500/15 text-emerald-300 px-2 py-1 border border-emerald-500/20">
             Live
