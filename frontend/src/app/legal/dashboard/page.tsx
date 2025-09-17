@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
+import ReportDetailsModal from "@/components/ui/ReportDetailsModal";
 
 interface Alert {
   _id?: string;
@@ -59,6 +60,8 @@ export default function LegalDashboardPage() {
   const router = useRouter();
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedReport, setSelectedReport] = useState<LegalReport | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     // Simulate checking authentication
@@ -103,6 +106,31 @@ export default function LegalDashboardPage() {
         message: "Failed to logout. Please try again.",
       });
     }
+  };
+
+  const handleViewDetails = (report: LegalReport) => {
+    setSelectedReport(report);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReport(null);
+  };
+
+  const handleStatusUpdate = (reportId: string, newStatus: string) => {
+    // Update the local report data to reflect the status change
+    if (selectedReport && selectedReport.id === reportId) {
+      setSelectedReport({ ...selectedReport, status: newStatus });
+    }
+    
+    // Trigger a refresh of the reports data
+    // The SWR will automatically refetch due to the refreshInterval
+    addToast({
+      type: "info",
+      title: "Data Refreshing",
+      message: "Report list will be updated shortly",
+    });
   };
 
   // Use real alerts from API, fallback to empty array
@@ -480,7 +508,10 @@ export default function LegalDashboardPage() {
                     >
                       {report.status}
                     </span>
-                    <button className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-300 rounded text-xs transition-colors">
+                    <button 
+                      onClick={() => handleViewDetails(report)}
+                      className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-300 rounded text-xs transition-colors"
+                    >
                       View Details
                     </button>
                   </div>
@@ -490,6 +521,14 @@ export default function LegalDashboardPage() {
           )}
         </div>
       </section>
+
+      {/* Report Details Modal */}
+      <ReportDetailsModal
+        report={selectedReport}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onStatusUpdate={handleStatusUpdate}
+      />
     </div>
   );
 }
