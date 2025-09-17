@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import SplineHero from "@/components/widgets/SplineHero";
 
 export default function Home() {
   const { user, isLoading, refreshUser } = useUser();
@@ -45,49 +46,7 @@ export default function Home() {
 
       <main className="flex-1">
         <section className="relative overflow-hidden h-dvh flex items-center">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,.35),transparent_35%),radial-gradient(ellipse_at_bottom_left,rgba(16,185,129,.35),transparent_35%)] bg-drift" />
-          <div className="absolute inset-0 opacity-60 water-float">
-            <svg
-              aria-hidden
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 1440 560"
-            >
-              <path
-                fill="url(#g)"
-                d="M0,192L60,165.3C120,139,240,85,360,80C480,75,600,117,720,117.3C840,117,960,75,1080,90.7C1200,107,1320,181,1380,218.7L1440,256L1440,560L1380,560C1320,560,1200,560,1080,560C960,560,840,560,720,560C600,560,480,560,360,560C240,560,120,560,60,560L0,560Z"
-              ></path>
-              <defs>
-                <linearGradient id="g" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="#22d3ee" />
-                  <stop offset="100%" stopColor="#0ea5e9" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          <div className="absolute inset-0 water-float-2">
-            <svg
-              aria-hidden
-              className="w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 1440 560"
-            >
-              <path
-                fill="url(#g2)"
-                opacity="0.25"
-                d="M0,256L60,261.3C120,267,240,277,360,256C480,235,600,181,720,176C840,171,960,213,1080,229.3C1200,245,1320,235,1380,229.3L1440,224L1440,560L1380,560C1320,560,1200,560,1080,560C960,560,840,560,720,560C600,560,480,560,360,560C240,560,120,560,60,560L0,560Z"
-              ></path>
-              <defs>
-                <linearGradient id="g2" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="#2dd4bf" />
-                  <stop offset="100%" stopColor="#38bdf8" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          <div className="absolute inset-0 water-shimmer" />
+          <SplineHero />
           <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-28">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/50 dark:bg-white/10 px-3 py-1 text-xs text-slate-700 dark:text-slate-200 shadow-sm">
               AI + IoT • Water Health • Early Warning
