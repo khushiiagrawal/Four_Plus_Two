@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -38,7 +39,7 @@ class HomeViewModel @Inject constructor(
                     alertRepository.alerts.map { allAlerts ->
                         watchList.map { waterSource ->
                             val alertsForSource =
-                                allAlerts.filter { it.waterSource?.id == waterSource.id }
+                                allAlerts.filter { it.waterSource == waterSource }
                             // Enum is in ascending ordinal, but descending severity
                             val severity = alertsForSource.minByOrNull { it.severity }?.severity
                             Log.d("HomeVM", "allAlerts=$allAlerts alertsForSource=$alertsForSource id=${waterSource.id} severity=$severity")
@@ -56,7 +57,16 @@ class HomeViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val recentAlerts: StateFlow<List<Alert>> =
-        alertRepository.alerts
+        combine(
+            alertRepository.alerts,
+            userRepository.userWatchList
+        ) { alerts, userWatchList ->
+            // alerts that are from a water source should show only if its in our list
+            // TODO: make this a user pref
+            alerts.filter { alert ->
+                alert.waterSource == null || userWatchList.contains(alert.waterSource)
+            }
+        }
             .take(5)
             .stateIn(
                 scope = viewModelScope,
