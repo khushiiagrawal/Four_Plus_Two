@@ -15,6 +15,7 @@ export default function ReportsList({
 }) {
   const { addToast } = useToast();
   const [sendingReports, setSendingReports] = useState<Set<string>>(new Set());
+  const [removedReports, setRemovedReports] = useState<Set<string>>(new Set());
   const { data, error } = useSWR("/api/data/reports", fetcher, {
     refreshInterval: 30_000,
   });
@@ -36,6 +37,7 @@ export default function ReportsList({
 
     return all.filter(
       (it) =>
+        !removedReports.has(it.id) &&
         (regionFilter === "All Regions" || it.region === regionFilter) &&
         (!query ||
           it.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -43,7 +45,7 @@ export default function ReportsList({
           it.symptoms?.toLowerCase().includes(query.toLowerCase()) ||
           it.location?.toLowerCase().includes(query.toLowerCase()))
     );
-  }, [data, regionFilter, query]);
+  }, [data, regionFilter, query, removedReports]);
 
   const sendReportToLegal = async (report: {
     id: string;
@@ -94,6 +96,7 @@ export default function ReportsList({
             "Health report has been successfully sent to legal authorities.",
           duration: 5000,
         });
+        setRemovedReports((prev) => new Set(prev).add(report.id));
       } else {
         throw new Error(result.error || "Failed to send report");
       }

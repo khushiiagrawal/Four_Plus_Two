@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifyUserJwt } from "@/lib/jwt";
-import { getReportsCollection, convertTimestamp } from "@/lib/firestore";
+import { getUserReportsCollection, convertTimestamp } from "@/lib/firestore";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -13,8 +13,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const reportsCollection = getReportsCollection();
-    const snapshot = await reportsCollection
+    const userReportsCollection = getUserReportsCollection();
+    const snapshot = await userReportsCollection
+      .orderBy('reportTimestamp', 'desc')
       .limit(50)
       .get();
 
@@ -28,22 +29,24 @@ export async function GET(req: NextRequest) {
         region: data.location || "Unknown Location",
         district: data.location || "Unknown District",
         type: "health_report",
-        time: data.createdAt ? convertTimestamp(data.createdAt).getTime() : now,
-        // Include additional Firestore data
+        time: data.reportTimestamp || now,
+        // Include additional Firestore data from userReports
         age: data.age,
-        userID: data.userID,
-        waterID: data.waterID,
+        userID: data.userId,
+        waterID: data.waterSource,
         symptoms: data.symptoms,
         location: data.location,
-        createdAt: data.createdAt ? convertTimestamp(data.createdAt) : new Date(now),
+        createdAt: data.reportTimestamp ? new Date(data.reportTimestamp) : new Date(now),
+        description: data.description,
+        symptomStartTimestamp: data.symptomStartTimestamp,
       };
     });
 
     return NextResponse.json({ items, ts: Date.now() }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Error fetching reports from Firestore:", error);
+    console.error("Error fetching userReports from Firestore:", error);
     return NextResponse.json(
-      { error: "Failed to fetch reports" },
+      { error: "Failed to fetch user reports" },
       { status: 500 }
     );
   }

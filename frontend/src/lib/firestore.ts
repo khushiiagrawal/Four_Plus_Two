@@ -51,6 +51,11 @@ export function getReportsCollection() {
   return firestore.collection('reports');
 }
 
+export function getUserReportsCollection() {
+  const firestore = initializeFirestore();
+  return firestore.collection('userReports');
+}
+
 export function getMessagingClient(): Messaging {
   if (!msg) {
     // Ensure app and clients are initialized
