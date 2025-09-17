@@ -30,9 +30,8 @@ class HomeViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val watchlistItems: StateFlow<List<WatchListItem>> =
-        userRepository.userProfile
-            .flatMapLatest { userProfile ->
-                val watchList = userProfile?.watchList ?: emptyList()
+        userRepository.userWatchList
+            .flatMapLatest { watchList ->
                 if (watchList.isEmpty()) {
                     flowOf(emptyList())
                 } else {

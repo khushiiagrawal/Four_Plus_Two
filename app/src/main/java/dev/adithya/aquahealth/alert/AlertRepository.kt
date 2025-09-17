@@ -6,29 +6,39 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import dev.adithya.aquahealth.alert.model.Alert
 import dev.adithya.aquahealth.alert.model.AlertSeverity
+import dev.adithya.aquahealth.di.ApplicationScope
 import dev.adithya.aquahealth.watersource.model.WaterSource
 import dev.adithya.aquahealth.watersource.repository.WaterSourceRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface AlertRepository {
-    val alerts: Flow<List<Alert>>
+    val alerts: StateFlow<List<Alert>>
 }
 
 @Singleton
 class AlertRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val waterSourceRepo: WaterSourceRepository
+    private val waterSourceRepo: WaterSourceRepository,
+    @ApplicationScope private val applicationScope: CoroutineScope
 ) : AlertRepository {
 
-    override val alerts: Flow<List<Alert>> = firestore.collection("alerts")
+    override val alerts: StateFlow<List<Alert>> = firestore.collection("alerts")
         .orderBy("timestamp", Query.Direction.DESCENDING)
         .snapshots()
         .combine(waterSourceRepo.waterSources) { snapshot, waterSources ->
             snapshot.documents.mapNotNull { it.toAlert(waterSources) }
         }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private fun DocumentSnapshot.toAlert(
         waterSources: List<WaterSource>

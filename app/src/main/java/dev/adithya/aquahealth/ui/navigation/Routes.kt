@@ -7,6 +7,7 @@ sealed class Route(val key: String) {
         data object AddSources : Onboarding("addSources")
     }
 
+    data object Splash : Route("splash")
     data object Home : Route("home")
     data object Search : Route("search")
     data object Map : Route("map")

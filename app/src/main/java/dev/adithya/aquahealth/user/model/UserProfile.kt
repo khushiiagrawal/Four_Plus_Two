@@ -13,3 +13,9 @@ data class UserProfile(
     val onboardingStage: OnboardingStage = OnboardingStage.PROFILE,
     val watchList: List<WaterSource> = emptyList()
 )
+
+sealed interface UserProfileState {
+    object Loading : UserProfileState
+    object LoggedOut : UserProfileState
+    data class LoggedIn(val userProfile: UserProfile) : UserProfileState
+}
