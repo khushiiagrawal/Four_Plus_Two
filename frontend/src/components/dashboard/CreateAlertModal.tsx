@@ -91,7 +91,7 @@ export default function CreateAlertModal({
       addToast({
         type: "error",
         title: "Error",
-        message: "Failed to send report. Please try again.",
+        message: "Failed to send alert. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -216,7 +216,7 @@ export default function CreateAlertModal({
                 disabled={isSubmitting}
                 className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Sending..." : "Send Report"}
+                {isSubmitting ? "Sending..." : "Send Alert"}
               </button>
             </div>
           </form>
