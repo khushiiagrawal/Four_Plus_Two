@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 import joblib
 import pandas as pd
 import numpy as np
+import os
 import warnings
 from sklearn.exceptions import InconsistentVersionWarning
 from typing import Dict, List
@@ -45,6 +46,14 @@ class PredictionResponse(BaseModel):
     binary_representation: str
     health_risks: List[str]
     is_safe: bool
+
+class AlertSample(BaseModel):
+    humidity: float
+    temperature_celsius: float
+
+class AlertDecision(BaseModel):
+    isHigh: bool
+    reason: str
 
 @app.on_event("startup")
 async def load_model():
@@ -151,6 +160,29 @@ async def predict_water_quality_endpoint(water_sample: WaterSample):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+@app.post("/alert", response_model=AlertDecision)
+async def alert_decision(sample: AlertSample):
+    """
+    Decide if a sensor reading (temp/humidity) is high.
+    This provides a consistent ML service surface for Cloud Functions.
+    Replace the simple rule below with an actual model if desired.
+    """
+    try:
+        temp_high_c = float(os.getenv("TEMP_HIGH_C", 38))
+        humidity_high_pct = float(os.getenv("HUMIDITY_HIGH_PCT", 80))
+    except Exception:
+        temp_high_c = 38.0
+        humidity_high_pct = 80.0
+
+    reasons: List[str] = []
+    if sample.temperature_celsius >= temp_high_c:
+        reasons.append(f"Temperature too high: {sample.temperature_celsius}°C ≥ {temp_high_c}°C")
+    if sample.humidity >= humidity_high_pct:
+        reasons.append(f"Humidity too high: {sample.humidity}% ≥ {humidity_high_pct}%")
+
+    is_high = len(reasons) > 0
+    return AlertDecision(isHigh=is_high, reason="; ".join(reasons) or "Within normal range")
 
 @app.get("/sample")
 async def get_sample_data():

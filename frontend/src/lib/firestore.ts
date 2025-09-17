@@ -1,8 +1,10 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore, Timestamp } from 'firebase-admin/firestore';
+import { getMessaging, Messaging } from 'firebase-admin/messaging';
 
 // Initialize Firebase Admin SDK
 let db: Firestore;
+let msg: Messaging;
 
 export function initializeFirestore(): Firestore {
   if (db) {
@@ -30,6 +32,7 @@ export function initializeFirestore(): Firestore {
     }
 
     db = getFirestore();
+    msg = getMessaging();
     return db;
   } catch (error) {
     console.error('Failed to initialize Firestore:', error);
@@ -41,6 +44,14 @@ export function initializeFirestore(): Firestore {
 export function getUsersCollection() {
   const firestore = initializeFirestore();
   return firestore.collection('users');
+}
+
+export function getMessagingClient(): Messaging {
+  if (!msg) {
+    // Ensure app and clients are initialized
+    initializeFirestore();
+  }
+  return msg;
 }
 
 // Helper function to convert Firestore timestamp to Date
