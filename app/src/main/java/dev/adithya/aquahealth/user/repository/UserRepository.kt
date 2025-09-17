@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.snapshots
 import dev.adithya.aquahealth.di.ApplicationScope
 import dev.adithya.aquahealth.model.Location
@@ -15,9 +14,11 @@ import dev.adithya.aquahealth.user.model.UserProfileState
 import dev.adithya.aquahealth.watersource.model.WaterSource
 import dev.adithya.aquahealth.watersource.repository.WaterSourceRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
@@ -25,8 +26,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,7 +47,8 @@ interface UserRepository {
     suspend fun setName(name: String)
     suspend fun setHomeLocation(location: Location)
     suspend fun setOnboardingStage(stage: OnboardingStage)
-    suspend fun setWatchList(watchList: List<WaterSource>)
+    suspend fun addToWatchList(waterSource: WaterSource)
+    suspend fun removeFromWatchList(waterSource: WaterSource)
 }
 
 @Singleton
@@ -62,39 +68,34 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val userProfileState = userId
+    private val userProfile: SharedFlow<UserProfile?> = userId
         .distinctUntilChanged()
         .flatMapLatest { uid ->
             if (uid != null) {
                 firestore.collection("users").document(uid).snapshots()
                     .combine(waterSourcesRepo.waterSources) { snapshot, waterSources ->
-                        snapshot.toUserProfileObject(waterSources)?.let {
-                            UserProfileState.LoggedIn(it)
-                        } ?: UserProfileState.LoggedOut
+                        snapshot.toUserProfileObject(waterSources)
                     }
             } else {
-                flowOf(UserProfileState.LoggedOut)
+                flowOf(null)
             }
         }
+        .shareIn(
+            scope = applicationScope,
+            started = SharingStarted.Eagerly,
+            replay = 1
+        )
+
+    override val userProfileState: StateFlow<UserProfileState> = userProfile
+        .map {
+            Log.d(TAG, "userProfile=$it")
+            it?.let { UserProfileState.LoggedIn } ?: UserProfileState.LoggedOut
+        }
+        .distinctUntilChanged()
         .stateIn(
             scope = applicationScope,
             started = SharingStarted.Eagerly,
             initialValue = UserProfileState.Loading
-        )
-
-    private val userProfile: StateFlow<UserProfile?> = userProfileState
-        .map {
-            Log.d(TAG, "userProfile=$it")
-            if (it is UserProfileState.LoggedIn) {
-                it.userProfile
-            } else {
-                null
-            }
-        }
-        .stateIn(
-            scope = applicationScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
         )
 
     override val userName: StateFlow<String?> = userProfile
@@ -125,7 +126,7 @@ class UserRepositoryImpl @Inject constructor(
         )
 
     override val userWatchList: StateFlow<List<WaterSource>> = userProfile
-        .map { it?.watchList ?: emptyList() }
+        .map { it?.watchList?.distinct() ?: emptyList() }
         .distinctUntilChanged()
         .stateIn(
             scope = applicationScope,
@@ -134,40 +135,51 @@ class UserRepositoryImpl @Inject constructor(
         )
 
     override suspend fun createUser(uid: String) {
-        // Do not create a full UserProfile class here to avoid overwriting.
-        uid.getUserDoc()
-            .set(
-                mapOf("uid" to uid),
-                SetOptions.merge()
-            )
+        withContext(Dispatchers.IO) {
+            val docRef = uid.getUserDoc()
+            if (!docRef.get().await().exists()) {
+                docRef.set(UserProfile(uid).toMap())
+            }
+        }
     }
 
     override suspend fun setName(name: String) {
-        userProfile.value?.let {
+        userProfile.lastOrNull()?.let {
             it.uid.getUserDoc()
                 .set(it.copy(name = name).toMap())
         }
     }
 
     override suspend fun setHomeLocation(location: Location) {
-        userProfile.value?.let {
+        userProfile.lastOrNull()?.let {
             it.uid.getUserDoc()
                 .set(it.copy(homeLocation = location).toMap())
         }
     }
 
     override suspend fun setOnboardingStage(stage: OnboardingStage) {
-        userProfile.value?.let {
+        userProfile.lastOrNull()?.let {
             it.uid.getUserDoc()
                 .set(it.copy(onboardingStage = stage).toMap())
         }
     }
 
-    override suspend fun setWatchList(watchList: List<WaterSource>) {
-        userProfile.value?.let {
+    override suspend fun addToWatchList(waterSource: WaterSource) {
+        Log.d(TAG, "addToWatchList")
+        userProfile.replayCache.lastOrNull()?.let {
+            Log.d(TAG, "addToWatchList2")
             it.uid.getUserDoc()
-                .set(it.copy(watchList = watchList).toMap())
-        }
+                .set(it.copy(watchList = it.watchList + waterSource).toMap())
+        } ?: run { Log.d(TAG, "fucked")}
+    }
+
+    override suspend fun removeFromWatchList(waterSource: WaterSource) {
+        Log.d(TAG, "removeFromWatchList")
+        userProfile.replayCache.lastOrNull()?.let {
+            Log.d(TAG, "removeFromWatchList2")
+            it.uid.getUserDoc()
+                .set(it.copy(watchList = it.watchList - waterSource).toMap())
+        } ?: run { Log.d(TAG, "fucked")}
     }
 
     // Firebase doc helpers

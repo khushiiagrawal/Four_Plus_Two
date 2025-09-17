@@ -67,6 +67,7 @@ fun AlertsSection(
 
 @Composable
 fun AlertCard(alertItem: Alert, onClick: () -> Unit) {
+    //TODO: Use ListItem instead
     Card(
         modifier = Modifier
             .fillMaxWidth()

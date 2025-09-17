@@ -28,8 +28,8 @@ sealed class Route(val key: String) {
                 Profile.key -> Profile
                 Settings.key -> Settings
                 else -> {
-                    if (route?.startsWith("onBoarding") ?: false) {
-                        val subRoute = route.substringAfter("onboarding/")
+                    if (route?.startsWith(ONBOARDING_ROUTE) ?: false) {
+                        val subRoute = route.substringAfter("$ONBOARDING_ROUTE/")
                         when (subRoute) {
                             Onboarding.SignOn.key -> Onboarding.SignOn
                             Onboarding.UserInfo.key -> Onboarding.UserInfo

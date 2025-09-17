@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.home.viewmodel.HomeViewModel
 import dev.adithya.aquahealth.ui.components.AppScaffold
 
+// TODO: Use LazyColumn and make each row a lazy item
 @Composable
 fun HomeScreen(
     navController: NavHostController,

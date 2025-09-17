@@ -26,12 +26,14 @@ fun AppBottomNavBar(
                 enabled = enabled,
                 selected = currentRoute == navItem.route.key,
                 onClick = {
-                    navController.navigate(navItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if (currentRoute != navItem.route.key) {
+                        navController.navigate(navItem.route.key) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 },
                 icon = {

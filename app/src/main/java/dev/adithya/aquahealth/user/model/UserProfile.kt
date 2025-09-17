@@ -17,5 +17,5 @@ data class UserProfile(
 sealed interface UserProfileState {
     object Loading : UserProfileState
     object LoggedOut : UserProfileState
-    data class LoggedIn(val userProfile: UserProfile) : UserProfileState
+    object LoggedIn : UserProfileState
 }
