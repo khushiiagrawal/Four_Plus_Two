@@ -116,7 +116,7 @@ export default function DashboardPage() {
       }}
     >
       <header className="flex items-center justify-between mt-20">
-        <h1 className="text-2xl md:text-3xl font-semibold text-white">
+        <h1 className="text-2xl md:text-3xl font-semibold text-slate-50">
           District Dashboard
         </h1>
         <div className="flex items-center gap-4">
@@ -144,9 +144,9 @@ export default function DashboardPage() {
         {counters.map((c) => (
           <div
             key={c.label}
-            className="rounded-2xl p-4 bg-white/30 backdrop-blur border border-white/20 shadow-sm"
+            className="rounded-2xl p-4 bg-white/35 backdrop-blur border border-white/25 shadow-sm"
           >
-            <div className="text-xs text-slate-200">{c.label}</div>
+            <div className="text-xs text-slate-100">{c.label}</div>
             <div className="text-2xl md:text-3xl font-semibold mt-1 text-white">
               {c.value}
             </div>

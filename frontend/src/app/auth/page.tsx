@@ -212,7 +212,7 @@ export default function AuthPage() {
                 password confidential.
               </p>
             </div>
-            <button className="mt-8 w-full rounded-xl bg-gradient-to-r from-teal-500 to-sky-500 text-white py-2.5 shadow-lg">
+            <button className="mt-8 w-full rounded-xl bg-sky-600 hover:bg-sky-700 text-white py-2.5 shadow-lg">
               Log in
             </button>
           </form>
@@ -308,7 +308,7 @@ export default function AuthPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Access limited to legal/government authorities.
             </p>
-            <button className="w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white py-2.5 shadow-lg">
+            <button className="w-full rounded-xl bg-sky-600 hover:bg-sky-700 text-white py-2.5 shadow-lg">
               Request Access
             </button>
           </form>

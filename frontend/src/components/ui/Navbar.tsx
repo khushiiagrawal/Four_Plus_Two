@@ -38,23 +38,23 @@ export default function Navbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-40 flex justify-center px-3">
-      <div className="mt-3 w-full max-w-6xl rounded-2xl border border-white/30 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur supports-[backdrop-filter]:bg-white/30 dark:supports-[backdrop-filter]:bg-white/5 shadow-sm px-4 py-2 flex items-center justify-between">
-        <Link href={"/"} className="font-semibold tracking-tight">
+      <div className="mt-3 w-full max-w-6xl rounded-full border border-cyan-700/40 bg-cyan-600/80 backdrop-blur-md text-white shadow-md px-4 py-2 flex items-center justify-between">
+        <Link href={"/"} className="font-semibold tracking-tight text-lg md:text-xl">
           <span className="inline-flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-5 h-5"
+              className="w-6 h-6"
               aria-hidden="true"
             >
               <path d="M12.22 2.22a.75.75 0 0 0-1.44 0C9.73 6.2 6 8.6 6 12.25 6 16.22 8.86 19 12 19s6-2.78 6-6.75c0-3.65-3.73-6.05-5.78-10.03z" />
             </svg>
-            <span>JalSurakshak</span>
+            <span>JalRakshak</span>
           </span>
         </Link>
         
-        <nav className="flex items-center gap-2 text-sm">
+        <nav className="flex items-center gap-3 text-base text-white">
           {isLoading ? (
             <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
           ) : user ? (
@@ -63,10 +63,10 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2 px-3 py-1 rounded-full hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-500 to-sky-500 text-white text-sm font-semibold flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-r from-teal-500 to-sky-500 text-white text-base font-semibold flex items-center justify-center">
                   {getUserInitials(user.name)}
                 </div>
-                <span className="hidden sm:block text-sm font-medium">
+                <span className="hidden sm:block text-base font-medium">
                   {user.name.split(" ")[0]}
                 </span>
               </button>
@@ -109,13 +109,13 @@ export default function Navbar() {
           ) : (
             <>
               <Link
-                className="px-3 py-1 rounded-full hover:bg-white/60 dark:hover:bg-white/10"
+                className="px-3 py-1 rounded-full hover:bg-white/20"
                 href="/auth"
               >
                 Log in
               </Link>
               <Link
-                className="px-3 py-1 rounded-full bg-gradient-to-r from-teal-500 to-sky-500 text-white"
+                className="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white shadow-sm border border-white/20"
                 href="/auth?tab=signup"
               >
                 Request Access

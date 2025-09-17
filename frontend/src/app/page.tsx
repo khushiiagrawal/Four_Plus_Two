@@ -48,26 +48,26 @@ export default function Home() {
         <section className="relative overflow-hidden h-dvh flex items-center">
           <SplineHero />
           <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-28">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/50 dark:bg-white/10 px-3 py-1 text-xs text-slate-700 dark:text-slate-200 shadow-sm">
-              AI + IoT • Water Health • Early Warning
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/20 backdrop-blur-md px-4 py-1.5 text-sm text-white drop-shadow-md shadow-sm">
+              AI & IoT • Water Health • Early Warning
             </span>
             <h1 className="mt-4 text-4xl md:text-6xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 max-w-3xl">
               Smart Community Health Monitoring
             </h1>
-            <p className="mt-4 text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl">
+            <p className="mt-4 text-lg md:text-xl text-white/90 drop-shadow-md max-w-2xl">
               AI and IoT powered Early Warning for Water-Borne Diseases in Rural
               India.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <button
                 onClick={handleDashboardClick}
-                className="rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"
+                className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
               >
                 Go to Dashboard
               </button>
               <Link
                 href="/auth?tab=signup"
-                className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"
+                className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
               >
                 Request Access
               </Link>
