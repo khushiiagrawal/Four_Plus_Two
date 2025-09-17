@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.adithya.aquahealth.MainViewModel
 import dev.adithya.aquahealth.home.ui.HomeScreen
 import dev.adithya.aquahealth.onboarding.ui.SignOnScreen
+import dev.adithya.aquahealth.report.ui.UserReportScreen
 import dev.adithya.aquahealth.search.ui.SearchScreen
 import dev.adithya.aquahealth.ui.components.SplashScreen
 import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
@@ -62,6 +63,11 @@ fun AppNavHost(
             }
             composable(Route.Search.key) {
                 SearchScreen(
+                    navController = navController
+                )
+            }
+            composable(Route.Report.key) {
+                UserReportScreen(
                     navController = navController
                 )
             }

@@ -48,10 +48,10 @@ fun AppTopBar(
                     contentDescription = "Logo"
                 )
                 Text(
-                    text = if (currentNavItem == NavItem.Home) {
-                        stringResource(R.string.app_name)
-                    } else {
-                        currentNavItem.title
+                    text = when (currentNavItem) {
+                        NavItem.Home -> stringResource(R.string.app_name)
+                        NavItem.Report -> "Report Symptoms"
+                        else -> currentNavItem.title
                     },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
@@ -61,7 +61,7 @@ fun AppTopBar(
         actions = {
             IconButton(
                 enabled = buttonsEnabled,
-                onClick = { /* navigate to settings */ }
+                onClick = { /* TODO: navigate to account page */ }
             ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
@@ -70,7 +70,7 @@ fun AppTopBar(
             }
             IconButton(
                 enabled = buttonsEnabled,
-                onClick = { /* navigate to settings */ }
+                onClick = { /* TODO: navigate to settings */ }
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,

@@ -1,9 +1,9 @@
 package dev.adithya.aquahealth.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -29,7 +29,7 @@ enum class NavItem(
     ),
     Report(
         title = "Report",
-        icon = Icons.Default.Report,
+        icon = Icons.Default.HealthAndSafety,
         route = Route.Report
     );
 

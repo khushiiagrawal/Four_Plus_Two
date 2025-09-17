@@ -8,6 +8,8 @@ import dev.adithya.aquahealth.alert.AlertRepository
 import dev.adithya.aquahealth.alert.AlertRepositoryImpl
 import dev.adithya.aquahealth.onboarding.repository.SignOnRepository
 import dev.adithya.aquahealth.onboarding.repository.SignOnRepositoryImpl
+import dev.adithya.aquahealth.report.repository.UserReportRepository
+import dev.adithya.aquahealth.report.repository.UserReportRepositoryImpl
 import dev.adithya.aquahealth.user.repository.UserRepository
 import dev.adithya.aquahealth.user.repository.UserRepositoryImpl
 import dev.adithya.aquahealth.watersource.repository.WaterSourceRepository
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindWaterSourceRepository(
         impl: WaterSourceRepositoryImpl
     ): WaterSourceRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserReportRepository(
+        impl: UserReportRepositoryImpl
+    ): UserReportRepository
 }
