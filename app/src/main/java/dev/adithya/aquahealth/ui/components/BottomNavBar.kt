@@ -10,6 +10,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.adithya.aquahealth.ui.navigation.NavItem
+import dev.adithya.aquahealth.ui.navigation.Route
 
 @Composable
 fun AppBottomNavBar(
@@ -17,10 +18,12 @@ fun AppBottomNavBar(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val enabled = currentRoute != Route.Splash.key
 
     NavigationBar {
         NavItem.entries.forEach { navItem ->
             NavigationBarItem(
+                enabled = enabled,
                 selected = currentRoute == navItem.route.key,
                 onClick = {
                     navController.navigate(navItem.route) {

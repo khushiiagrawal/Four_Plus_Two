@@ -45,7 +45,7 @@ fun AppNavHost(
         startDestination = Route.Splash.key
     ) {
         composable(Route.Splash.key) {
-            SplashScreen()
+            SplashScreen(navController = navController)
         }
         navigation(startDestination = Route.Onboarding.SignOn.subKey, route = ONBOARDING_ROUTE) {
             composable(Route.Onboarding.SignOn.subKey) {

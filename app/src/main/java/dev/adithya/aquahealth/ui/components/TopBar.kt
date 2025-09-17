@@ -34,6 +34,7 @@ fun AppTopBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: Route.Home.key
     val currentNavItem = NavItem.fromRoute(currentRoute)
+    val buttonsEnabled = currentRoute != Route.Splash.key
 
     TopAppBar(
         title = {
@@ -56,13 +57,19 @@ fun AppTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { /* navigate to settings */ }) {
+            IconButton(
+                enabled = buttonsEnabled,
+                onClick = { /* navigate to settings */ }
+            ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = { /* navigate to settings */ }) {
+            IconButton(
+                enabled = buttonsEnabled,
+                onClick = { /* navigate to settings */ }
+            ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = ""
