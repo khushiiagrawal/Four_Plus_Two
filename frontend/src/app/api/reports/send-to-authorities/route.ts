@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifyUserJwt } from "@/lib/jwt";
-import { connectToDatabase, LEGAL_REPORTS_COLLECTION } from "@/lib/mongodb";
+import { connectToDatabase, AUTHORITIES_REPORTS_COLLECTION } from "@/lib/mongodb";
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -17,10 +17,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { db } = await connectToDatabase();
-    const legalReportsCollection = db.collection(LEGAL_REPORTS_COLLECTION);
+    const authoritiesReportsCollection = db.collection(AUTHORITIES_REPORTS_COLLECTION);
     
-    // Create a legal report document
-    const legalReport = {
+    // Create an authorities report document
+    const authoritiesReport = {
       originalReportId: reportId,
       title: `Environmental Health Report - ${reportData.symptoms || 'Health Concern'}`,
       type: "Health Report",
@@ -45,18 +45,18 @@ export async function POST(req: NextRequest) {
       }
     };
 
-    const result = await legalReportsCollection.insertOne(legalReport);
+    const result = await authoritiesReportsCollection.insertOne(authoritiesReport);
     
     return NextResponse.json({ 
       success: true, 
       reportId: result.insertedId,
-      message: "Report successfully sent to legal authorities"
+      message: "Report successfully sent to higher authorities"
     });
     
   } catch (error) {
-    console.error("Error sending report to legal:", error);
+    console.error("Error sending report to authorities:", error);
     return NextResponse.json(
-      { error: "Failed to send report to legal authorities" },
+      { error: "Failed to send report to higher authorities" },
       { status: 500 }
     );
   }

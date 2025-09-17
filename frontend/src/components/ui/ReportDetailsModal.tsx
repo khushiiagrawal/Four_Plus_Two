@@ -128,7 +128,7 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
     if (!report) return;
     
     try {
-      const response = await fetch("/api/legal-reports", {
+      const response = await fetch("/api/authorities-reports", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SignJWT } from "jose";
 
-const LEGAL_CREDENTIALS = {
-  username: process.env.LEGAL_USERNAME,
-  password: process.env.LEGAL_PASSWORD
+const AUTHORITIES_CREDENTIALS = {
+  username: process.env.AUTHORITIES_USERNAME,
+  password: process.env.AUTHORITIES_PASSWORD
 };
 
-const LEGAL_COOKIE_NAME = "legal_auth_token";
+const AUTHORITIES_COOKIE_NAME = "authorities_auth_token";
 
 export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
     // Validate credentials
-    if (username !== LEGAL_CREDENTIALS.username || password !== LEGAL_CREDENTIALS.password) {
+    if (username !== AUTHORITIES_CREDENTIALS.username || password !== AUTHORITIES_CREDENTIALS.password) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    // Create JWT token for legal authorities
+    // Create JWT token for authorities
     const JWT_SECRET = new TextEncoder().encode(
       process.env.JWT_SECRET || "dev-secret-change-me"
     );
     
     const token = await new SignJWT({ 
-      type: "legal", 
+      type: "authorities", 
       username: username,
       iat: Math.floor(Date.now() / 1000)
     })
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const response = NextResponse.json({ success: true });
     
     // Set secure cookie
-    response.cookies.set(LEGAL_COOKIE_NAME, token, {
+    response.cookies.set(AUTHORITIES_COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Legal auth error:", error);
+    console.error("Authorities auth error:", error);
     return NextResponse.json(
       { error: "Authentication failed" },
       { status: 500 }

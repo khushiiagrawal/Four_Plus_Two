@@ -109,7 +109,7 @@ export default function DashboardPage() {
     >
       <header className="flex items-center justify-between mt-20">
         <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
-          District Dashboard
+          Workers Dashboard
         </h1>
         <div className="flex items-center gap-4">
           <button
@@ -163,7 +163,7 @@ export default function DashboardPage() {
             type: "success",
             title: "Report Created",
             message:
-              "Emergency report has been created and sent to legal authorities.",
+              "Emergency report has been created and sent to higher authorities.",
           });
         }}
       />

@@ -34,7 +34,7 @@ export interface Alert {
   createdBy?: string; // User ID who created the alert
   metadata?: {
     originalReportId?: string;
-    reportData?: any;
+    reportData?: Record<string, unknown>;
     source?: string;
     sentAt?: string;
   };
@@ -42,6 +42,7 @@ export interface Alert {
 
 export const ALERTS_COLLECTION = "alerts";
 export const LEGAL_REPORTS_COLLECTION = "legal_reports";
+export const AUTHORITIES_REPORTS_COLLECTION = "authorities_reports";
 
 export interface LegalReport {
   _id?: string;

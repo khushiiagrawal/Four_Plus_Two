@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase, Alert, ALERTS_COLLECTION } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 // GET - Fetch all alerts
 export async function GET() {
@@ -71,6 +72,55 @@ export async function POST(req: NextRequest) {
     console.error("Error creating alert:", error);
     return NextResponse.json(
       { error: "Failed to create alert" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update alert status
+export async function PATCH(req: NextRequest) {
+  try {
+    const { alertId, status } = await req.json();
+    
+    if (!alertId || !status) {
+      return NextResponse.json(
+        { error: "Alert ID and status are required" },
+        { status: 400 }
+      );
+    }
+
+    const { db } = await connectToDatabase();
+    
+    // Update the alert status
+    const result = await db
+      .collection<Alert>(ALERTS_COLLECTION)
+      .updateOne(
+        { _id: new ObjectId(alertId) },
+        { 
+          $set: { 
+            status: status,
+            updatedAt: new Date()
+          } 
+        }
+      );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Alert not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: `Alert status updated to ${status}`,
+      ts: Date.now()
+    });
+    
+  } catch (error) {
+    console.error("Error updating alert status:", error);
+    return NextResponse.json(
+      { error: "Failed to update alert status" },
       { status: 500 }
     );
   }
