@@ -66,7 +66,7 @@ export default function ReportsList({
     setSendingReports((prev) => new Set(prev).add(report.id));
 
     try {
-      const response = await fetch("/api/reports/send-to-legal", {
+      const response = await fetch("/api/reports/send-to-authorities", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

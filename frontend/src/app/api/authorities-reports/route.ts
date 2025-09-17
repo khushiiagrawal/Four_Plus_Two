@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase, LEGAL_REPORTS_COLLECTION } from "@/lib/mongodb";
+import { connectToDatabase, AUTHORITIES_REPORTS_COLLECTION } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export async function GET() {
   try {
     const { db } = await connectToDatabase();
-    const legalReportsCollection = db.collection(LEGAL_REPORTS_COLLECTION);
+    const authoritiesReportsCollection = db.collection(AUTHORITIES_REPORTS_COLLECTION);
     
-    // Fetch all legal reports, sorted by most recent first
-    const reports = await legalReportsCollection
+    // Fetch all authorities reports, sorted by most recent first
+    const reports = await authoritiesReportsCollection
       .find({})
       .sort({ sentAt: -1 })
       .limit(50)
@@ -63,9 +63,9 @@ export async function GET() {
     });
     
   } catch (error) {
-    console.error("Error fetching legal reports:", error);
+    console.error("Error fetching authorities reports:", error);
     return NextResponse.json(
-      { error: "Failed to fetch legal reports" },
+      { error: "Failed to fetch authorities reports" },
       { status: 500 }
     );
   }
@@ -83,10 +83,10 @@ export async function PATCH(req: NextRequest) {
     }
 
     const { db } = await connectToDatabase();
-    const legalReportsCollection = db.collection(LEGAL_REPORTS_COLLECTION);
+    const authoritiesReportsCollection = db.collection(AUTHORITIES_REPORTS_COLLECTION);
     
     // Update the report status
-    const result = await legalReportsCollection.updateOne(
+    const result = await authoritiesReportsCollection.updateOne(
       { _id: new ObjectId(reportId) },
       { 
         $set: { 

@@ -152,37 +152,28 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-dvh flex items-center justify-center"
-        style={{
-          background:
-            "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-        }}
-      >
-        <div className="text-white">Loading...</div>
+      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-cyan-400 via-sky-300 to-cyan-200">
+        <div className="text-center">
+          <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
+          <p className="text-slate-600">Loading...</p>
+        </div>
       </div>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div
-        className="min-h-dvh flex items-center justify-center overflow-hidden p-6"
-        style={{
-          background:
-            "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-        }}
-      >
-        <div className="w-full max-w-md mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur shadow-lg p-4">
+      <div className="min-h-dvh flex items-center justify-center overflow-hidden p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
+        <div className="w-full max-w-md mx-auto rounded-2xl border border-white/40 bg-white/30 backdrop-blur shadow-lg p-4">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">Admin Panel</h1>
-            <p className="text-slate-300 text-sm">
+            <h1 className="text-2xl font-bold text-slate-800 mb-2">Admin Panel</h1>
+            <p className="text-slate-600 text-sm">
               Enter admin credentials to continue
             </p>
           </div>
 
           <form
-            className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur p-6 pb-8 shadow relative"
+            className="rounded-2xl border border-white/40 bg-white/40 backdrop-blur p-6 pb-8 shadow relative"
             onSubmit={adminForm.handleSubmit(onAdminLogin)}
           >
             <div className="pointer-events-none absolute -top-3 -left-2 h-2 w-2 rounded-full bg-white/70 shadow" />
@@ -191,34 +182,34 @@ export default function AdminPage() {
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm mb-1 text-white">
+                <label className="block text-sm mb-1 text-slate-700">
                   Username
                 </label>
                 <input
                   type="text"
                   {...adminForm.register("username")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-400"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white/70 px-3 py-2 outline-none focus:ring-2 focus:ring-cyan-400 text-slate-800"
                   placeholder="admin"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-white">
+                <label className="block text-sm mb-1 text-slate-700">
                   Password
                 </label>
                 <input
                   type="password"
                   {...adminForm.register("password")}
-                  className="w-full rounded-xl border border-slate-300/70 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2 outline-none focus:ring-2 focus:ring-teal-400"
+                  className="w-full rounded-xl border border-slate-300/70 bg-white/70 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-400 text-slate-800"
                   placeholder="••••••••"
                 />
               </div>
               {error && (
-                <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                <div className="text-red-600 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
                   {error}
                 </div>
               )}
             </div>
-            <button className="mt-6 w-full rounded-xl bg-gradient-to-r from-teal-500 to-sky-500 text-white py-2.5 shadow-lg hover:shadow-xl transition-shadow">
+            <button className="mt-6 w-full rounded-xl bg-gradient-to-r from-cyan-600 to-sky-600 text-white py-2.5 shadow-lg hover:shadow-xl transition-shadow">
               Login as Admin
             </button>
           </form>
@@ -228,28 +219,22 @@ export default function AdminPage() {
   }
 
   return (
-    <div
-      className="min-h-dvh p-6"
-      style={{
-        background:
-          "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
-      }}
-    >
+    <div className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg p-6">
+        <div className="mb-8 rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md shadow-lg p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-bold text-slate-800 mb-2">
                 Admin Dashboard
               </h1>
-              <p className="text-slate-300">
+              <p className="text-slate-600">
                 Manage registered users ({users.length} total)
               </p>
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-200 hover:bg-red-500/30 transition-colors"
+              className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-700 text-white border border-red-700 transition-colors"
             >
               Logout
             </button>
@@ -257,50 +242,50 @@ export default function AdminPage() {
         </div>
 
         {/* Users Table */}
-        <div className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg overflow-hidden">
-          <div className="p-6 border-b border-white/10">
-            <h2 className="text-xl font-semibold text-white">
+        <div className="rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-white/20">
+            <h2 className="text-xl font-semibold text-slate-800">
               Registered Users
             </h2>
           </div>
 
           {users.length === 0 ? (
-            <div className="p-12 text-center text-slate-300">
+            <div className="p-12 text-center text-slate-600">
               <p className="text-lg">No users registered yet</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                  <tr className="border-b border-white/20">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Name
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Email
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Employee ID
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Designation
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Department
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Region
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Photo ID
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Status
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Actions
                     </th>
-                    <th className="text-left p-4 text-slate-200 font-medium">
+                    <th className="text-left p-4 text-slate-700 font-medium">
                       Registered
                     </th>
                   </tr>
@@ -309,22 +294,22 @@ export default function AdminPage() {
                   {users.map((user, index) => (
                     <tr
                       key={user.id}
-                      className={`border-b border-white/5 ${
-                        index % 2 === 0 ? "bg-white/5" : ""
+                      className={`border-b border-white/20 ${
+                        index % 2 === 0 ? "bg-white/10" : ""
                       }`}
                     >
-                      <td className="p-4 text-white font-medium">
+                      <td className="p-4 text-slate-800 font-medium">
                         {user.name}
                       </td>
-                      <td className="p-4 text-slate-300">{user.email}</td>
-                      <td className="p-4 text-slate-300">{user.employeeId}</td>
-                      <td className="p-4 text-slate-300">{user.designation}</td>
-                      <td className="p-4 text-slate-300">{user.department}</td>
-                      <td className="p-4 text-slate-300">{user.region}</td>
+                      <td className="p-4 text-slate-600">{user.email}</td>
+                      <td className="p-4 text-slate-600">{user.employeeId}</td>
+                      <td className="p-4 text-slate-600">{user.designation}</td>
+                      <td className="p-4 text-slate-600">{user.department}</td>
+                      <td className="p-4 text-slate-600">{user.region}</td>
                       <td className="p-4">
                         {user.photoIdUrl ? (
                           user.photoIdUrl.startsWith("mock-") ? (
-                            <span className="text-yellow-400 text-xs">
+                            <span className="text-yellow-600 text-xs">
                               Mock File
                             </span>
                           ) : (
@@ -352,7 +337,7 @@ export default function AdminPage() {
                                       alt={`${user.name}'s ID`}
                                       width={48}
                                       height={48}
-                                      className="w-12 h-12 object-cover rounded-lg border border-white/20 cursor-pointer"
+                                      className="w-12 h-12 object-cover rounded-lg border border-white/40 cursor-pointer"
                                       unoptimized
                                     />
                                   </button>
@@ -362,7 +347,7 @@ export default function AdminPage() {
                                   href={user.photoIdUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sky-400 hover:text-sky-300 text-sm underline"
+                                  className="text-cyan-600 hover:text-cyan-700 text-sm underline"
                                 >
                                   View File
                                 </a>
@@ -378,8 +363,8 @@ export default function AdminPage() {
                       <td className="p-4">
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           user.isAuthenticated 
-                            ? "bg-green-500/20 text-green-200 border border-green-500/30"
-                            : "bg-yellow-500/20 text-yellow-200 border border-yellow-500/30"
+                            ? "bg-green-500/20 text-green-700 border border-green-500/30"
+                            : "bg-yellow-500/20 text-yellow-700 border border-yellow-500/30"
                         }`}>
                           {user.isAuthenticated ? "Approved" : "Pending"}
                         </span>
@@ -389,21 +374,21 @@ export default function AdminPage() {
                           {!user.isAuthenticated ? (
                             <button
                               onClick={() => updateUserAuthentication(user.id, true)}
-                              className="px-3 py-1 rounded-lg bg-green-500/20 border border-green-500/30 text-green-200 hover:bg-green-500/30 transition-colors text-xs"
+                              className="px-3 py-1 rounded-lg bg-green-500/20 border border-green-500/30 text-green-700 hover:bg-green-500/30 transition-colors text-xs"
                             >
                               Approve
                             </button>
                           ) : (
                             <button
                               onClick={() => updateUserAuthentication(user.id, false)}
-                              className="px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-200 hover:bg-red-500/30 transition-colors text-xs"
+                              className="px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-700 hover:bg-red-500/30 transition-colors text-xs"
                             >
                               Revoke
                             </button>
                           )}
                         </div>
                       </td>
-                      <td className="p-4 text-slate-400 text-sm">
+                      <td className="p-4 text-slate-500 text-sm">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
@@ -419,14 +404,14 @@ export default function AdminPage() {
       {selectedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="relative max-w-4xl max-h-[90vh] mx-4">
-            <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur shadow-2xl overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-white">
+            <div className="rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md shadow-2xl overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b border-white/20">
+                <h3 className="text-lg font-semibold text-slate-800">
                   {selectedImage.name}
                 </h3>
                 <button
                   onClick={() => setSelectedImage(null)}
-                  className="text-white/70 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+                  className="text-slate-600 hover:text-slate-800 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
                 >
                   ×
                 </button>

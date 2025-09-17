@@ -205,7 +205,7 @@ export default function AuthPage() {
               </div>
               <p className="text-xs text-slate-700 mt-2">
                 Note: Use your official email and valid credentials. Access is
-                limited to authorized government/legal authorities. Keep your
+                limited to authorized government/higher authorities. Keep your
                 password confidential.
               </p>
             </div>
@@ -303,7 +303,7 @@ export default function AuthPage() {
               </p>
             </div>
             <p className="text-xs text-slate-600">
-              Access limited to legal/government authorities.
+              Access limited to higher authorities/government officials.
             </p>
             <button className="w-full rounded-xl bg-cyan-400/60 text-slate-800 border border-white/40 py-2.5 shadow-md hover:shadow-lg backdrop-blur-md">
               Request Access

@@ -69,14 +69,20 @@ export default function Home() {
                 href="/auth?tab=signup"
                 className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
               >
-                Request Access
+                Workers Login
+              </Link>
+              <Link
+                href="/authorities"
+                className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
+              >
+                Ministry Login
               </Link>
             </div>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="rounded-2xl p-5 bg-white/20 backdrop-blur-md border border-white/30 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
                 <div className="text-sm font-semibold flex items-center gap-2 text-white">
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500" />
-                  Legal Authorities Only
+                  Higher Authorities Only
                 </div>
                 <div className="text-xs text-white/90 mt-2">
                   Verified access for district health officials

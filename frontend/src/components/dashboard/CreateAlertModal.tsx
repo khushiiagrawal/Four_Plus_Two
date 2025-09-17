@@ -81,13 +81,13 @@ export default function CreateAlertModal({
       addToast({
         type: "success",
         title: "Report Sent",
-        message: "Report has been successfully sent to legal authorities.",
+        message: "Report has been successfully sent to higher authorities.",
       });
 
       form.reset();
       onClose();
       onAlertCreated?.();
-    } catch (error) {
+    } catch {
       addToast({
         type: "error",
         title: "Error",
@@ -201,8 +201,8 @@ export default function CreateAlertModal({
 
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
               <p className="text-xs text-amber-200">
-                ⚠️ This report will be immediately sent to legal authorities and
-                law enforcement agencies. Please ensure all information is
+                ⚠️ This report will be immediately sent to higher authorities and
+                district officials. Please ensure all information is
                 accurate and the situation requires immediate attention.
               </p>
             </div>
