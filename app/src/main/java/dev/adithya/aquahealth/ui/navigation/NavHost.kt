@@ -15,6 +15,7 @@ import dev.adithya.aquahealth.home.ui.HomeScreen
 import dev.adithya.aquahealth.onboarding.ui.SignOnScreen
 import dev.adithya.aquahealth.report.ui.UserReportScreen
 import dev.adithya.aquahealth.search.ui.SearchScreen
+import dev.adithya.aquahealth.settings.ui.SettingsScreen
 import dev.adithya.aquahealth.ui.components.SplashScreen
 import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
 import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
@@ -71,6 +72,11 @@ fun AppNavHost(
             }
             composable(Route.Report.key) {
                 UserReportScreen(
+                    navController = navController
+                )
+            }
+            composable(Route.Settings.key) {
+                SettingsScreen(
                     navController = navController
                 )
             }

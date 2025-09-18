@@ -66,7 +66,7 @@ fun AppTopBar(
             }
             IconButton(
                 enabled = buttonsEnabled,
-                onClick = { /* TODO: navigate to settings */ }
+                onClick = { navController.navigate(Route.Settings.key) }
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,

@@ -75,4 +75,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.firebase.messaging)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
 }
