@@ -107,5 +107,20 @@
   "common.close": "বন্ধ করুন",
   "common.tryAgain": "কর্ম সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।",
   "common.networkError": "নেটওয়ার্ক ত্রুটি। আবার চেষ্টা করুন।"
+  ,
+  "alerts.critical.title": "গুরুতর জল মান সতর্কতা",
+  "alerts.critical.severity": "গুরুতর",
+  "alerts.critical.message.highTemp": "দূষণের ঝুঁকি: উচ্চ তাপমাত্রা ({temp}°C)। {risks}",
+  "alerts.critical.message.highHumTemp": "দূষণের ঝুঁকি: উচ্চ আর্দ্রতা ({humidity}%), উচ্চ তাপমাত্রা ({temp}°C)। {risks}",
+  "alerts.warning.title": "জল মান সতর্কতা",
+  "alerts.warning.severity": "সতর্কতা",
+  "alerts.warning.message.tempHumidity": "তাপমাত্রা বেশি: {temp}°C; আর্দ্রতা বেশি: {humidity}%",
+  "alerts.actions.alertUser": "ব্যবহারকারীকে সতর্ক করুন",
+  "alerts.actions.viewAnalysis": "বিস্তারিত বিশ্লেষণ দেখুন",
+  "alerts.incidents.cholera.title": "কলেরা প্রাদুর্ভাব",
+  "alerts.incidents.cholera.desc": "বানাশঙ্করী তালুক সংলগ্ন এলাকায় কলেরা কেস বাড়ছে, অতিরিক্ত সতর্কতা প্রয়োজন",
+  "alerts.incidents.contamination.title": "জল দূষণ",
+  "alerts.incidents.contamination.desc": "রসায়নিক বর্জ্যে সম্ভাব্য জল দূষণ",
+  "alerts.meta.location": "অবস্থান"
 }
 

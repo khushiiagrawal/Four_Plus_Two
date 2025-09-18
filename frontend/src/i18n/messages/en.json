@@ -107,5 +107,20 @@
   "common.close": "Close",
   "common.tryAgain": "Could not complete the action. Please try again.",
   "common.networkError": "Network error. Please try again."
+  ,
+  "alerts.critical.title": "CRITICAL Water Quality Alert",
+  "alerts.critical.severity": "CRITICAL",
+  "alerts.critical.message.highTemp": "Contamination risk detected: High temperature ({temp}°C). {risks}",
+  "alerts.critical.message.highHumTemp": "Contamination risk detected: High humidity ({humidity}%), High temperature ({temp}°C). {risks}",
+  "alerts.warning.title": "Water Quality Warning",
+  "alerts.warning.severity": "WARNING",
+  "alerts.warning.message.tempHumidity": "Temperature too high: {temp}°C; Humidity too high: {humidity}%",
+  "alerts.actions.alertUser": "Alert User",
+  "alerts.actions.viewAnalysis": "View detailed analysis",
+  "alerts.incidents.cholera.title": "Cholera breakout",
+  "alerts.incidents.cholera.desc": "Cholera cases rising in areas surrounding Banashankari Taluk, extreme caution advised",
+  "alerts.incidents.contamination.title": "Water contamination",
+  "alerts.incidents.contamination.desc": "Potential water contamination with chemical waste",
+  "alerts.meta.location": "Location"
 }
 

@@ -107,5 +107,20 @@
   "common.close": "बंद करें",
   "common.tryAgain": "कार्रवाई पूरी नहीं हो सकी। कृपया पुनः प्रयास करें।",
   "common.networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।"
+  ,
+  "alerts.critical.title": "गंभीर जल गुणवत्ता अलर्ट",
+  "alerts.critical.severity": "गंभीर",
+  "alerts.critical.message.highTemp": "दूषण का जोखिम: उच्च तापमान ({temp}°C)। {risks}",
+  "alerts.critical.message.highHumTemp": "दूषण का जोखिम: उच्च आर्द्रता ({humidity}%), उच्च तापमान ({temp}°C)। {risks}",
+  "alerts.warning.title": "जल गुणवत्ता चेतावनी",
+  "alerts.warning.severity": "चेतावनी",
+  "alerts.warning.message.tempHumidity": "तापमान बहुत अधिक: {temp}°C; आर्द्रता बहुत अधिक: {humidity}%",
+  "alerts.actions.alertUser": "उपयोगकर्ता को अलर्ट करें",
+  "alerts.actions.viewAnalysis": "विस्तृत विश्लेषण देखें",
+  "alerts.incidents.cholera.title": "कॉलेरा प्रकोप",
+  "alerts.incidents.cholera.desc": "बनशंकरी तालुक के आसपास के क्षेत्रों में कॉलेरा मामलों में वृद्धि, अत्यधिक सावधानी बरतें",
+  "alerts.incidents.contamination.title": "जल प्रदूषण",
+  "alerts.incidents.contamination.desc": "रासायनिक कचरे से संभावित जल प्रदूषण",
+  "alerts.meta.location": "स्थान"
 }
 

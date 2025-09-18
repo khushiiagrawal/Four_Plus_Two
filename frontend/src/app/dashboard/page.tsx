@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
-import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
+import WaterQualityCharts from "@/components/widgets/WaterQualityCharts";
 import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
 import CreateReportModal from "@/components/dashboard/CreateReportModal";
 import SummarizationModal from "@/components/dashboard/SummarizationModal";
@@ -259,22 +259,7 @@ export default function DashboardPage() {
           >
             ➕ <FormattedMessage id="dashboard.actions.createReport" defaultMessage="Create Report" />
           </button>
-          <button
-            onClick={handleSummarizeReports}
-            disabled={selectedReports.size === 0 || isSummarizing}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg border border-blue-700 disabled:border-gray-500 transition-colors flex items-center gap-2 shadow-sm disabled:cursor-not-allowed"
-          >
-            {isSummarizing ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <FormattedMessage id="dashboard.actions.summarizing" defaultMessage="Summarizing..." />
-              </>
-            ) : (
-              <>
-                📝 <FormattedMessage id="dashboard.actions.summarizeReports" defaultMessage="Summarize Reports" /> ({selectedReports.size})
-              </>
-            )}
-          </button>
+          
           <button
             onClick={() => setIsAlertModalOpen(true)}
             className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center gap-2 shadow-sm"
@@ -308,7 +293,36 @@ export default function DashboardPage() {
       </section>
       <RealTimeAlerts />
       <section className="mt-6">
-        <GrafanaEmbed title={intl.formatMessage({ id: "dashboard.grafana.title", defaultMessage: "Sensor Overview (Grafana)" })} />
+        <WaterQualityCharts />
+      </section>
+
+      {/* Summarize Action below dashboard widgets, above reports section */}
+      <section className="mt-6">
+        <div className="rounded-2xl p-4 bg-white/40 backdrop-blur-md border border-white/50 shadow-sm flex items-center justify-between flex-wrap gap-3">
+          <div className="text-slate-700 text-sm">
+            <FormattedMessage id="dashboard.actions.summarizeReports" defaultMessage="Summarize Reports" />
+            {" "}
+            <span className="text-slate-500">(
+              {selectedReports.size}
+              )</span>
+          </div>
+          <button
+            onClick={handleSummarizeReports}
+            disabled={selectedReports.size === 0 || isSummarizing}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg border border-blue-700 disabled:border-gray-500 transition-colors flex items-center gap-2 shadow-sm disabled:cursor-not-allowed"
+          >
+            {isSummarizing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <FormattedMessage id="dashboard.actions.summarizing" defaultMessage="Summarizing..." />
+              </>
+            ) : (
+              <>
+                📝 <FormattedMessage id="dashboard.actions.summarizeReports" defaultMessage="Summarize Reports" />
+              </>
+            )}
+          </button>
+        </div>
       </section>
       <section id="reports-section" className="mt-6">
         <ReportsList

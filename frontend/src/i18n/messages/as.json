@@ -107,5 +107,20 @@
   "common.close": "বন্ধ কৰক",
   "common.tryAgain": "কাৰ্য সম্পূৰ্ণ কৰিব নোৱাৰি। অনুগ্ৰহ কৰি পুনঃচেষ্টা কৰক।",
   "common.networkError": "নেটৱৰ্ক ত্ৰুটি। অনুগ্ৰহ কৰি পুনঃচেষ্টা কৰক।"
+  ,
+  "alerts.critical.title": "গুরুতৰ পানীৰ গুণমান সতর্কবার্তা",
+  "alerts.critical.severity": "গুরুতৰ",
+  "alerts.critical.message.highTemp": "দূষণৰ আশংকা: উঞ্চ তাপমাত্রা ({temp}°C)। {risks}",
+  "alerts.critical.message.highHumTemp": "দূষণৰ আশংকা: অধিক আর্দ্ৰতা ({humidity}%), উঞ্চ তাপমাত্রা ({temp}°C)। {risks}",
+  "alerts.warning.title": "পানীৰ গুণমান সতর্কবার্তা",
+  "alerts.warning.severity": "সতৰ্কতা",
+  "alerts.warning.message.tempHumidity": "তাপমাত্রা অধিক: {temp}°C; আর্দ্ৰতা অধিক: {humidity}%",
+  "alerts.actions.alertUser": "ব্যৱহাৰকাৰীক সতৰ্ক কৰক",
+  "alerts.actions.viewAnalysis": "বিস্তারিত বিশ্লেষণ চাওক",
+  "alerts.incidents.cholera.title": "কলৰা বিস্তাৰ",
+  "alerts.incidents.cholera.desc": "বানশংকৰী তালুকৰ চাৰিওফালে কলৰা কেছ বৃদ্ধিপ্রাপ্ত, অতিশয় সাৱধানতা অবলম্বন কৰক",
+  "alerts.incidents.contamination.title": "পানী দূষণ",
+  "alerts.incidents.contamination.desc": "ৰাসায়নিক আবর্জনাৰ বাবে সম্ভাব্য পানী দূষণ",
+  "alerts.meta.location": "অৱস্থান"
 }
 

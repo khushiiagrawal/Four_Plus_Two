@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
 import ReportDetailsModal from "@/components/ui/ReportDetailsModal";
-import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
+import WaterQualityCharts from "@/components/widgets/WaterQualityCharts";
 
 interface Alert {
   _id?: string;
@@ -335,7 +335,7 @@ export default function AuthoritiesDashboardPage() {
 
       {/* Removed Stats Overview for authorities dashboard as requested */}
 
-      {/* Monitoring Dashboard (Grafana) */}
+      {/* Monitoring Dashboard (Charts) */}
       <section className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
@@ -343,7 +343,7 @@ export default function AuthoritiesDashboardPage() {
           </h2>
           <span className="text-xs text-slate-500">Real-time environmental metrics</span>
         </div>
-        <GrafanaEmbed title="Sensor Overview (Grafana)" height={520} />
+        <WaterQualityCharts />
       </section>
 
       {/* Real-time Alerts Section */}

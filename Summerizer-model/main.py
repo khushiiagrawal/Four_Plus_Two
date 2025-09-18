@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import pipeline
@@ -117,6 +117,15 @@ async def summarize_text(input_data: TextInput):
         logger.error(f"Error during summarization: {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+@app.options("/summarize")
+async def summarize_options() -> Response:
+    # Explicit preflight handler to avoid 404s from proxies/tools that don't send CORS headers
+    return Response(status_code=200, headers={
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    })
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
