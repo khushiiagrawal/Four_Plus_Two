@@ -65,12 +65,14 @@ export default function Home() {
               >
                 Go to Dashboard
               </button>
-              <Link
-                href="/auth?tab=signup"
-                className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
-              >
-                Workers Login
-              </Link>
+              {!user && (
+                <Link
+                  href="/auth"
+                  className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"
+                >
+                  Health-Care Workers Login
+                </Link>
+              )}
               <Link
                 href="/authorities"
                 className="rounded-xl bg-white text-cyan-600 px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-cyan-600/30"

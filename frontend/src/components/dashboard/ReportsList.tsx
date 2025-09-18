@@ -1,6 +1,6 @@
 "use client";
-import useSWR from "swr";
-import { useMemo, useState } from "react";
+import useSWR, { mutate as globalMutate } from "swr";
+import { useMemo, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
 
 const fetcher = (url: string) =>
@@ -20,9 +20,23 @@ export default function ReportsList({
   const { addToast } = useToast();
   const [sendingReports, setSendingReports] = useState<Set<string>>(new Set());
   const [removedReports, setRemovedReports] = useState<Set<string>>(new Set());
-  const { data, error } = useSWR("/api/data/reports", fetcher, {
+  const key = "/api/data/reports";
+  const { data, error, mutate } = useSWR(key, fetcher, {
     refreshInterval: 30_000,
   });
+
+  // Listen for a cross-component refresh event dispatched after creating a report
+  // to immediately update list without waiting for interval.
+  useEffect(() => {
+    function handler() {
+      mutate();
+      globalMutate(key);
+    }
+    window.addEventListener('refresh-reports', handler);
+    return () => {
+      window.removeEventListener('refresh-reports', handler);
+    };
+  }, [mutate]);
   const items = useMemo(() => {
     const all = (data?.items ?? []) as Array<{
       id: string;
