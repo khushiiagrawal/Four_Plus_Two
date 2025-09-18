@@ -10,6 +10,7 @@ import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
 import CreateReportModal from "@/components/dashboard/CreateReportModal";
 import SummarizationModal from "@/components/dashboard/SummarizationModal";
 import RealTimeAlerts from "@/components/dashboard/RealTimeAlerts";
+import WaterQualityReference from "@/components/dashboard/WaterQualityReference";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/Toast";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -28,8 +29,14 @@ export default function DashboardPage() {
     if (!isLoading && !user) {
       addToast({
         type: "error",
-        title: intl.formatMessage({ id: "toast.accessDenied.title", defaultMessage: "Access Denied" }),
-        message: intl.formatMessage({ id: "toast.accessDenied.message", defaultMessage: "Please log in to access the dashboard." }),
+        title: intl.formatMessage({
+          id: "toast.accessDenied.title",
+          defaultMessage: "Access Denied",
+        }),
+        message: intl.formatMessage({
+          id: "toast.accessDenied.message",
+          defaultMessage: "Please log in to access the dashboard.",
+        }),
       });
       router.push("/auth");
       return;
@@ -37,8 +44,15 @@ export default function DashboardPage() {
     if (!isLoading && user && !user.isAuthenticated) {
       addToast({
         type: "warning",
-        title: intl.formatMessage({ id: "toast.accessPending.title", defaultMessage: "Access Pending" }),
-        message: intl.formatMessage({ id: "toast.accessPending.message", defaultMessage: "User not given access yet. Please wait for admin approval." }),
+        title: intl.formatMessage({
+          id: "toast.accessPending.title",
+          defaultMessage: "Access Pending",
+        }),
+        message: intl.formatMessage({
+          id: "toast.accessPending.message",
+          defaultMessage:
+            "User not given access yet. Please wait for admin approval.",
+        }),
         duration: 8000,
       });
       router.push("/profile");
@@ -65,13 +79,34 @@ export default function DashboardPage() {
 
   const counters = useMemo(
     () => [
-      { label: intl.formatMessage({ id: "dashboard.counter.activeOutbreaks", defaultMessage: "Active Outbreaks" }), value: summary?.activeOutbreaks ?? "—" },
       {
-        label: intl.formatMessage({ id: "dashboard.counter.recentFieldReports", defaultMessage: "Recent Field Reports" }),
+        label: intl.formatMessage({
+          id: "dashboard.counter.activeOutbreaks",
+          defaultMessage: "Active Outbreaks",
+        }),
+        value: summary?.activeOutbreaks ?? "—",
+      },
+      {
+        label: intl.formatMessage({
+          id: "dashboard.counter.recentFieldReports",
+          defaultMessage: "Recent Field Reports",
+        }),
         value: summary?.recentFieldReports ?? "—",
       },
-      { label: intl.formatMessage({ id: "dashboard.counter.sensorAlerts", defaultMessage: "Sensor Alerts" }), value: summary?.sensorAlerts ?? "—" },
-      { label: intl.formatMessage({ id: "dashboard.counter.areasAtRisk", defaultMessage: "Areas at Risk" }), value: summary?.areasAtRisk ?? "—" },
+      {
+        label: intl.formatMessage({
+          id: "dashboard.counter.sensorAlerts",
+          defaultMessage: "Sensor Alerts",
+        }),
+        value: summary?.sensorAlerts ?? "—",
+      },
+      {
+        label: intl.formatMessage({
+          id: "dashboard.counter.areasAtRisk",
+          defaultMessage: "Areas at Risk",
+        }),
+        value: summary?.areasAtRisk ?? "—",
+      },
     ],
     [summary]
   );
@@ -239,7 +274,15 @@ export default function DashboardPage() {
         <div className="text-center">
           <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
           <p className="text-slate-600">
-            {isLoading ? intl.formatMessage({ id: "common.loading", defaultMessage: "Loading..." }) : intl.formatMessage({ id: "dashboard.checkingAccess", defaultMessage: "Checking access..." })}
+            {isLoading
+              ? intl.formatMessage({
+                  id: "common.loading",
+                  defaultMessage: "Loading...",
+                })
+              : intl.formatMessage({
+                  id: "dashboard.checkingAccess",
+                  defaultMessage: "Checking access...",
+                })}
           </p>
         </div>
       </div>
@@ -250,27 +293,43 @@ export default function DashboardPage() {
     <div className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
       <header className="flex items-center justify-between mt-20">
         <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
-          <FormattedMessage id="dashboard.title" defaultMessage="Health-Care Workers Dashboard" />
+          <FormattedMessage
+            id="dashboard.title"
+            defaultMessage="Health-Care Workers Dashboard"
+          />
         </h1>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsCreateReportOpen(true)}
             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg border border-emerald-700 transition-colors flex items-center gap-2 shadow-sm"
           >
-            ➕ <FormattedMessage id="dashboard.actions.createReport" defaultMessage="Create Report" />
+            ➕{" "}
+            <FormattedMessage
+              id="dashboard.actions.createReport"
+              defaultMessage="Create Report"
+            />
           </button>
-          
+
           <button
             onClick={() => setIsAlertModalOpen(true)}
             className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center gap-2 shadow-sm"
           >
-            🚨 <FormattedMessage id="dashboard.actions.createAlert" defaultMessage="Create Alert" />
+            🚨{" "}
+            <FormattedMessage
+              id="dashboard.actions.createAlert"
+              defaultMessage="Create Alert"
+            />
           </button>
           <span className="inline-flex items-center text-xs rounded-full bg-emerald-600 text-white px-2 py-1 border border-emerald-700 shadow-sm">
             <FormattedMessage id="dashboard.live" defaultMessage="Live" />
           </span>
         </div>
       </header>
+
+      <div className="mt-6">
+        <WaterQualityReference />
+      </div>
+
       <section className="mt-4">
         <FiltersBar
           value={filters}
@@ -300,11 +359,11 @@ export default function DashboardPage() {
       <section className="mt-6">
         <div className="rounded-2xl p-4 bg-white/40 backdrop-blur-md border border-white/50 shadow-sm flex items-center justify-between flex-wrap gap-3">
           <div className="text-slate-700 text-sm">
-            <FormattedMessage id="dashboard.actions.summarizeReports" defaultMessage="Summarize Reports" />
-            {" "}
-            <span className="text-slate-500">(
-              {selectedReports.size}
-              )</span>
+            <FormattedMessage
+              id="dashboard.actions.summarizeReports"
+              defaultMessage="Summarize Reports"
+            />{" "}
+            <span className="text-slate-500">({selectedReports.size})</span>
           </div>
           <button
             onClick={handleSummarizeReports}
@@ -314,11 +373,18 @@ export default function DashboardPage() {
             {isSummarizing ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <FormattedMessage id="dashboard.actions.summarizing" defaultMessage="Summarizing..." />
+                <FormattedMessage
+                  id="dashboard.actions.summarizing"
+                  defaultMessage="Summarizing..."
+                />
               </>
             ) : (
               <>
-                📝 <FormattedMessage id="dashboard.actions.summarizeReports" defaultMessage="Summarize Reports" />
+                📝{" "}
+                <FormattedMessage
+                  id="dashboard.actions.summarizeReports"
+                  defaultMessage="Summarize Reports"
+                />
               </>
             )}
           </button>
@@ -332,6 +398,7 @@ export default function DashboardPage() {
           onSelectionChange={setSelectedReports}
         />
       </section>
+
       <CreateAlertModal
         isOpen={isAlertModalOpen}
         onClose={() => setIsAlertModalOpen(false)}
@@ -339,8 +406,15 @@ export default function DashboardPage() {
           // Optionally refresh data or show success message
           addToast({
             type: "success",
-            title: intl.formatMessage({ id: "dashboard.reportCreated.title", defaultMessage: "Report Created" }),
-            message: intl.formatMessage({ id: "dashboard.reportCreated.message", defaultMessage: "Emergency report has been created and sent to higher authorities." }),
+            title: intl.formatMessage({
+              id: "dashboard.reportCreated.title",
+              defaultMessage: "Report Created",
+            }),
+            message: intl.formatMessage({
+              id: "dashboard.reportCreated.message",
+              defaultMessage:
+                "Emergency report has been created and sent to higher authorities.",
+            }),
           });
         }}
       />

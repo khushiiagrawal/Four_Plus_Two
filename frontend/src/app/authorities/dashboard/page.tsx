@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
 import ReportDetailsModal from "@/components/ui/ReportDetailsModal";
 import WaterQualityCharts from "@/components/widgets/WaterQualityCharts";
+import WaterQualityReference from "@/components/dashboard/WaterQualityReference";
 
 interface Alert {
   _id?: string;
@@ -78,7 +79,9 @@ interface SummarizedReport {
   };
 }
 
-function convertSummarizedToAuthorities(report: SummarizedReport): AuthoritiesReport {
+function convertSummarizedToAuthorities(
+  report: SummarizedReport
+): AuthoritiesReport {
   return {
     id: report.id,
     title: report.title,
@@ -98,7 +101,8 @@ export default function AuthoritiesDashboardPage() {
   const router = useRouter();
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedReport, setSelectedReport] = useState<AuthoritiesReport | null>(null);
+  const [selectedReport, setSelectedReport] =
+    useState<AuthoritiesReport | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -170,7 +174,7 @@ export default function AuthoritiesDashboardPage() {
     if (selectedReport && selectedReport.id === reportId) {
       setSelectedReport({ ...selectedReport, status: newStatus });
     }
-    
+
     // Trigger a refresh of the reports data
     // The SWR will automatically refetch due to the refreshInterval
     addToast({
@@ -189,7 +193,7 @@ export default function AuthoritiesDashboardPage() {
         },
         body: JSON.stringify({
           alertId: alertId,
-          status: "completed"
+          status: "completed",
         }),
       });
 
@@ -197,7 +201,8 @@ export default function AuthoritiesDashboardPage() {
         addToast({
           type: "success",
           title: "Alert Acknowledged",
-          message: "Alert has been marked as completed and will be removed from the dashboard.",
+          message:
+            "Alert has been marked as completed and will be removed from the dashboard.",
         });
         // The SWR will automatically refetch due to the refreshInterval
       } else {
@@ -217,7 +222,9 @@ export default function AuthoritiesDashboardPage() {
   };
 
   // Use real alerts from API, ensure it's always an array
-  const alertsData: Alert[] = Array.isArray(alertsFromAPI) ? (alertsFromAPI as Alert[]) : [];
+  const alertsData: Alert[] = Array.isArray(alertsFromAPI)
+    ? (alertsFromAPI as Alert[])
+    : [];
 
   // Show error toast if there's an error fetching alerts or reports
   useEffect(() => {
@@ -245,10 +252,12 @@ export default function AuthoritiesDashboardPage() {
   }, [alertsError, reportsError, summarizedError, addToast]);
 
   // Use real reports from MongoDB, fallback to empty array
-  const reportsData: AuthoritiesReport[] = authoritiesReportsData?.reports || [];
-  
+  const reportsData: AuthoritiesReport[] =
+    authoritiesReportsData?.reports || [];
+
   // Use summarized reports from MongoDB, fallback to empty array
-  const summarizedReports: SummarizedReport[] = summarizedReportsData?.reports || [];
+  const summarizedReports: SummarizedReport[] =
+    summarizedReportsData?.reports || [];
 
   // Stats removed from UI; no derived metrics required here
 
@@ -296,7 +305,9 @@ export default function AuthoritiesDashboardPage() {
       <div className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-cyan-400 via-sky-300 to-cyan-200">
         <div className="text-center">
           <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
-          <p className="text-slate-600">Loading Higher Authorities Dashboard...</p>
+          <p className="text-slate-600">
+            Loading Higher Authorities Dashboard...
+          </p>
         </div>
       </div>
     );
@@ -333,6 +344,8 @@ export default function AuthoritiesDashboardPage() {
         </div>
       </header>
 
+      <WaterQualityReference />
+
       {/* Removed Stats Overview for authorities dashboard as requested */}
 
       {/* Monitoring Dashboard (Charts) */}
@@ -341,7 +354,9 @@ export default function AuthoritiesDashboardPage() {
           <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
             📊 Monitoring Dashboard
           </h2>
-          <span className="text-xs text-slate-500">Real-time environmental metrics</span>
+          <span className="text-xs text-slate-500">
+            Real-time environmental metrics
+          </span>
         </div>
         <WaterQualityCharts />
       </section>
@@ -368,7 +383,8 @@ export default function AuthoritiesDashboardPage() {
                 </div>
               </div>
             </div>
-          ) : alertsData.filter((alert: Alert) => alert.status !== "completed").length === 0 ? (
+          ) : alertsData.filter((alert: Alert) => alert.status !== "completed")
+              .length === 0 ? (
             // No alerts state
             <div className="rounded-xl p-8 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm text-center">
               <div className="text-4xl mb-2">🔕</div>
@@ -381,69 +397,73 @@ export default function AuthoritiesDashboardPage() {
             alertsData
               .filter((alert: Alert) => alert.status !== "completed") // Filter out completed alerts
               .map((alert: Alert) => (
-              <div
-                key={alert._id || alert.id}
-                className={`rounded-xl p-4 backdrop-blur-md border ${getAlertColor(
-                  alert.type
-                )} shadow-sm bg-white/30`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3 flex-1">
-                    <span className="text-xl">{getAlertIcon(alert.type)}</span>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-slate-800 text-sm">
-                        {alert.title}
-                      </h3>
-                      <p className="text-slate-600 text-xs mt-1">
-                        {alert.description || alert.message}
-                      </p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
-                        <span>📍 {alert.location || alert.region}</span>
-                        <span>
-                          🕒{" "}
-                          {alert.createdAt
-                            ? new Date(alert.createdAt).toLocaleString()
-                            : alert.timestamp}
-                        </span>
-                        {alert.metadata?.source === "health_report" && (
-                          <span className="px-2 py-0.5 bg-blue-500/20 text-blue-700 rounded-full text-xs">
-                            Health Report
+                <div
+                  key={alert._id || alert.id}
+                  className={`rounded-xl p-4 backdrop-blur-md border ${getAlertColor(
+                    alert.type
+                  )} shadow-sm bg-white/30`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3 flex-1">
+                      <span className="text-xl">
+                        {getAlertIcon(alert.type)}
+                      </span>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-slate-800 text-sm">
+                          {alert.title}
+                        </h3>
+                        <p className="text-slate-600 text-xs mt-1">
+                          {alert.description || alert.message}
+                        </p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                          <span>📍 {alert.location || alert.region}</span>
+                          <span>
+                            🕒{" "}
+                            {alert.createdAt
+                              ? new Date(alert.createdAt).toLocaleString()
+                              : alert.timestamp}
                           </span>
+                          {alert.metadata?.source === "health_report" && (
+                            <span className="px-2 py-0.5 bg-blue-500/20 text-blue-700 rounded-full text-xs">
+                              Health Report
+                            </span>
+                          )}
+                        </div>
+                        {alert.metadata?.reportData && (
+                          <div className="mt-2 p-2 bg-slate-500/10 rounded-lg">
+                            <div className="text-xs text-slate-600 font-medium mb-1">
+                              Health Report Details:
+                            </div>
+                            <div className="grid grid-cols-2 gap-1 text-xs text-slate-500">
+                              {alert.metadata.reportData.age && (
+                                <div>
+                                  👤 Age: {alert.metadata.reportData.age}
+                                </div>
+                              )}
+                              {alert.metadata.reportData.userID && (
+                                <div>
+                                  🆔 User: {alert.metadata.reportData.userID}
+                                </div>
+                              )}
+                              {alert.metadata.reportData.waterID && (
+                                <div>
+                                  💧 Water: {alert.metadata.reportData.waterID}
+                                </div>
+                              )}
+                              {alert.metadata.reportData.symptoms && (
+                                <div className="col-span-2">
+                                  🩺 Symptoms:{" "}
+                                  {alert.metadata.reportData.symptoms}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
-                      {alert.metadata?.reportData && (
-                        <div className="mt-2 p-2 bg-slate-500/10 rounded-lg">
-                          <div className="text-xs text-slate-600 font-medium mb-1">
-                            Health Report Details:
-                          </div>
-                          <div className="grid grid-cols-2 gap-1 text-xs text-slate-500">
-                            {alert.metadata.reportData.age && (
-                              <div>👤 Age: {alert.metadata.reportData.age}</div>
-                            )}
-                            {alert.metadata.reportData.userID && (
-                              <div>
-                                🆔 User: {alert.metadata.reportData.userID}
-                              </div>
-                            )}
-                            {alert.metadata.reportData.waterID && (
-                              <div>
-                                💧 Water: {alert.metadata.reportData.waterID}
-                              </div>
-                            )}
-                            {alert.metadata.reportData.symptoms && (
-                              <div className="col-span-2">
-                                🩺 Symptoms:{" "}
-                                {alert.metadata.reportData.symptoms}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium capitalize
+                    <div className="flex flex-col items-end gap-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium capitalize
                     ${
                       alert.status === "active"
                         ? "bg-red-500/20 text-red-700"
@@ -451,21 +471,23 @@ export default function AuthoritiesDashboardPage() {
                         ? "bg-yellow-500/20 text-yellow-700"
                         : "bg-green-500/20 text-green-700"
                     }`}
-                    >
-                      {alert.status}
-                    </span>
-                    {alert.status === "active" && (
-                      <button
-                        onClick={() => handleAcknowledgeAlert(alert._id || alert.id || "")}
-                        className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs transition-colors"
                       >
-                        Acknowledge
-                      </button>
-                    )}
+                        {alert.status}
+                      </span>
+                      {alert.status === "active" && (
+                        <button
+                          onClick={() =>
+                            handleAcknowledgeAlert(alert._id || alert.id || "")
+                          }
+                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs transition-colors"
+                        >
+                          Acknowledge
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              ))
           )}
         </div>
       </section>
@@ -577,7 +599,7 @@ export default function AuthoritiesDashboardPage() {
                     >
                       {report.status}
                     </span>
-                    <button 
+                    <button
                       onClick={() => handleViewDetails(report)}
                       className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-700 rounded text-xs transition-colors"
                     >
@@ -619,7 +641,8 @@ export default function AuthoritiesDashboardPage() {
               <div className="text-4xl mb-2">🤖</div>
               <p className="text-slate-600">No AI summarized reports yet</p>
               <p className="text-slate-500 text-xs mt-1">
-                Summarized reports will appear here when created from the field dashboard
+                Summarized reports will appear here when created from the field
+                dashboard
               </p>
             </div>
           ) : (
@@ -645,11 +668,12 @@ export default function AuthoritiesDashboardPage() {
                         {report.severity}
                       </span>
                     </div>
-                    
+
                     {/* AI Summary */}
                     <div className="mb-3 p-3 bg-white/40 rounded-lg border border-blue-200/30">
                       <div className="text-xs text-blue-600 font-medium mb-1 flex items-center gap-1">
-                        🤖 AI Summary ({report.originalReportCount} reports combined):
+                        🤖 AI Summary ({report.originalReportCount} reports
+                        combined):
                       </div>
                       <p className="text-sm text-slate-700 leading-relaxed">
                         {report.summary}
@@ -670,37 +694,48 @@ export default function AuthoritiesDashboardPage() {
                         {report.region}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
                       <span>🕒 {report.timestamp}</span>
-                      <span>📊 {report.originalReportCount} original reports</span>
+                      <span>
+                        📊 {report.originalReportCount} original reports
+                      </span>
                       {report.metadata?.summarizationDate && (
                         <span>
-                          🤖 Summarized: {new Date(report.metadata.summarizationDate).toLocaleString()}
+                          🤖 Summarized:{" "}
+                          {new Date(
+                            report.metadata.summarizationDate
+                          ).toLocaleString()}
                         </span>
                       )}
                     </div>
 
                     {/* Original Reports Preview */}
-                    {report.originalReports && report.originalReports.length > 0 && (
-                      <div className="mt-3 p-2 bg-slate-500/10 rounded-lg">
-                        <div className="text-xs text-slate-600 font-medium mb-1">
-                          📋 Original Reports ({report.originalReportCount}):
+                    {report.originalReports &&
+                      report.originalReports.length > 0 && (
+                        <div className="mt-3 p-2 bg-slate-500/10 rounded-lg">
+                          <div className="text-xs text-slate-600 font-medium mb-1">
+                            📋 Original Reports ({report.originalReportCount}):
+                          </div>
+                          <div className="space-y-1">
+                            {report.originalReports
+                              .slice(0, 3)
+                              .map((origReport, index) => (
+                                <div
+                                  key={index}
+                                  className="text-xs text-slate-500"
+                                >
+                                  • {origReport.title} - {origReport.location}
+                                </div>
+                              ))}
+                            {report.originalReports.length > 3 && (
+                              <div className="text-xs text-slate-400">
+                                ... and {report.originalReports.length - 3} more
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="space-y-1">
-                          {report.originalReports.slice(0, 3).map((origReport, index) => (
-                            <div key={index} className="text-xs text-slate-500">
-                              • {origReport.title} - {origReport.location}
-                            </div>
-                          ))}
-                          {report.originalReports.length > 3 && (
-                            <div className="text-xs text-slate-400">
-                              ... and {report.originalReports.length - 3} more
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
@@ -715,8 +750,12 @@ export default function AuthoritiesDashboardPage() {
                     >
                       {report.status}
                     </span>
-                    <button 
-                      onClick={() => handleViewDetails(convertSummarizedToAuthorities(report))}
+                    <button
+                      onClick={() =>
+                        handleViewDetails(
+                          convertSummarizedToAuthorities(report)
+                        )
+                      }
                       className="px-3 py-1 bg-blue-600/30 hover:bg-blue-600/40 text-blue-700 rounded text-xs transition-colors"
                     >
                       View Details
