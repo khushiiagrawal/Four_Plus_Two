@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
@@ -38,13 +37,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.adithya.aquahealth.home.model.WatchListItem
 import dev.adithya.aquahealth.home.viewmodel.HomeViewModel
+import dev.adithya.aquahealth.ui.theme.AppColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,14 +69,17 @@ fun WatchListSection(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
-            IconButton(onClick = onEditClick) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit Watchlist"
-                )
-            }
+            Text(
+                text = "Edit",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .clickable(onClick = onEditClick)
+                    .padding(end = 8.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (watchListItems.isEmpty()) {
             Text(
@@ -93,7 +96,6 @@ fun WatchListSection(
                 LazyRow(
                     state = lazyListState,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-//                    contentPadding = PaddingValues(horizontal = 8.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(watchListItems) { item ->
@@ -189,7 +191,7 @@ fun WatchlistItemCard(item: WatchListItem, onClick: () -> Unit) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val color = item.alertSeverity?.toColor() ?: Color.Green
+                val color = item.alertSeverity?.toColor() ?: AppColors.normal
                 val label = item.alertSeverity?.toText() ?: "Safe"
                 Box(
                     modifier = Modifier

@@ -39,6 +39,7 @@ class WaterSourceRepositoryImpl @Inject constructor(
         val name = getString("name") ?: return null
         val location = getGeoPoint("location") ?: return null
         val address = getString("address")
+        val lastUpdated = getLong("lastUpdated") ?: System.currentTimeMillis()
         return WaterSource(
             id = id,
             name = name,
@@ -46,7 +47,8 @@ class WaterSourceRepositoryImpl @Inject constructor(
                 latitude = location.latitude,
                 longitude = location.longitude,
                 address = address
-            )
+            ),
+            lastUpdated = lastUpdated
         )
     }
 }

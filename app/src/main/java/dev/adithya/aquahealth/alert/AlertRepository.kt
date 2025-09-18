@@ -50,7 +50,7 @@ class AlertRepositoryImpl @Inject constructor(
         }
         val shortSummary = getString("shortSummary") ?: return null
         val longSummary = getString("longSummary")
-        val timestamp = getTimestamp("timestamp")?.toDate()?.time ?: return null
+        val timestamp = getLong("timestamp") ?: return null
         val severity = getString("severity") ?: return null
 
         return Alert(

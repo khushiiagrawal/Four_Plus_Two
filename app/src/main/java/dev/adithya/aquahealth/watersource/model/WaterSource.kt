@@ -5,7 +5,8 @@ import dev.adithya.aquahealth.model.Location
 data class WaterSource(
     val id: String,
     val name: String,
-    val location: Location
+    val location: Location,
+    val lastUpdated: Long,
 ) {
     override fun equals(other: Any?): Boolean {
         return other is WaterSource && other.id == id

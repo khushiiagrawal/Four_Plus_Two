@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dev.adithya.aquahealth.MainViewModel
 import dev.adithya.aquahealth.home.ui.HomeScreen
 import dev.adithya.aquahealth.onboarding.ui.SignOnScreen
@@ -17,6 +19,7 @@ import dev.adithya.aquahealth.ui.components.SplashScreen
 import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
 import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 import dev.adithya.aquahealth.user.model.UserProfileState
+import dev.adithya.aquahealth.watersource.ui.WaterSourceDetailScreen
 
 @Composable
 fun AppNavHost(
@@ -68,6 +71,16 @@ fun AppNavHost(
             }
             composable(Route.Report.key) {
                 UserReportScreen(
+                    navController = navController
+                )
+            }
+            composable(
+                route = Route.WaterSourceDetail.key,
+                arguments = listOf(
+                    navArgument("waterSourceId") { type = NavType.StringType }
+                )
+            ) {
+                WaterSourceDetailScreen(
                     navController = navController
                 )
             }

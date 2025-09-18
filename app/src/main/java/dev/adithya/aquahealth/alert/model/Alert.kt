@@ -1,6 +1,7 @@
 package dev.adithya.aquahealth.alert.model
 
 import androidx.compose.ui.graphics.Color
+import dev.adithya.aquahealth.ui.theme.AppColors
 import dev.adithya.aquahealth.watersource.model.WaterSource
 
 data class Alert(
@@ -29,9 +30,9 @@ enum class AlertSeverity(val key: String) {
 
     fun toColor(): Color {
         return when (this) {
-            CRITICAL -> Color.Red
-            WARNING -> Color.Yellow
-            INFO -> Color.Green
+            CRITICAL -> AppColors.critical
+            WARNING -> AppColors.warning
+            INFO -> AppColors.normal
         }
     }
 

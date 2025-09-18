@@ -32,6 +32,7 @@ import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.search.model.SearchItem
 import dev.adithya.aquahealth.search.viewmodel.SearchViewModel
 import dev.adithya.aquahealth.ui.components.AppScaffold
+import dev.adithya.aquahealth.ui.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +52,14 @@ fun SearchScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
+            Text(
+                text = "Water Bodies",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 16.dp)
+            )
             SearchBar(
                 inputField = {
                     SearchBarDefaults.InputField(
@@ -82,7 +91,9 @@ fun SearchScreen(
                             item = item,
                             onAddToWatchList = { viewModel.addToWatchList(item) },
                             onRemoveFromWatchList = { viewModel.removeFromWatchList(item) },
-                            onClick = { /* TODO: Navigate to WaterSourceDetailScreen */ }
+                            onClick = {
+                                navController.navigate(Route.WaterSourceDetail.createRoute(item.waterSource.id))
+                            }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }

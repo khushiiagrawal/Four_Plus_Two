@@ -2,18 +2,22 @@ package dev.adithya.aquahealth.ui.navigation
 
 sealed class Route(val key: String) {
     sealed class Onboarding(val subKey: String) : Route("$ONBOARDING_ROUTE/$subKey") {
-        data object SignOn : Onboarding("signOn")
-        data object UserInfo : Onboarding("userInfo")
-        data object AddSources : Onboarding("addSources")
+        object SignOn : Onboarding("signOn")
+        object UserInfo : Onboarding("userInfo")
+        object AddSources : Onboarding("addSources")
     }
 
-    data object Splash : Route("splash")
-    data object Home : Route("home")
-    data object Search : Route("search")
-    data object Map : Route("map")
-    data object Report : Route("report")
-    data object Profile : Route("profile")
-    data object Settings : Route("settings")
+    object Splash : Route("splash")
+    object Home : Route("home")
+    object Search : Route("search")
+    object Map : Route("map")
+    object Report : Route("report")
+    object Profile : Route("profile")
+    object Settings : Route("settings")
+
+    object WaterSourceDetail : Route("waterSourceDetail/{waterSourceId}") {
+        fun createRoute(waterSourceId: String) = "waterSourceDetail/$waterSourceId"
+    }
 
     companion object {
         const val ONBOARDING_ROUTE = "onboarding"

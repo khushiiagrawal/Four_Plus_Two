@@ -48,11 +48,7 @@ fun AppTopBar(
                     contentDescription = "Logo"
                 )
                 Text(
-                    text = when (currentNavItem) {
-                        NavItem.Home -> stringResource(R.string.app_name)
-                        NavItem.Report -> "Report Symptoms"
-                        else -> currentNavItem.title
-                    },
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
