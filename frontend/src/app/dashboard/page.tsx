@@ -9,6 +9,7 @@ import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
 import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
 import CreateReportModal from "@/components/dashboard/CreateReportModal";
 import SummarizationModal from "@/components/dashboard/SummarizationModal";
+import RealTimeAlerts from "@/components/dashboard/RealTimeAlerts";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/Toast";
 
@@ -78,9 +79,12 @@ export default function DashboardPage() {
     region: "All Regions",
   });
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-  const [selectedReports, setSelectedReports] = useState<Set<string>>(new Set());
+  const [selectedReports, setSelectedReports] = useState<Set<string>>(
+    new Set()
+  );
   const [isSummarizing, setIsSummarizing] = useState(false);
-  const [isSummarizationModalOpen, setIsSummarizationModalOpen] = useState(false);
+  const [isSummarizationModalOpen, setIsSummarizationModalOpen] =
+    useState(false);
   const [generatedSummary, setGeneratedSummary] = useState("");
   const [summaryReportCount, setSummaryReportCount] = useState(0);
   const [isSendingToAuthorities, setIsSendingToAuthorities] = useState(false);
@@ -111,26 +115,31 @@ export default function DashboardPage() {
       // First, get the selected reports data
       const response = await fetch("/api/data/reports");
       const data = await response.json();
-      const selectedReportsData = data.items.filter((report: {
-        id: string;
-        symptoms?: string;
-        title: string;
-        location?: string;
-        region: string;
-      }) => 
-        selectedReports.has(report.id)
+      const selectedReportsData = data.items.filter(
+        (report: {
+          id: string;
+          symptoms?: string;
+          title: string;
+          location?: string;
+          region: string;
+        }) => selectedReports.has(report.id)
       );
 
       // Combine all report texts for summarization
-      const combinedText = selectedReportsData.map((report: {
-        id: string;
-        symptoms?: string;
-        title: string;
-        location?: string;
-        region: string;
-      }) => 
-        `${report.symptoms || report.title} - Location: ${report.location || report.region} - ${report.symptoms || 'No additional details'}`
-      ).join('. ');
+      const combinedText = selectedReportsData
+        .map(
+          (report: {
+            id: string;
+            symptoms?: string;
+            title: string;
+            location?: string;
+            region: string;
+          }) =>
+            `${report.symptoms || report.title} - Location: ${
+              report.location || report.region
+            } - ${report.symptoms || "No additional details"}`
+        )
+        .join(". ");
 
       // Call the summarizer service
       const summarizeResponse = await fetch("http://localhost:8000/summarize", {
@@ -162,7 +171,6 @@ export default function DashboardPage() {
         message: `Successfully generated summary from ${selectedReports.size} reports. Please review before sending.`,
         duration: 3000,
       });
-
     } catch (error) {
       console.error("Error summarizing reports:", error);
       addToast({
@@ -182,14 +190,14 @@ export default function DashboardPage() {
       // Get the selected reports data again for sending
       const response = await fetch("/api/data/reports");
       const data = await response.json();
-      const selectedReportsData = data.items.filter((report: {
-        id: string;
-        symptoms?: string;
-        title: string;
-        location?: string;
-        region: string;
-      }) => 
-        selectedReports.has(report.id)
+      const selectedReportsData = data.items.filter(
+        (report: {
+          id: string;
+          symptoms?: string;
+          title: string;
+          location?: string;
+          region: string;
+        }) => selectedReports.has(report.id)
       );
 
       // Send summarized report to authorities
@@ -214,7 +222,6 @@ export default function DashboardPage() {
       setIsSummarizationModalOpen(false);
       setGeneratedSummary("");
       setSummaryReportCount(0);
-
     } catch (error) {
       console.error("Error sending summarized report:", error);
       throw error; // Re-throw to be handled by the modal
@@ -226,9 +233,7 @@ export default function DashboardPage() {
   // Show loading state while checking authentication
   if (isLoading || !user || !user.isAuthenticated) {
     return (
-      <div
-        className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-cyan-400 via-sky-300 to-cyan-200"
-      >
+      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-b from-cyan-400 via-sky-300 to-cyan-200">
         <div className="text-center">
           <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse mx-auto mb-4" />
           <p className="text-slate-600">
@@ -240,9 +245,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div
-      className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90"
-    >
+    <div className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
       <header className="flex items-center justify-between mt-20">
         <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
           Health-Care Workers Dashboard
@@ -265,9 +268,7 @@ export default function DashboardPage() {
                 Summarizing...
               </>
             ) : (
-              <>
-                📝 Summarize Reports ({selectedReports.size})
-              </>
+              <>📝 Summarize Reports ({selectedReports.size})</>
             )}
           </button>
           <button
@@ -304,13 +305,15 @@ export default function DashboardPage() {
         ))}
       </section>
 
+      <RealTimeAlerts />
+
       <section className="mt-6">
         <GrafanaEmbed title="Sensor Overview (Grafana)" />
       </section>
 
       <section id="reports-section" className="mt-6">
-        <ReportsList 
-          regionFilter={filters.region} 
+        <ReportsList
+          regionFilter={filters.region}
           query={filters.query}
           selectedReports={selectedReports}
           onSelectionChange={setSelectedReports}
@@ -336,7 +339,7 @@ export default function DashboardPage() {
         onClose={() => setIsCreateReportOpen(false)}
         onCreated={() => {
           // trigger list refresh below
-          const event = new CustomEvent('refresh-reports');
+          const event = new CustomEvent("refresh-reports");
           window.dispatchEvent(event);
         }}
       />
