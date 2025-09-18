@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useToast } from "@/components/ui/Toast";
 import ReportDetailsModal from "@/components/ui/ReportDetailsModal";
+import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
 
 interface Alert {
   _id?: string;
@@ -74,6 +75,19 @@ interface SummarizedReport {
   metadata?: {
     source?: string;
     summarizationDate?: string;
+  };
+}
+
+function convertSummarizedToAuthorities(report: SummarizedReport): AuthoritiesReport {
+  return {
+    id: report.id,
+    title: report.title,
+    type: report.type,
+    severity: report.severity,
+    reportedBy: report.reportedBy,
+    timestamp: report.timestamp,
+    region: report.region,
+    status: report.status,
   };
 }
 
@@ -236,22 +250,7 @@ export default function AuthoritiesDashboardPage() {
   // Use summarized reports from MongoDB, fallback to empty array
   const summarizedReports: SummarizedReport[] = summarizedReportsData?.reports || [];
 
-  // Calculate dynamic metrics from actual data
-  const activeAlerts = alertsData.filter(
-    (a: Alert) => a.status === "active"
-  ).length;
-  const pendingReports = reportsData.filter(
-    (r: AuthoritiesReport) => r.status === "Under Review"
-  ).length;
-  const highPriorityReports = reportsData.filter(
-    (r: AuthoritiesReport) => r.severity === "High"
-  ).length;
-  const uniqueZones = [
-    ...new Set([
-      ...alertsData.map((a: Alert) => a.location),
-      ...reportsData.map((r: AuthoritiesReport) => r.region),
-    ]),
-  ].filter((zone) => zone && zone !== "All Zones").length;
+  // Stats removed from UI; no derived metrics required here
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -320,6 +319,12 @@ export default function AuthoritiesDashboardPage() {
             🔒 Secure Access
           </span>
           <button
+            onClick={() => router.push("/")}
+            className="px-4 py-2 bg-white/70 hover:bg-white text-slate-800 rounded-lg border border-white/80 transition-colors"
+          >
+            Go to Home
+          </button>
+          <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors"
           >
@@ -328,32 +333,17 @@ export default function AuthoritiesDashboardPage() {
         </div>
       </header>
 
-      {/* Stats Overview */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm">
-          <div className="text-xs text-slate-600">Active Alerts</div>
-          <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
-            {activeAlerts}
-          </div>
+      {/* Removed Stats Overview for authorities dashboard as requested */}
+
+      {/* Monitoring Dashboard (Grafana) */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+            📊 Monitoring Dashboard
+          </h2>
+          <span className="text-xs text-slate-500">Real-time environmental metrics</span>
         </div>
-        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm">
-          <div className="text-xs text-slate-600">Pending Reports</div>
-          <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
-            {pendingReports}
-          </div>
-        </div>
-        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm">
-          <div className="text-xs text-slate-600">High Priority</div>
-          <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
-            {highPriorityReports}
-          </div>
-        </div>
-        <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm">
-          <div className="text-xs text-slate-600">Zones Monitored</div>
-          <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
-            {uniqueZones}
-          </div>
-        </div>
+        <GrafanaEmbed title="Sensor Overview (Grafana)" height={520} />
       </section>
 
       {/* Real-time Alerts Section */}
@@ -726,7 +716,7 @@ export default function AuthoritiesDashboardPage() {
                       {report.status}
                     </span>
                     <button 
-                      onClick={() => handleViewDetails(report as any)}
+                      onClick={() => handleViewDetails(convertSummarizedToAuthorities(report))}
                       className="px-3 py-1 bg-blue-600/30 hover:bg-blue-600/40 text-blue-700 rounded text-xs transition-colors"
                     >
                       View Details

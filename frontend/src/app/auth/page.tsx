@@ -35,6 +35,24 @@ export default function AuthPage() {
     setTab(defaultTab);
   }, [defaultTab]);
 
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      addToast({
+        type: "success",
+        title: "Logged Out",
+        message: "You have been logged out.",
+      });
+      router.push("/");
+    } catch {
+      addToast({
+        type: "error",
+        title: "Logout Error",
+        message: "Failed to logout. Please try again.",
+      });
+    }
+  }
+
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -149,6 +167,21 @@ export default function AuthPage() {
       className={`min-h-dvh flex items-center justify-center overflow-hidden p-6 ${outerPadClass}`}
       style={{ background: "linear-gradient(180deg, #a8e9f2 0%, #7fd3e6 45%, #bfeff7 100%)" }}
     >
+      {/* Top actions: Go Home and Logout */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <button
+          onClick={() => router.push("/")}
+          className="px-3 py-1.5 bg-white/50 hover:bg-white/70 text-slate-800 rounded-lg border border-white/60 text-xs shadow-sm transition-colors"
+        >
+          Go to Home
+        </button>
+        <button
+          onClick={handleLogout}
+          className="px-3 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-lg border border-red-700 text-xs shadow-sm transition-colors"
+        >
+          Logout
+        </button>
+      </div>
       <div
         className={`w-full mx-auto rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md shadow-lg p-4 flex flex-col transition-all duration-300 ${cardSizeClass}`}
       >
