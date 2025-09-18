@@ -216,8 +216,8 @@ export default function AuthoritiesDashboardPage() {
     }
   };
 
-  // Use real alerts from API, fallback to empty array
-  const alertsData = alertsFromAPI || [];
+  // Use real alerts from API, ensure it's always an array
+  const alertsData: Alert[] = Array.isArray(alertsFromAPI) ? (alertsFromAPI as Alert[]) : [];
 
   // Show error toast if there's an error fetching alerts or reports
   useEffect(() => {
@@ -232,7 +232,7 @@ export default function AuthoritiesDashboardPage() {
       addToast({
         type: "error",
         title: "Error Loading Reports",
-        message: "Failed to load environmental reports from server.",
+        message: "Failed to load public health reports from server.",
       });
     }
     if (summarizedError) {
@@ -474,7 +474,7 @@ export default function AuthoritiesDashboardPage() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            📋 Environmental Reports
+            📋 Public Health Reports
           </h2>
           <button className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-700 rounded-lg border border-blue-500/30 text-sm transition-colors">
             View All Reports
@@ -496,7 +496,7 @@ export default function AuthoritiesDashboardPage() {
             // No reports state
             <div className="rounded-xl p-8 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm text-center">
               <div className="text-4xl mb-2">📋</div>
-              <p className="text-slate-600">No environmental reports yet</p>
+              <p className="text-slate-600">No public health reports yet</p>
               <p className="text-slate-500 text-xs mt-1">
                 Reports will appear here when sent from the field dashboard
               </p>
