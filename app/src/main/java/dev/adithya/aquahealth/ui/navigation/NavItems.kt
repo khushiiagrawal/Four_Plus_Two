@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -31,6 +32,11 @@ enum class NavItem(
         title = "Report",
         icon = Icons.Default.HealthAndSafety,
         route = Route.Report
+    ),
+    Learn(
+        title = "Learn",
+        icon = Icons.Default.MenuBook,
+        route = Route.Learn
     );
 
      companion object {

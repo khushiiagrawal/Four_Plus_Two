@@ -14,6 +14,7 @@ sealed class Route(val key: String) {
     object Report : Route("report")
     object Profile : Route("profile")
     object Settings : Route("settings")
+    object Learn : Route("learn")
 
     object WaterSourceDetail : Route("waterSourceDetail/{waterSourceId}") {
         fun createRoute(waterSourceId: String) = "waterSourceDetail/$waterSourceId"
