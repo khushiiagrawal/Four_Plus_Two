@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.gms)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -78,4 +79,11 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+}
+
+secrets {
+    // contains GMAPS_API_KEY
+    propertiesFileName = "secrets.properties"
 }
