@@ -1,6 +1,7 @@
 "use client";
 import useSWR from "swr";
 import { useState } from "react";
+import { useToast } from "@/components/ui/Toast";
 
 // Define the Firestore alert interface
 interface FirestoreAlert {
@@ -52,6 +53,7 @@ const formatTimestamp = (timestamp: number) => {
 };
 
 export default function RealTimeAlerts() {
+  const { addToast } = useToast();
   const [alertingStates, setAlertingStates] = useState<Record<string, boolean>>(
     {}
   );
@@ -65,14 +67,51 @@ export default function RealTimeAlerts() {
     setAlertingStates((prev) => ({ ...prev, [alertId]: true }));
 
     try {
-      // TODO: Implement the actual alert user functionality
-      // For now, just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Send FCM notification via API
+      const response = await fetch("/api/fcm/send-alert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: alert.id,
+          waterSource: alert.waterSource,
+          title: alert.title,
+          shortSummary: alert.shortSummary,
+          longSummary: alert.longSummary,
+          timestamp: alert.timestamp,
+          severity: alert.severity,
+        }),
+      });
 
-      console.log("Alert User clicked for:", alert);
-      // You can implement the actual functionality here later
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send alert");
+      }
+
+      const result = await response.json();
+      console.log("FCM notification sent successfully:", result);
+
+      // Show success toast
+      addToast({
+        type: "success",
+        title: "Alert Sent",
+        message: "Users have been notified about this water quality alert.",
+        duration: 4000,
+      });
     } catch (error) {
-      console.error("Error alerting user:", error);
+      console.error("Error sending alert to users:", error);
+
+      // Show error toast
+      addToast({
+        type: "error",
+        title: "Alert Failed",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to send alert notification. Please try again.",
+        duration: 5000,
+      });
     } finally {
       setAlertingStates((prev) => ({ ...prev, [alertId]: false }));
     }
