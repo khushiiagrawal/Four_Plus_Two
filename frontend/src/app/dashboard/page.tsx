@@ -7,6 +7,7 @@ import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
 import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
 import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
+import CreateReportModal from "@/components/dashboard/CreateReportModal";
 import SummarizationModal from "@/components/dashboard/SummarizationModal";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/Toast";
@@ -83,6 +84,7 @@ export default function DashboardPage() {
   const [generatedSummary, setGeneratedSummary] = useState("");
   const [summaryReportCount, setSummaryReportCount] = useState(0);
   const [isSendingToAuthorities, setIsSendingToAuthorities] = useState(false);
+  const [isCreateReportOpen, setIsCreateReportOpen] = useState(false);
 
   const scrollToReports = () => {
     const reportsSection = document.getElementById("reports-section");
@@ -243,9 +245,15 @@ export default function DashboardPage() {
     >
       <header className="flex items-center justify-between mt-20">
         <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
-          Workers Dashboard
+          Health-Care Workers Dashboard
         </h1>
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsCreateReportOpen(true)}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg border border-emerald-700 transition-colors flex items-center gap-2 shadow-sm"
+          >
+            ➕ Create Report
+          </button>
           <button
             onClick={handleSummarizeReports}
             disabled={selectedReports.size === 0 || isSummarizing}
@@ -320,6 +328,16 @@ export default function DashboardPage() {
             message:
               "Emergency report has been created and sent to higher authorities.",
           });
+        }}
+      />
+
+      <CreateReportModal
+        isOpen={isCreateReportOpen}
+        onClose={() => setIsCreateReportOpen(false)}
+        onCreated={() => {
+          // trigger list refresh below
+          const event = new CustomEvent('refresh-reports');
+          window.dispatchEvent(event);
         }}
       />
 
