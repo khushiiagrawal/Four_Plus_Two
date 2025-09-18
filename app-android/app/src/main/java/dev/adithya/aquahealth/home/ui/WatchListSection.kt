@@ -42,16 +42,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.adithya.aquahealth.common.ui.theme.AppColors
 import dev.adithya.aquahealth.home.model.WatchListItem
 import dev.adithya.aquahealth.home.viewmodel.HomeViewModel
-import dev.adithya.aquahealth.ui.theme.AppColors
 import kotlinx.coroutines.launch
 
 @Composable
 fun WatchListSection(
     viewModel: HomeViewModel,
-    onItemClick: (WatchListItem) -> Unit = {/*TODO*/},
-    onEditClick: () -> Unit = {/*TODO*/}
+    onItemClick: (WatchListItem) -> Unit,
+    onEditClick: () -> Unit
 ) {
     val watchListItems by viewModel.watchlistItems.collectAsState()
     val lazyListState = rememberLazyListState()

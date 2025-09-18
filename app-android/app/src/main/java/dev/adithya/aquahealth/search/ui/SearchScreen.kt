@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.adithya.aquahealth.common.ui.components.AppScaffold
+import dev.adithya.aquahealth.common.ui.navigation.Route
 import dev.adithya.aquahealth.search.model.SearchItem
 import dev.adithya.aquahealth.search.viewmodel.SearchViewModel
-import dev.adithya.aquahealth.ui.components.AppScaffold
-import dev.adithya.aquahealth.ui.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

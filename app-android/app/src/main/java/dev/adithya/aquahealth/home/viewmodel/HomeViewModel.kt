@@ -1,6 +1,5 @@
 package dev.adithya.aquahealth.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +41,7 @@ class HomeViewModel @Inject constructor(
                                 allAlerts.filter { it.waterSource == waterSource }
                             // Enum is in ascending ordinal, but descending severity
                             val severity = alertsForSource.minByOrNull { it.severity }?.severity
-                            Log.d("HomeVM", "allAlerts=$allAlerts alertsForSource=$alertsForSource id=${waterSource.id} severity=$severity")
+//                            Log.d("HomeVM", "allAlerts=$allAlerts alertsForSource=$alertsForSource id=${waterSource.id} severity=$severity")
                             WatchListItem(waterSource, severity)
                         }
                     }

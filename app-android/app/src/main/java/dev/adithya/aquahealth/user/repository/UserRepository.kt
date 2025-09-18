@@ -1,13 +1,12 @@
 package dev.adithya.aquahealth.user.repository
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.snapshots
-import dev.adithya.aquahealth.di.ApplicationScope
-import dev.adithya.aquahealth.model.Location
+import dev.adithya.aquahealth.common.di.ApplicationScope
+import dev.adithya.aquahealth.common.model.Location
 import dev.adithya.aquahealth.onboarding.model.OnboardingStage
 import dev.adithya.aquahealth.user.model.UserProfile
 import dev.adithya.aquahealth.user.model.UserProfileState
@@ -88,7 +87,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override val userProfileState: StateFlow<UserProfileState> = userProfile
         .map {
-            Log.d(TAG, "userProfile=$it")
+//            Log.d(TAG, "userProfile=$it")
             it?.let { UserProfileState.LoggedIn } ?: UserProfileState.LoggedOut
         }
         .distinctUntilChanged()
@@ -165,21 +164,17 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addToWatchList(waterSource: WaterSource) {
-        Log.d(TAG, "addToWatchList")
         userProfile.replayCache.lastOrNull()?.let {
-            Log.d(TAG, "addToWatchList2")
             it.uid.getUserDoc()
                 .set(it.copy(watchList = it.watchList + waterSource).toMap())
-        } ?: run { Log.d(TAG, "fucked")}
+        }
     }
 
     override suspend fun removeFromWatchList(waterSource: WaterSource) {
-        Log.d(TAG, "removeFromWatchList")
         userProfile.replayCache.lastOrNull()?.let {
-            Log.d(TAG, "removeFromWatchList2")
             it.uid.getUserDoc()
                 .set(it.copy(watchList = it.watchList - waterSource).toMap())
-        } ?: run { Log.d(TAG, "fucked")}
+        }
     }
 
     // Firebase doc helpers
@@ -208,7 +203,7 @@ class UserRepositoryImpl @Inject constructor(
         val watchList = watchListIds
             ?.mapNotNull { id -> waterSources.find { it.id == id } }
             ?: emptyList()
-        Log.d(TAG, "watchListIds: $watchListIds waterSources: $waterSources watchList: $watchList")
+//        Log.d(TAG, "watchListIds: $watchListIds waterSources: $waterSources watchList: $watchList")
 
         return UserProfile(
             uid = uid,

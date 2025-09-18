@@ -1,0 +1,47 @@
+package dev.adithya.aquahealth.common.ui.navigation
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.vector.ImageVector
+
+enum class NavItem(
+    val title: String,
+    val icon: ImageVector,
+    val route: Route
+) {
+    Home(
+        title = "Home",
+        icon = Icons.Default.Home,
+        route = Route.Home
+    ),
+    Search(
+        title = "Search",
+        icon = Icons.Default.Search,
+        route = Route.Search
+    ),
+    Map(
+        title = "Map",
+        icon = Icons.Default.Map,
+        route = Route.Map
+    ),
+    Report(
+        title = "Report",
+        icon = Icons.Default.HealthAndSafety,
+        route = Route.Report
+    ),
+    Learn(
+        title = "Learn",
+        icon = Icons.Default.MenuBook,
+        route = Route.Learn
+    );
+
+     companion object {
+         fun fromRoute(route: String): NavItem {
+             return entries.find { it.route.key == route } ?: Home
+         }
+     }
+}

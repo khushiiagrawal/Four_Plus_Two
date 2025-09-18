@@ -1,5 +1,6 @@
 package dev.adithya.aquahealth.onboarding.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,10 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -27,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,11 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.R
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.MAIN_ROUTE
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 import dev.adithya.aquahealth.onboarding.model.VerificationError
 import dev.adithya.aquahealth.onboarding.model.VerificationStatus
 import dev.adithya.aquahealth.onboarding.viewmodel.SignOnViewModel
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 
 /**
  * Consists of a:
@@ -99,15 +98,14 @@ fun SignOnScreen(
                     .padding(top = 64.dp)
                     .padding(bottom = 48.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.WaterDrop,
+                Image(
+                    painter = painterResource(R.drawable.app_logo),
                     contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(48.dp)
+                    modifier = Modifier.size(24.dp)
                 )
                 Text(
                     text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
             }

@@ -6,7 +6,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import dev.adithya.aquahealth.alert.model.Alert
 import dev.adithya.aquahealth.alert.model.AlertSeverity
-import dev.adithya.aquahealth.di.ApplicationScope
+import dev.adithya.aquahealth.common.di.ApplicationScope
 import dev.adithya.aquahealth.watersource.model.WaterSource
 import dev.adithya.aquahealth.watersource.repository.WaterSourceRepository
 import kotlinx.coroutines.CoroutineScope

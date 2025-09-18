@@ -1,6 +1,6 @@
 package dev.adithya.aquahealth.watersource.model
 
-import dev.adithya.aquahealth.model.Location
+import dev.adithya.aquahealth.common.model.Location
 
 data class WaterSource(
     val id: String,
