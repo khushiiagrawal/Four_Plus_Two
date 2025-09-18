@@ -23,8 +23,28 @@ export default function SplineHero({ sceneUrl, className }: SplineHeroProps) {
     return candidate.includes(".splinecode") ? candidate : "";
   }, [sceneUrl]);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // Optional static setup (no hover parallax). Keep effect for future hooks if needed.
-  useEffect(() => {}, []);
+  // Hide "Built with Spline" watermark if injected in DOM by the viewer
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const hideWatermark = () => {
+      const candidates = container.querySelectorAll("a, div, span");
+      candidates.forEach((el) => {
+        const text = (el.textContent || "").trim();
+        if (text.includes("Built with Spline")) {
+          (el as HTMLElement).style.display = "none";
+        }
+        const aria = (el as HTMLElement).getAttribute("aria-label");
+        if (aria && aria.toLowerCase().includes("built with spline")) {
+          (el as HTMLElement).style.display = "none";
+        }
+      });
+    };
+    hideWatermark();
+    const observer = new MutationObserver(hideWatermark);
+    observer.observe(container, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div

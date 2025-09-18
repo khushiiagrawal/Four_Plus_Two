@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/Toast";
 import { useUser } from "@/contexts/UserContext";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -28,6 +29,7 @@ export default function AuthPage() {
   const params = useSearchParams();
   const router = useRouter();
   const { addToast } = useToast();
+  const intl = useIntl();
   const { refreshUser } = useUser();
   const defaultTab = params.get("tab") === "signup" ? "signup" : "login";
   const [tab, setTab] = useState<"login" | "signup">(defaultTab);
@@ -40,15 +42,15 @@ export default function AuthPage() {
       await fetch("/api/auth/logout", { method: "POST" });
       addToast({
         type: "success",
-        title: "Logged Out",
-        message: "You have been logged out.",
+        title: intl.formatMessage({ id: "auth.logout.title", defaultMessage: "Logged Out" }),
+        message: intl.formatMessage({ id: "auth.logout.message", defaultMessage: "You have been logged out." }),
       });
       router.push("/");
     } catch {
       addToast({
         type: "error",
-        title: "Logout Error",
-        message: "Failed to logout. Please try again.",
+        title: intl.formatMessage({ id: "auth.logoutError.title", defaultMessage: "Logout Error" }),
+        message: intl.formatMessage({ id: "auth.logoutError.message", defaultMessage: "Failed to logout. Please try again." }),
       });
     }
   }
@@ -72,8 +74,8 @@ export default function AuthPage() {
       if (res.ok) {
         addToast({
           type: "success",
-          title: "Login Successful",
-          message: "Welcome back! Redirecting to dashboard...",
+          title: intl.formatMessage({ id: "auth.login.success.title", defaultMessage: "Login Successful" }),
+          message: intl.formatMessage({ id: "auth.login.success.message", defaultMessage: "Welcome back! Redirecting to dashboard..." }),
         });
         // Wait a bit for the cookie to be set, then refresh user context
         setTimeout(async () => {
@@ -85,23 +87,23 @@ export default function AuthPage() {
         if (data.requiresApproval) {
           addToast({
             type: "warning",
-            title: "Access Pending",
+            title: intl.formatMessage({ id: "toast.accessPending.title", defaultMessage: "Access Pending" }),
             message: data.error,
             duration: 8000,
           });
         } else {
           addToast({
             type: "error",
-            title: "Login Failed",
-            message: data.error || "Invalid credentials",
+            title: intl.formatMessage({ id: "auth.login.failed.title", defaultMessage: "Login Failed" }),
+            message: data.error || intl.formatMessage({ id: "auth.login.failed.message", defaultMessage: "Invalid credentials" }),
           });
         }
       }
     } catch {
       addToast({
         type: "error",
-        title: "Login Error",
-        message: "Network error. Please try again.",
+        title: intl.formatMessage({ id: "auth.login.error.title", defaultMessage: "Login Error" }),
+        message: intl.formatMessage({ id: "common.networkError", defaultMessage: "Network error. Please try again." }),
       });
     }
   }
@@ -122,8 +124,8 @@ export default function AuthPage() {
       if (res.ok) {
         addToast({
           type: "success",
-          title: "Account Created",
-          message: "Your account has been created. Please wait for admin approval.",
+          title: intl.formatMessage({ id: "auth.signup.success.title", defaultMessage: "Account Created" }),
+          message: intl.formatMessage({ id: "auth.signup.success.message", defaultMessage: "Your account has been created. Please wait for admin approval." }),
           duration: 8000,
         });
         // Wait a bit for the cookie to be set, then refresh user context
@@ -138,22 +140,22 @@ export default function AuthPage() {
           const errorMessages = Object.values(data.error).flat();
           addToast({
             type: "error",
-            title: "Signup Failed",
+            title: intl.formatMessage({ id: "auth.signup.failed.title", defaultMessage: "Signup Failed" }),
             message: errorMessages.join(", "),
           });
         } else {
           addToast({
             type: "error",
-            title: "Signup Failed",
-            message: data.error || "Failed to create account",
+            title: intl.formatMessage({ id: "auth.signup.failed.title", defaultMessage: "Signup Failed" }),
+            message: data.error || intl.formatMessage({ id: "auth.signup.failed.message", defaultMessage: "Failed to create account" }),
           });
         }
       }
     } catch {
       addToast({
         type: "error",
-        title: "Signup Error",
-        message: "Network error. Please try again.",
+        title: intl.formatMessage({ id: "auth.signup.error.title", defaultMessage: "Signup Error" }),
+        message: intl.formatMessage({ id: "common.networkError", defaultMessage: "Network error. Please try again." }),
       });
     }
   }
@@ -197,7 +199,7 @@ export default function AuthPage() {
               tab === "login" ? "text-slate-900" : "text-slate-600"
             }`}
           >
-            Login
+            <FormattedMessage id="auth.tabs.login" defaultMessage="Login" />
           </button>
           <button
             onClick={() => setTab("signup")}
@@ -205,7 +207,7 @@ export default function AuthPage() {
               tab === "signup" ? "text-slate-900" : "text-slate-600"
             }`}
           >
-            Sign up
+            <FormattedMessage id="auth.tabs.signup" defaultMessage="Sign up" />
           </button>
         </div>
 
@@ -219,7 +221,7 @@ export default function AuthPage() {
             <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="flex-1 space-y-8 md:space-y-10">
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Official Email</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.login.emailLabel" defaultMessage="Official Email" /></label>
                 <input
                   type="email"
                   {...loginForm.register("email")}
@@ -228,7 +230,7 @@ export default function AuthPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Secure Password</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.login.passwordLabel" defaultMessage="Secure Password" /></label>
                 <input
                   type="password"
                   {...loginForm.register("password")}
@@ -237,13 +239,11 @@ export default function AuthPage() {
                 />
               </div>
               <p className="text-xs text-slate-700 mt-2">
-                Note: Use your official email and valid credentials. Access is
-                limited to authorized government/higher authorities. Keep your
-                password confidential.
+                <FormattedMessage id="auth.login.note" defaultMessage="Note: Use your official email and valid credentials. Access is limited to authorized government/higher authorities. Keep your password confidential." />
               </p>
             </div>
             <button className="mt-8 w-full rounded-xl bg-cyan-400/60 text-slate-800 border border-white/40 py-2.5 shadow-md hover:shadow-lg backdrop-blur-md">
-              Log in
+              <FormattedMessage id="nav.login" defaultMessage="Log in" />
             </button>
           </form>
         ) : (
@@ -256,14 +256,14 @@ export default function AuthPage() {
             <div className="pointer-events-none absolute bottom-3 left-6 h-1.5 w-1.5 rounded-full bg-white/70 shadow water-float animation-delay-300" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Full Name</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.fullName" defaultMessage="Full Name" /></label>
                 <input
                   {...signupForm.register("name")}
                   className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Official Email</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.officialEmail" defaultMessage="Official Email" /></label>
                 <input
                   type="email"
                   {...signupForm.register("email")}
@@ -271,14 +271,14 @@ export default function AuthPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Employee ID/Number</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.employeeId" defaultMessage="Employee ID/Number" /></label>
                 <input
                   {...signupForm.register("employeeId")}
                   className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Designation</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.designation" defaultMessage="Designation" /></label>
                 <input
                   {...signupForm.register("designation")}
                   className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
@@ -286,7 +286,7 @@ export default function AuthPage() {
               </div>
               <div>
                 <label className="block text-sm mb-1 text-slate-700">
-                  Department/Organization
+                  <FormattedMessage id="auth.signup.department" defaultMessage="Department/Organization" />
                 </label>
                 <input
                   {...signupForm.register("department")}
@@ -294,7 +294,7 @@ export default function AuthPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1 text-slate-700">Region/District</label>
+                <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.region" defaultMessage="Region/District" /></label>
                 <input
                   {...signupForm.register("region")}
                   className="w-full rounded-xl border border-slate-300/70 bg-white px-3 py-2 outline-none text-slate-800"
@@ -302,7 +302,7 @@ export default function AuthPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm mb-1 text-slate-700">Secure Password</label>
+              <label className="block text-sm mb-1 text-slate-700"><FormattedMessage id="auth.signup.password" defaultMessage="Secure Password" /></label>
               <input
                 type="password"
                 {...signupForm.register("password")}
@@ -311,7 +311,7 @@ export default function AuthPage() {
             </div>
             <div>
               <label className="block text-sm mb-1 text-slate-700">
-                Invitation Code (if pre-approved)
+                <FormattedMessage id="auth.signup.invitation" defaultMessage="Invitation Code (if pre-approved)" />
               </label>
               <input
                 {...signupForm.register("invitationCode")}
@@ -319,9 +319,9 @@ export default function AuthPage() {
               />
             </div>
             <div>
-              <label className="block text-slate-700 text-sm mb-1">Photo ID Upload</label>
+              <label className="block text-slate-700 text-sm mb-1"><FormattedMessage id="auth.signup.photoId" defaultMessage="Photo ID Upload" /></label>
               <label className="block w-full">
-                <span className="sr-only">Choose photo ID file</span>
+                <span className="sr-only"><FormattedMessage id="auth.signup.photoId.choose" defaultMessage="Choose photo ID file" /></span>
                 <input
                   type="file"
                   accept="image/*,application/pdf"
@@ -332,14 +332,14 @@ export default function AuthPage() {
                 />
               </label>
               <p className="mt-1 text-xs text-slate-600">
-                Accepted: images only JPG . Click the field to select a file.
+                <FormattedMessage id="auth.signup.photoId.note" defaultMessage="Accepted: images only JPG . Click the field to select a file." />
               </p>
             </div>
-            <p className="text-xs text-slate-600">
-              Access limited to higher authorities/government officials.
-            </p>
+              <p className="text-xs text-slate-600">
+                <FormattedMessage id="auth.signup.accessNote" defaultMessage="Access limited to higher authorities/government officials." />
+              </p>
             <button className="w-full rounded-xl bg-cyan-400/60 text-slate-800 border border-white/40 py-2.5 shadow-md hover:shadow-lg backdrop-blur-md">
-              Request Access
+              <FormattedMessage id="nav.requestAccess" defaultMessage="Request Access" />
             </button>
           </form>
         )}
