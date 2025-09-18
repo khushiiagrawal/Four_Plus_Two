@@ -53,6 +53,30 @@ interface AuthoritiesReport {
   };
 }
 
+interface SummarizedReport {
+  id: string;
+  title: string;
+  type: string;
+  severity: string;
+  reportedBy: string;
+  timestamp: string;
+  region: string;
+  status: string;
+  summary: string;
+  originalReportCount: number;
+  originalReports: Array<{
+    id: string;
+    title: string;
+    location: string;
+    timestamp: number;
+  }>;
+  createdAt: Date;
+  metadata?: {
+    source?: string;
+    summarizationDate?: string;
+  };
+}
+
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
 
@@ -84,6 +108,15 @@ export default function AuthoritiesDashboardPage() {
   // Fetch authorities reports from MongoDB
   const { data: authoritiesReportsData, error: reportsError } = useSWR(
     "/api/authorities-reports",
+    fetcher,
+    {
+      refreshInterval: 30_000, // Refresh every 30 seconds
+    }
+  );
+
+  // Fetch summarized reports from MongoDB
+  const { data: summarizedReportsData, error: summarizedError } = useSWR(
+    "/api/authorities/summarized-reports",
     fetcher,
     {
       refreshInterval: 30_000, // Refresh every 30 seconds
@@ -188,10 +221,20 @@ export default function AuthoritiesDashboardPage() {
         message: "Failed to load environmental reports from server.",
       });
     }
-  }, [alertsError, reportsError, addToast]);
+    if (summarizedError) {
+      addToast({
+        type: "error",
+        title: "Error Loading Summarized Reports",
+        message: "Failed to load summarized reports from server.",
+      });
+    }
+  }, [alertsError, reportsError, summarizedError, addToast]);
 
   // Use real reports from MongoDB, fallback to empty array
   const reportsData: AuthoritiesReport[] = authoritiesReportsData?.reports || [];
+  
+  // Use summarized reports from MongoDB, fallback to empty array
+  const summarizedReports: SummarizedReport[] = summarizedReportsData?.reports || [];
 
   // Calculate dynamic metrics from actual data
   const activeAlerts = alertsData.filter(
@@ -547,6 +590,144 @@ export default function AuthoritiesDashboardPage() {
                     <button 
                       onClick={() => handleViewDetails(report)}
                       className="px-3 py-1 bg-slate-600/30 hover:bg-slate-600/40 text-slate-700 rounded text-xs transition-colors"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Summarized Reports Section */}
+      <section className="mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+            🤖 AI Summarized Reports
+          </h2>
+          <span className="text-xs text-slate-500">
+            Reports processed by AI summarization
+          </span>
+        </div>
+        <div className="space-y-3">
+          {!summarizedReportsData && !summarizedError ? (
+            // Loading state
+            <div className="rounded-xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-white/20 animate-pulse" />
+                <div className="flex-1">
+                  <div className="w-3/4 h-4 bg-white/20 rounded animate-pulse mb-2" />
+                  <div className="w-full h-3 bg-white/20 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          ) : summarizedReports.length === 0 ? (
+            // No summarized reports state
+            <div className="rounded-xl p-8 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm text-center">
+              <div className="text-4xl mb-2">🤖</div>
+              <p className="text-slate-600">No AI summarized reports yet</p>
+              <p className="text-slate-500 text-xs mt-1">
+                Summarized reports will appear here when created from the field dashboard
+              </p>
+            </div>
+          ) : (
+            summarizedReports.map((report: SummarizedReport) => (
+              <div
+                key={report.id}
+                className="rounded-xl p-4 bg-gradient-to-r from-blue-50/50 to-purple-50/50 backdrop-blur-md border border-blue-200/50 shadow-sm hover:from-blue-100/50 hover:to-purple-100/50 transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-medium text-slate-800 text-sm">
+                        {report.title}
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-700">
+                        AI Summarized
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
+                          report.severity
+                        )}`}
+                      >
+                        {report.severity}
+                      </span>
+                    </div>
+                    
+                    {/* AI Summary */}
+                    <div className="mb-3 p-3 bg-white/40 rounded-lg border border-blue-200/30">
+                      <div className="text-xs text-blue-600 font-medium mb-1 flex items-center gap-1">
+                        🤖 AI Summary ({report.originalReportCount} reports combined):
+                      </div>
+                      <p className="text-sm text-slate-700 leading-relaxed">
+                        {report.summary}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-600">
+                      <div>
+                        <span className="text-slate-500">Type:</span>{" "}
+                        {report.type}
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Reporter:</span>{" "}
+                        {report.reportedBy}
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Region:</span>{" "}
+                        {report.region}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                      <span>🕒 {report.timestamp}</span>
+                      <span>📊 {report.originalReportCount} original reports</span>
+                      {report.metadata?.summarizationDate && (
+                        <span>
+                          🤖 Summarized: {new Date(report.metadata.summarizationDate).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Original Reports Preview */}
+                    {report.originalReports && report.originalReports.length > 0 && (
+                      <div className="mt-3 p-2 bg-slate-500/10 rounded-lg">
+                        <div className="text-xs text-slate-600 font-medium mb-1">
+                          📋 Original Reports ({report.originalReportCount}):
+                        </div>
+                        <div className="space-y-1">
+                          {report.originalReports.slice(0, 3).map((origReport, index) => (
+                            <div key={index} className="text-xs text-slate-500">
+                              • {origReport.title} - {origReport.location}
+                            </div>
+                          ))}
+                          {report.originalReports.length > 3 && (
+                            <div className="text-xs text-slate-400">
+                              ... and {report.originalReports.length - 3} more
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium
+                    ${
+                      report.status === "Under Review"
+                        ? "bg-yellow-500/20 text-yellow-700"
+                        : report.status === "Approved"
+                        ? "bg-green-500/20 text-green-700"
+                        : "bg-blue-500/20 text-blue-700"
+                    }`}
+                    >
+                      {report.status}
+                    </span>
+                    <button 
+                      onClick={() => handleViewDetails(report as any)}
+                      className="px-3 py-1 bg-blue-600/30 hover:bg-blue-600/40 text-blue-700 rounded text-xs transition-colors"
                     >
                       View Details
                     </button>
