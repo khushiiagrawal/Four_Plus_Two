@@ -9,9 +9,13 @@ const fetcher = (url: string) =>
 export default function ReportsList({
   regionFilter,
   query,
+  selectedReports,
+  onSelectionChange,
 }: {
   regionFilter: string;
   query: string;
+  selectedReports: Set<string>;
+  onSelectionChange: (selectedIds: Set<string>) => void;
 }) {
   const { addToast } = useToast();
   const [sendingReports, setSendingReports] = useState<Set<string>>(new Set());
@@ -132,17 +136,33 @@ export default function ReportsList({
         {items.map((it) => (
           <li key={it.id} className="p-4">
             <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="text-sm font-medium text-slate-800">
-                  {it.symptoms || it.title}
-                </div>
+              <div className="flex items-start gap-3 flex-1">
+                <input
+                  type="checkbox"
+                  checked={selectedReports.has(it.id)}
+                  onChange={(e) => {
+                    const newSelection = new Set(selectedReports);
+                    if (e.target.checked) {
+                      newSelection.add(it.id);
+                    } else {
+                      newSelection.delete(it.id);
+                    }
+                    onSelectionChange(newSelection);
+                  }}
+                  className="mt-1 w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-slate-800">
+                    {it.symptoms || it.title}
+                  </div>
                 <div className="text-xs text-slate-600 mt-1">
                   📍 {it.location || it.region}
                 </div>
-                <div className="flex items-center gap-4 mt-2 text-xs text-slate-600">
-                  {it.age && <span>👤 Age: {it.age}</span>}
-                  {it.userID && <span>🆔 User: {it.userID}</span>}
-                  {it.waterID && <span>💧 Water: {it.waterID}</span>}
+                  <div className="flex items-center gap-4 mt-2 text-xs text-slate-600">
+                    {it.age && <span>👤 Age: {it.age}</span>}
+                    {it.userID && <span>🆔 User: {it.userID}</span>}
+                    {it.waterID && <span>💧 Water: {it.waterID}</span>}
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2 ml-4">

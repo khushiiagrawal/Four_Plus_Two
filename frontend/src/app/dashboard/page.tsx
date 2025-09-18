@@ -7,6 +7,7 @@ import FiltersBar, { type Filters } from "@/components/dashboard/FiltersBar";
 import ReportsList from "@/components/dashboard/ReportsList";
 import GrafanaEmbed from "@/components/widgets/GrafanaEmbed";
 import CreateAlertModal from "@/components/dashboard/CreateAlertModal";
+import SummarizationModal from "@/components/dashboard/SummarizationModal";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/Toast";
 
@@ -76,6 +77,12 @@ export default function DashboardPage() {
     region: "All Regions",
   });
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [selectedReports, setSelectedReports] = useState<Set<string>>(new Set());
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [isSummarizationModalOpen, setIsSummarizationModalOpen] = useState(false);
+  const [generatedSummary, setGeneratedSummary] = useState("");
+  const [summaryReportCount, setSummaryReportCount] = useState(0);
+  const [isSendingToAuthorities, setIsSendingToAuthorities] = useState(false);
 
   const scrollToReports = () => {
     const reportsSection = document.getElementById("reports-section");
@@ -84,6 +91,133 @@ export default function DashboardPage() {
         behavior: "smooth",
         block: "start",
       });
+    }
+  };
+
+  const handleSummarizeReports = async () => {
+    if (selectedReports.size === 0) {
+      addToast({
+        type: "warning",
+        title: "No Reports Selected",
+        message: "Please select at least one report to summarize.",
+      });
+      return;
+    }
+
+    setIsSummarizing(true);
+    try {
+      // First, get the selected reports data
+      const response = await fetch("/api/data/reports");
+      const data = await response.json();
+      const selectedReportsData = data.items.filter((report: {
+        id: string;
+        symptoms?: string;
+        title: string;
+        location?: string;
+        region: string;
+      }) => 
+        selectedReports.has(report.id)
+      );
+
+      // Combine all report texts for summarization
+      const combinedText = selectedReportsData.map((report: {
+        id: string;
+        symptoms?: string;
+        title: string;
+        location?: string;
+        region: string;
+      }) => 
+        `${report.symptoms || report.title} - Location: ${report.location || report.region} - ${report.symptoms || 'No additional details'}`
+      ).join('. ');
+
+      // Call the summarizer service
+      const summarizeResponse = await fetch("http://localhost:8000/summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: combinedText,
+          max_length: 200,
+          min_length: 100,
+        }),
+      });
+
+      if (!summarizeResponse.ok) {
+        throw new Error("Failed to summarize reports");
+      }
+
+      const summaryResult = await summarizeResponse.json();
+
+      // Store the summary and show modal for review
+      setGeneratedSummary(summaryResult.summary);
+      setSummaryReportCount(selectedReports.size);
+      setIsSummarizationModalOpen(true);
+
+      addToast({
+        type: "success",
+        title: "Summary Generated",
+        message: `Successfully generated summary from ${selectedReports.size} reports. Please review before sending.`,
+        duration: 3000,
+      });
+
+    } catch (error) {
+      console.error("Error summarizing reports:", error);
+      addToast({
+        type: "error",
+        title: "Summarization Failed",
+        message: "Failed to summarize reports. Please try again.",
+        duration: 5000,
+      });
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
+  const handleSendSummarizedToAuthorities = async () => {
+    setIsSendingToAuthorities(true);
+    try {
+      // Get the selected reports data again for sending
+      const response = await fetch("/api/data/reports");
+      const data = await response.json();
+      const selectedReportsData = data.items.filter((report: {
+        id: string;
+        symptoms?: string;
+        title: string;
+        location?: string;
+        region: string;
+      }) => 
+        selectedReports.has(report.id)
+      );
+
+      // Send summarized report to authorities
+      const sendResponse = await fetch("/api/reports/send-summarized", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: generatedSummary,
+          originalReports: selectedReportsData,
+          reportCount: summaryReportCount,
+        }),
+      });
+
+      if (!sendResponse.ok) {
+        throw new Error("Failed to send summarized report");
+      }
+
+      // Clear selection and close modal
+      setSelectedReports(new Set());
+      setIsSummarizationModalOpen(false);
+      setGeneratedSummary("");
+      setSummaryReportCount(0);
+
+    } catch (error) {
+      console.error("Error sending summarized report:", error);
+      throw error; // Re-throw to be handled by the modal
+    } finally {
+      setIsSendingToAuthorities(false);
     }
   };
 
@@ -112,6 +246,22 @@ export default function DashboardPage() {
           Workers Dashboard
         </h1>
         <div className="flex items-center gap-4">
+          <button
+            onClick={handleSummarizeReports}
+            disabled={selectedReports.size === 0 || isSummarizing}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg border border-blue-700 disabled:border-gray-500 transition-colors flex items-center gap-2 shadow-sm disabled:cursor-not-allowed"
+          >
+            {isSummarizing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Summarizing...
+              </>
+            ) : (
+              <>
+                📝 Summarize Reports ({selectedReports.size})
+              </>
+            )}
+          </button>
           <button
             onClick={() => setIsAlertModalOpen(true)}
             className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center gap-2 shadow-sm"
@@ -151,7 +301,12 @@ export default function DashboardPage() {
       </section>
 
       <section id="reports-section" className="mt-6">
-        <ReportsList regionFilter={filters.region} query={filters.query} />
+        <ReportsList 
+          regionFilter={filters.region} 
+          query={filters.query}
+          selectedReports={selectedReports}
+          onSelectionChange={setSelectedReports}
+        />
       </section>
 
       <CreateAlertModal
@@ -166,6 +321,19 @@ export default function DashboardPage() {
               "Emergency report has been created and sent to higher authorities.",
           });
         }}
+      />
+
+      <SummarizationModal
+        isOpen={isSummarizationModalOpen}
+        onClose={() => {
+          setIsSummarizationModalOpen(false);
+          setGeneratedSummary("");
+          setSummaryReportCount(0);
+        }}
+        summary={generatedSummary}
+        originalReportCount={summaryReportCount}
+        onSendToAuthorities={handleSendSummarizedToAuthorities}
+        isSending={isSendingToAuthorities}
       />
     </div>
   );
