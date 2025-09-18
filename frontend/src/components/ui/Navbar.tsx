@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
+import LocaleSwitcher from "@/components/ui/LocaleSwitcher";
+import { FormattedMessage } from "react-intl";
 
 export default function Navbar() {
   const { user, isLoading, logout } = useUser();
@@ -57,7 +59,7 @@ export default function Navbar() {
             >
               <path d="M12.22 2.22a.75.75 0 0 0-1.44 0C9.73 6.2 6 8.6 6 12.25 6 16.22 8.86 19 12 19s6-2.78 6-6.75c0-3.65-3.73-6.05-5.78-10.03z" />
             </svg>
-            <span>JalRakshak</span>
+            <span><FormattedMessage id="app.name" defaultMessage="JalRakshak" /></span>
           </span>
         </Link>
         
@@ -66,7 +68,7 @@ export default function Navbar() {
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-full hover:bg-white/20 transition-colors"
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,6 +81,7 @@ export default function Navbar() {
               )}
             </button>
           )}
+          <LocaleSwitcher />
           {isLoading ? (
             <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
           ) : user ? (
@@ -110,7 +113,11 @@ export default function Navbar() {
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-amber-100 text-amber-800"
                       }`}>
-                        {user.isAuthenticated ? "Authenticated" : "Pending Approval"}
+                        {user.isAuthenticated ? (
+                          <FormattedMessage id="nav.authenticated" defaultMessage="Authenticated" />
+                        ) : (
+                          <FormattedMessage id="nav.pendingApproval" defaultMessage="Pending Approval" />
+                        )}
                       </span>
                     </p>
                   </div>
@@ -119,13 +126,13 @@ export default function Navbar() {
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    Profile
+                    <FormattedMessage id="nav.profile" defaultMessage="Profile" />
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
                   >
-                    Logout
+                    <FormattedMessage id="nav.logout" defaultMessage="Logout" />
                   </button>
                 </div>
               )}
@@ -136,13 +143,13 @@ export default function Navbar() {
                 className="px-3 py-1 rounded-full hover:bg-white/20"
                 href="/auth"
               >
-                Log in
+                <FormattedMessage id="nav.login" defaultMessage="Log in" />
               </Link>
               <Link
                 className="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white shadow-sm border border-white/20"
                 href="/auth?tab=signup"
               >
-                Request Access
+                <FormattedMessage id="nav.requestAccess" defaultMessage="Request Access" />
               </Link>
             </>
           )}
