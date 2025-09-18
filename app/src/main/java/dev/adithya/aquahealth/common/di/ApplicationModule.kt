@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.di
+package dev.adithya.aquahealth.common.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

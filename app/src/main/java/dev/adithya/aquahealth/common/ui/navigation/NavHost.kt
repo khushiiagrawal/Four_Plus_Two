@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.navigation
+package dev.adithya.aquahealth.common.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,6 +11,9 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.adithya.aquahealth.MainViewModel
+import dev.adithya.aquahealth.common.ui.components.SplashScreen
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.MAIN_ROUTE
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 import dev.adithya.aquahealth.home.ui.HomeScreen
 import dev.adithya.aquahealth.learn.ui.LearningScreen
 import dev.adithya.aquahealth.map.ui.MapScreen
@@ -18,9 +21,6 @@ import dev.adithya.aquahealth.onboarding.ui.SignOnScreen
 import dev.adithya.aquahealth.report.ui.UserReportScreen
 import dev.adithya.aquahealth.search.ui.SearchScreen
 import dev.adithya.aquahealth.settings.ui.SettingsScreen
-import dev.adithya.aquahealth.ui.components.SplashScreen
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 import dev.adithya.aquahealth.user.model.UserProfileState
 import dev.adithya.aquahealth.watersource.ui.WaterSourceDetailScreen
 

@@ -9,8 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
-import dev.adithya.aquahealth.ui.navigation.AppNavHost
-import dev.adithya.aquahealth.ui.theme.AppTheme
+import dev.adithya.aquahealth.common.ui.navigation.AppNavHost
+import dev.adithya.aquahealth.common.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

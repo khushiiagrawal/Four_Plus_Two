@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.theme
+package dev.adithya.aquahealth.common.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

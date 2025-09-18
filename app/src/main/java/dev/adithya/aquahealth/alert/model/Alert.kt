@@ -1,7 +1,7 @@
 package dev.adithya.aquahealth.alert.model
 
 import androidx.compose.ui.graphics.Color
-import dev.adithya.aquahealth.ui.theme.AppColors
+import dev.adithya.aquahealth.common.ui.theme.AppColors
 import dev.adithya.aquahealth.watersource.model.WaterSource
 
 data class Alert(

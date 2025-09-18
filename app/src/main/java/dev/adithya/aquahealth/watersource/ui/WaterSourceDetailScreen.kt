@@ -43,9 +43,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.alert.ui.AlertCard
+import dev.adithya.aquahealth.common.ui.components.AppScaffold
+import dev.adithya.aquahealth.common.ui.theme.AppColors
 import dev.adithya.aquahealth.home.ui.MetricCard
-import dev.adithya.aquahealth.ui.components.AppScaffold
-import dev.adithya.aquahealth.ui.theme.AppColors
 import dev.adithya.aquahealth.watersource.viewmodel.WaterSourceDetailViewModel
 import java.util.Locale
 

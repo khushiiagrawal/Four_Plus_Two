@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.R
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.MAIN_ROUTE
+import dev.adithya.aquahealth.common.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 import dev.adithya.aquahealth.onboarding.model.VerificationError
 import dev.adithya.aquahealth.onboarding.model.VerificationStatus
 import dev.adithya.aquahealth.onboarding.viewmodel.SignOnViewModel
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.MAIN_ROUTE
-import dev.adithya.aquahealth.ui.navigation.Route.Companion.ONBOARDING_ROUTE
 
 /**
  * Consists of a:

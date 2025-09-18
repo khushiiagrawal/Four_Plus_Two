@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.di
+package dev.adithya.aquahealth.common.di
 
 import dagger.Binds
 import dagger.Module

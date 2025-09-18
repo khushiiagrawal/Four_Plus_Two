@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.theme
+package dev.adithya.aquahealth.common.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

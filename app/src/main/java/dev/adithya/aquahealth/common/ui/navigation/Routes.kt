@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.navigation
+package dev.adithya.aquahealth.common.ui.navigation
 
 sealed class Route(val key: String) {
     sealed class Onboarding(val subKey: String) : Route("$ONBOARDING_ROUTE/$subKey") {

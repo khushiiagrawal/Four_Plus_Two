@@ -49,9 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.adithya.aquahealth.common.ui.components.AppScaffold
 import dev.adithya.aquahealth.report.viewmodel.SubmissionState
 import dev.adithya.aquahealth.report.viewmodel.UserReportViewModel
-import dev.adithya.aquahealth.ui.components.AppScaffold
 import dev.adithya.aquahealth.watersource.model.WaterSource
 import java.time.Instant
 import java.time.LocalTime

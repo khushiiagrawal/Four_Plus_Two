@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.model
+package dev.adithya.aquahealth.common.model
 
 data class Location(
     val latitude: Double = 0.0,

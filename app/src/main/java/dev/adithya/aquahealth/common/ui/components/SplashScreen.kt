@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.components
+package dev.adithya.aquahealth.common.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,6 +1,6 @@
 package dev.adithya.aquahealth.user.model
 
-import dev.adithya.aquahealth.model.Location
+import dev.adithya.aquahealth.common.model.Location
 import dev.adithya.aquahealth.onboarding.model.OnboardingStage
 import dev.adithya.aquahealth.watersource.model.WaterSource
 

@@ -29,9 +29,9 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import dev.adithya.aquahealth.common.ui.components.AppScaffold
+import dev.adithya.aquahealth.common.ui.navigation.Route
 import dev.adithya.aquahealth.map.viewmodel.MapViewModel
-import dev.adithya.aquahealth.ui.components.AppScaffold
-import dev.adithya.aquahealth.ui.navigation.Route
 
 private val CENTER_OF_INDIA = LatLng(20.5937, 78.9629)
 private const val MAP_LOADED_ZOOM = 14f

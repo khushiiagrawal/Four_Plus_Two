@@ -30,10 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import dev.adithya.aquahealth.alert.ui.AlertCard
+import dev.adithya.aquahealth.common.ui.components.AppScaffold
+import dev.adithya.aquahealth.common.ui.navigation.Route
+import dev.adithya.aquahealth.common.ui.theme.AppColors
 import dev.adithya.aquahealth.home.viewmodel.HomeViewModel
-import dev.adithya.aquahealth.ui.components.AppScaffold
-import dev.adithya.aquahealth.ui.navigation.Route
-import dev.adithya.aquahealth.ui.theme.AppColors
 
 @Composable
 fun HomeScreen(

@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.components
+package dev.adithya.aquahealth.common.ui.components
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.adithya.aquahealth.ui.navigation.NavItem
-import dev.adithya.aquahealth.ui.navigation.Route
+import dev.adithya.aquahealth.common.ui.navigation.NavItem
+import dev.adithya.aquahealth.common.ui.navigation.Route
 
 @Composable
 fun AppBottomNavBar(

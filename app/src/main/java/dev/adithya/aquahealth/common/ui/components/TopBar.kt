@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.components
+package dev.adithya.aquahealth.common.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.adithya.aquahealth.R
-import dev.adithya.aquahealth.ui.navigation.NavItem
-import dev.adithya.aquahealth.ui.navigation.Route
+import dev.adithya.aquahealth.common.ui.navigation.NavItem
+import dev.adithya.aquahealth.common.ui.navigation.Route
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable

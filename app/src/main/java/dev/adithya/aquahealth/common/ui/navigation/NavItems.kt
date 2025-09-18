@@ -1,4 +1,4 @@
-package dev.adithya.aquahealth.ui.navigation
+package dev.adithya.aquahealth.common.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HealthAndSafety
@@ -41,7 +41,7 @@ enum class NavItem(
 
      companion object {
          fun fromRoute(route: String): NavItem {
-             return NavItem.entries.find { it.route.key == route } ?: Home
+             return entries.find { it.route.key == route } ?: Home
          }
      }
 }
