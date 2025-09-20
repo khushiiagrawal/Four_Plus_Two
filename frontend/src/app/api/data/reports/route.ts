@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifyUserJwt } from "@/lib/jwt";
-import { getUserReportsCollection, convertTimestamp } from "@/lib/firestore";
+import { getUserReportsCollection } from "@/lib/firestore";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let payload: any;
+  let payload: { user?: { id?: string; region?: string } };
   try {
     payload = await verifyUserJwt(token);
   } catch {
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     }
 
     const now = Date.now();
-    const doc: Record<string, any> = {
+    const doc: Record<string, unknown> = {
       userId: userId || payload.user?.id,
       symptoms,
       location,
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     if (waterSource != null && waterSource !== '') doc.waterSource = waterSource;
 
     const col = getUserReportsCollection();
-    const ref = await col.add(doc as any);
+    const ref = await col.add(doc);
 
     return NextResponse.json({ id: ref.id, ...doc }, { status: 201 });
   } catch (error) {

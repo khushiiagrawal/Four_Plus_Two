@@ -8,7 +8,12 @@ export async function GET() {
     if (!res.ok || !json || !json.success) {
       return NextResponse.json({ success: false, error: json?.error || "sensor error" }, { status: 502 });
     }
-    let { water_ph, water_turbidity_ntu, temperature_celsius, humidity } = json.data || {};
+    const data = json.data || {};
+    let water_ph = data.water_ph;
+    let water_turbidity_ntu = data.water_turbidity_ntu;
+    const temperature_celsius = data.temperature_celsius;
+    const humidity = data.humidity;
+    
     // Fallback calculation if service does not provide derived values
     if ((water_ph == null || Number.isNaN(Number(water_ph))) && typeof temperature_celsius === "number") {
       const ph = 7.0 + (25.0 - Number(temperature_celsius)) * 0.02;
@@ -19,8 +24,9 @@ export async function GET() {
       water_turbidity_ntu = Math.max(0.1, Math.min(10.0, turb));
     }
     return NextResponse.json({ success: true, data: { water_ph, water_turbidity_ntu, temperature_celsius, humidity } });
-  } catch (e: any) {
-    return NextResponse.json({ success: false, error: e?.message || "network error" }, { status: 500 });
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : "network error";
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }
 

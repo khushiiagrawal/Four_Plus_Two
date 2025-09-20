@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -50,11 +50,19 @@ export default function AdminPage() {
     resolver: zodResolver(adminLoginSchema),
   });
 
-  useEffect(() => {
-    checkAdminAuth();
+  const fetchS3Images = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/s3-images");
+      if (res.ok) {
+        const data = await res.json();
+        setS3Images(data.images || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch S3 images:", error);
+    }
   }, []);
 
-  async function checkAdminAuth() {
+  const checkAdminAuth = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/users");
       if (res.ok) {
@@ -63,12 +71,16 @@ export default function AdminPage() {
         setIsAuthenticated(true);
         await fetchS3Images(); // Fetch S3 images after authentication
       }
-    } catch (err) {
-      console.error("Auth check failed:", err);
+    } catch (error) {
+      console.error("Auth check failed:", error);
     } finally {
       setLoading(false);
     }
-  }
+  }, [fetchS3Images]);
+
+  useEffect(() => {
+    checkAdminAuth();
+  }, [checkAdminAuth]);
 
   async function onAdminLogin(values: z.infer<typeof adminLoginSchema>) {
     try {
@@ -87,7 +99,8 @@ export default function AdminPage() {
         const data = await res.json().catch(() => ({}));
         setError(data.error || "Authentication failed");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Login error:", error);
       setError("Login failed. Please try again.");
     }
   }
@@ -99,24 +112,15 @@ export default function AdminPage() {
         const data = await res.json();
         setUsers(data.users);
       }
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
     }
   }
 
-  async function fetchS3Images() {
-    try {
-      const res = await fetch("/api/admin/s3-images");
-      if (res.ok) {
-        const data = await res.json();
-        setS3Images(data.images || []);
-      }
-    } catch (err) {
-      console.error("Failed to fetch S3 images:", err);
-    }
-  }
-
-  async function updateUserAuthentication(userId: string, isAuthenticated: boolean) {
+  async function updateUserAuthentication(
+    userId: string,
+    isAuthenticated: boolean
+  ) {
     try {
       const res = await fetch("/api/admin/users/authenticate", {
         method: "PATCH",
@@ -126,16 +130,17 @@ export default function AdminPage() {
 
       if (res.ok) {
         // Update local state
-        setUsers(prev => prev.map(user => 
-          user.id === userId 
-            ? { ...user, isAuthenticated }
-            : user
-        ));
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === userId ? { ...user, isAuthenticated } : user
+          )
+        );
       } else {
         const data = await res.json().catch(() => ({}));
         setError(data.error || "Failed to update user status");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Update user status error:", error);
       setError("Failed to update user status");
     }
   }
@@ -166,7 +171,9 @@ export default function AdminPage() {
       <div className="min-h-dvh flex items-center justify-center overflow-hidden p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
         <div className="w-full max-w-md mx-auto rounded-2xl border border-white/40 bg-white/30 backdrop-blur shadow-lg p-4">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-slate-800 mb-2">Admin Panel</h1>
+            <h1 className="text-2xl font-bold text-slate-800 mb-2">
+              Admin Panel
+            </h1>
             <p className="text-slate-600 text-sm">
               Enter admin credentials to continue
             </p>
@@ -361,11 +368,13 @@ export default function AdminPage() {
                         )}
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          user.isAuthenticated 
-                            ? "bg-green-500/20 text-green-700 border border-green-500/30"
-                            : "bg-yellow-500/20 text-yellow-700 border border-yellow-500/30"
-                        }`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            user.isAuthenticated
+                              ? "bg-green-500/20 text-green-700 border border-green-500/30"
+                              : "bg-yellow-500/20 text-yellow-700 border border-yellow-500/30"
+                          }`}
+                        >
                           {user.isAuthenticated ? "Approved" : "Pending"}
                         </span>
                       </td>
@@ -373,14 +382,18 @@ export default function AdminPage() {
                         <div className="flex gap-2">
                           {!user.isAuthenticated ? (
                             <button
-                              onClick={() => updateUserAuthentication(user.id, true)}
+                              onClick={() =>
+                                updateUserAuthentication(user.id, true)
+                              }
                               className="px-3 py-1 rounded-lg bg-green-500/20 border border-green-500/30 text-green-700 hover:bg-green-500/30 transition-colors text-xs"
                             >
                               Approve
                             </button>
                           ) : (
                             <button
-                              onClick={() => updateUserAuthentication(user.id, false)}
+                              onClick={() =>
+                                updateUserAuthentication(user.id, false)
+                              }
                               className="px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-700 hover:bg-red-500/30 transition-colors text-xs"
                             >
                               Revoke

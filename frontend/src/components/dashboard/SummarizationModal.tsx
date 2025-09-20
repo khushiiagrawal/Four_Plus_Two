@@ -59,10 +59,12 @@ export default function SummarizationModal({
       });
       onClose();
     } catch (error) {
+      console.error("Send to authorities error:", error);
       addToast({
         type: "error",
         title: "Send Failed",
-        message: "Failed to send summarized report to authorities. Please try again.",
+        message:
+          "Failed to send summarized report to authorities. Please try again.",
         duration: 5000,
       });
     }
@@ -90,10 +92,11 @@ export default function SummarizationModal({
 
       {/* Modal */}
       <div className="relative w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div 
+        <div
           className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg p-6"
           style={{
-            background: "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
+            background:
+              "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
           }}
         >
           <div className="flex items-center justify-between mb-6">
@@ -132,8 +135,8 @@ export default function SummarizationModal({
           {/* Warning Notice */}
           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-6">
             <p className="text-xs text-amber-200">
-              ⚠️ This summary will be sent to higher authorities and district officials. 
-              Please review the content carefully before sending.
+              ⚠️ This summary will be sent to higher authorities and district
+              officials. Please review the content carefully before sending.
             </p>
           </div>
 
@@ -158,9 +161,7 @@ export default function SummarizationModal({
                   Sending...
                 </>
               ) : (
-                <>
-                  📤 Send to Authorities
-                </>
+                <>📤 Send to Authorities</>
               )}
             </button>
           </div>
@@ -171,4 +172,3 @@ export default function SummarizationModal({
 
   return createPortal(modalContent, document.body);
 }
-

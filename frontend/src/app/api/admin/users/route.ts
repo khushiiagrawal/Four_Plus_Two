@@ -23,23 +23,28 @@ export async function GET(req: NextRequest) {
     const usersCollection = getUsersCollection();
     const snapshot = await usersCollection.orderBy('createdAt', 'desc').get();
     
-    const users = snapshot.docs.map(doc => {
-      const userData = convertFirestoreUser(doc);
-      // Return only the fields we want to expose
-      return {
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        employeeId: userData.employeeId,
-        designation: userData.designation,
-        department: userData.department,
-        region: userData.region,
-        photoIdUrl: userData.photoIdUrl,
-        isAuthenticated: userData.isAuthenticated,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt
-      };
-    });
+    const users = snapshot.docs
+      .map(doc => {
+        const userData = convertFirestoreUser(doc);
+        // Skip if userData is null
+        if (!userData) return null;
+        
+        // Return only the fields we want to expose
+        return {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          employeeId: userData.employeeId,
+          designation: userData.designation,
+          department: userData.department,
+          region: userData.region,
+          photoIdUrl: userData.photoIdUrl,
+          isAuthenticated: userData.isAuthenticated,
+          createdAt: userData.createdAt,
+          updatedAt: userData.updatedAt
+        };
+      })
+      .filter(user => user !== null); // Remove null entries
 
     return NextResponse.json({ 
       ok: true, 

@@ -9,12 +9,18 @@ export default function LocaleSwitcher() {
     <div className="relative">
       <select
         value={locale}
-        onChange={(e) => setLocale(e.target.value as any)}
+        onChange={(e) => setLocale(e.target.value as "en" | "hi" | "bn" | "as")}
         className="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 text-sm"
-        aria-label={intl.formatMessage({ id: "locale.label", defaultMessage: "Language" })}
+        aria-label={intl.formatMessage({
+          id: "locale.label",
+          defaultMessage: "Language",
+        })}
       >
         {supportedLocales.map((l) => {
-          const label = intl.formatMessage({ id: l.labelKey, defaultMessage: l.code.toUpperCase() });
+          const label = intl.formatMessage({
+            id: l.labelKey,
+            defaultMessage: l.code.toUpperCase(),
+          });
           return (
             <option key={l.code} value={l.code} className="text-slate-800">
               {label}
@@ -25,5 +31,3 @@ export default function LocaleSwitcher() {
     </div>
   );
 }
-
-
