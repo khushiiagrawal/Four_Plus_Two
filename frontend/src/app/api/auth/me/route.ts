@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifyUserJwt, AppUser } from "@/lib/jwt";
+import { getUsersCollection, convertFirestoreUser } from "@/lib/firestore";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,7 +12,31 @@ export async function GET(req: NextRequest) {
 
     try {
       const payload = await verifyUserJwt(token);
-      const user = (payload as { user: AppUser }).user;
+      const jwtUser = (payload as { user: AppUser }).user;
+      
+      // Fetch fresh user data from database to get current authentication status
+      const usersCollection = getUsersCollection();
+      const userDoc = await usersCollection.doc(jwtUser.id).get();
+      
+      if (!userDoc.exists) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+      
+      const dbUser = convertFirestoreUser(userDoc);
+      
+      // Create updated user object with fresh data from database
+      const user: AppUser = {
+        id: dbUser.id,
+        name: dbUser.name,
+        email: dbUser.email,
+        employeeId: dbUser.employeeId,
+        designation: dbUser.designation,
+        department: dbUser.department,
+        region: dbUser.region,
+        photoIdUrl: dbUser.photoIdUrl,
+        role: "official",
+        isAuthenticated: dbUser.isAuthenticated, // Use fresh data from database
+      };
       
       return NextResponse.json({ 
         ok: true, 

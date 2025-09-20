@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, refreshUser } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -115,9 +115,17 @@ export default function ProfilePage() {
           {/* Status Card */}
           <div className="animate-slide-up animation-delay-300">
             <div className="h-full rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">
-                Authentication Status
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Authentication Status
+                </h3>
+                <button
+                  onClick={() => refreshUser()}
+                  className="px-3 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+                >
+                  Refresh
+                </button>
+              </div>
 
               <div className="flex items-center gap-3 mb-4">
                 <div
