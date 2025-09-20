@@ -2,6 +2,7 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { useToast } from "@/components/ui/Toast";
+import { FormattedMessage, useIntl, IntlShape } from "react-intl";
 
 // Define the Firestore alert interface
 interface FirestoreAlert {
@@ -52,8 +53,71 @@ const formatTimestamp = (timestamp: number) => {
   });
 };
 
+// Function to translate dynamic alert content
+const translateAlertContent = (title: string, shortSummary: string, intl: IntlShape) => {
+  // Translate alert titles
+  let translatedTitle = title;
+  if (title === "CRITICAL Water Quality Alert") {
+    translatedTitle = intl.formatMessage({ id: "alerts.dynamic.criticalWaterQuality" });
+  } else if (title === "Water Quality Warning") {
+    translatedTitle = intl.formatMessage({ id: "alerts.dynamic.waterQualityWarning" });
+  } else if (title === "Cholera breakout") {
+    translatedTitle = intl.formatMessage({ id: "alerts.dynamic.choleraBreakout" });
+  } else if (title === "Water contamination") {
+    translatedTitle = intl.formatMessage({ id: "alerts.dynamic.waterContamination" });
+  }
+
+  // Translate alert descriptions
+  let translatedSummary = shortSummary;
+  
+  // Handle contamination risk with high temperature
+  if (shortSummary.includes("Contamination risk detected: High temperature")) {
+    const tempMatch = shortSummary.match(/High temperature \((\d+\.?\d*)°C\)/);
+    const temp = tempMatch ? tempMatch[1] : "0";
+    const risks = "Class A: Gastrointestinal diseases (e.g., cholera, diarrhea); Class B: Kidney diseases; Class C: Dental problems (Fluorosis, corrosion); Class D: Cardiovascular problems or Diabetes; Class F: Convulsions (from Ammonia); Class G: Bladder cancer (from Chlorides)";
+    translatedSummary = intl.formatMessage(
+      { id: "alerts.dynamic.contaminationRiskHighTemp" },
+      { temp, risks }
+    );
+  }
+  // Handle contamination risk with high humidity and temperature
+  else if (shortSummary.includes("Contamination risk detected: High humidity")) {
+    const humidityMatch = shortSummary.match(/High humidity \((\d+\.?\d*)%\)/);
+    const tempMatch = shortSummary.match(/High temperature \((\d+\.?\d*)°C\)/);
+    const humidity = humidityMatch ? humidityMatch[1] : "0";
+    const temp = tempMatch ? tempMatch[1] : "0";
+    const risks = "Class A: Gastrointestinal diseases (e.g., cholera, diarrhea); Class B: Kidney diseases; Class C: Dental problems (Fluorosis, corrosion); Class D: Cardiovascular problems or Diabetes; Class F: Convulsions (from Ammonia); Class G: Bladder cancer (from Chlorides)";
+    translatedSummary = intl.formatMessage(
+      { id: "alerts.dynamic.contaminationRiskHighHumTemp" },
+      { humidity, temp, risks }
+    );
+  }
+  // Handle temperature and humidity warning
+  else if (shortSummary.includes("Temperature too high") && shortSummary.includes("Humidity too high")) {
+    const tempMatch = shortSummary.match(/Temperature too high: (\d+)°C/);
+    const humidityMatch = shortSummary.match(/Humidity too high: (\d+)%/);
+    const temp = tempMatch ? tempMatch[1] : "0";
+    const humidity = humidityMatch ? humidityMatch[1] : "0";
+    translatedSummary = intl.formatMessage(
+      { id: "alerts.dynamic.tempHumidityHigh" },
+      { temp, humidity }
+    );
+  }
+  // Handle cholera cases rising
+  else if (shortSummary.includes("Cholera cases rising")) {
+    translatedSummary = intl.formatMessage({ id: "alerts.dynamic.choleraRising" });
+  }
+  // Handle chemical waste contamination
+  else if (shortSummary.includes("Potential water contamination with chemical waste")) {
+    translatedSummary = intl.formatMessage({ id: "alerts.dynamic.chemicalWaste" });
+  }
+
+  return { translatedTitle, translatedSummary };
+};
+
 export default function RealTimeAlerts() {
   const { addToast } = useToast();
+  const intl = useIntl();
   const [alertingStates, setAlertingStates] = useState<Record<string, boolean>>(
     {}
   );
@@ -95,8 +159,8 @@ export default function RealTimeAlerts() {
       // Show success toast
       addToast({
         type: "success",
-        title: "Alert Sent",
-        message: "Users have been notified about this water quality alert.",
+        title: intl.formatMessage({ id: "dashboard.realtimeAlerts.alertSent" }),
+        message: intl.formatMessage({ id: "dashboard.realtimeAlerts.alertSentMessage" }),
         duration: 4000,
       });
     } catch (error) {
@@ -105,11 +169,11 @@ export default function RealTimeAlerts() {
       // Show error toast
       addToast({
         type: "error",
-        title: "Alert Failed",
+        title: intl.formatMessage({ id: "dashboard.realtimeAlerts.alertFailed" }),
         message:
           error instanceof Error
             ? error.message
-            : "Failed to send alert notification. Please try again.",
+            : intl.formatMessage({ id: "dashboard.realtimeAlerts.alertFailedMessage" }),
         duration: 5000,
       });
     } finally {
@@ -122,9 +186,17 @@ export default function RealTimeAlerts() {
       <section className="mt-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            Real Time Alerts From Water Body
+            <FormattedMessage
+              id="dashboard.realtimeAlerts.title"
+              defaultMessage="Real Time Alerts From Water Body"
+            />
           </h2>
-          <span className="text-xs text-slate-500">Loading alerts...</span>
+          <span className="text-xs text-slate-500">
+            <FormattedMessage
+              id="dashboard.realtimeAlerts.loading"
+              defaultMessage="Loading alerts..."
+            />
+          </span>
         </div>
         <div className="rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg p-6">
           <div className="flex items-center justify-center py-8">
@@ -140,13 +212,24 @@ export default function RealTimeAlerts() {
       <section className="mt-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-            Real Time Alerts From Water Body
+            <FormattedMessage
+              id="dashboard.realtimeAlerts.title"
+              defaultMessage="Real Time Alerts From Water Body"
+            />
           </h2>
-          <span className="text-xs text-red-500">Error loading alerts</span>
+          <span className="text-xs text-red-500">
+            <FormattedMessage
+              id="dashboard.realtimeAlerts.error"
+              defaultMessage="Error loading alerts"
+            />
+          </span>
         </div>
         <div className="rounded-2xl border border-red-200 bg-red-50/40 backdrop-blur-md shadow-lg p-6">
           <p className="text-red-600 text-center">
-            Failed to load alerts. Please try again later.
+            <FormattedMessage
+              id="dashboard.realtimeAlerts.errorMessage"
+              defaultMessage="Failed to load alerts. Please try again later."
+            />
           </p>
         </div>
       </section>
@@ -159,11 +242,20 @@ export default function RealTimeAlerts() {
     <section className="mt-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-          Real Time Alerts From Water Body
+          <FormattedMessage
+            id="dashboard.realtimeAlerts.title"
+            defaultMessage="Real Time Alerts From Water Body"
+          />
         </h2>
         <span className="text-xs text-slate-500">
-          {alerts.length} alert{alerts.length !== 1 ? "s" : ""} •
-          Auto-refreshing
+          <FormattedMessage
+            id="dashboard.realtimeAlerts.count"
+            defaultMessage="{count} alerts"
+            values={{ count: alerts.length }}
+          /> • <FormattedMessage
+            id="dashboard.realtimeAlerts.autoRefresh"
+            defaultMessage="Auto-refreshing"
+          />
         </span>
       </div>
 
@@ -171,14 +263,24 @@ export default function RealTimeAlerts() {
         {alerts.length === 0 ? (
           <div className="p-8 text-center">
             <div className="text-4xl mb-4">🌊</div>
-            <p className="text-slate-600">No alerts at this time</p>
+            <p className="text-slate-600">
+              <FormattedMessage
+                id="dashboard.realtimeAlerts.noAlerts"
+                defaultMessage="No alerts at this time"
+              />
+            </p>
             <p className="text-slate-500 text-sm mt-1">
-              Water quality monitoring is active
+              <FormattedMessage
+                id="dashboard.realtimeAlerts.monitoringActive"
+                defaultMessage="Water quality monitoring is active"
+              />
             </p>
           </div>
         ) : (
           <div className="divide-y divide-white/20">
-            {alerts.map((alert) => (
+            {alerts.map((alert) => {
+              const { translatedTitle, translatedSummary } = translateAlertContent(alert.title, alert.shortSummary, intl);
+              return (
               <div
                 key={alert.id}
                 className="p-4 hover:bg-white/20 transition-colors"
@@ -191,7 +293,7 @@ export default function RealTimeAlerts() {
                         {getSeverityIcon(alert.severity)}
                       </span>
                       <h3 className="font-medium text-slate-800 truncate">
-                        {alert.title}
+                        {translatedTitle}
                       </h3>
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getSeverityColor(
@@ -204,7 +306,7 @@ export default function RealTimeAlerts() {
 
                     {/* Alert Summary */}
                     <p className="text-slate-700 text-sm mb-3 leading-relaxed">
-                      {alert.shortSummary}
+                      {translatedSummary}
                     </p>
 
                     {/* Alert Metadata */}
@@ -230,10 +332,16 @@ export default function RealTimeAlerts() {
                       {alertingStates[alert.id] ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Alerting...
+                          <FormattedMessage
+                            id="dashboard.realtimeAlerts.alerting"
+                            defaultMessage="Alerting..."
+                          />
                         </>
                       ) : (
-                        <>📢 Alert User</>
+                        <>📢 <FormattedMessage
+                          id="alerts.actions.alertUser"
+                          defaultMessage="Alert User"
+                        /></>
                       )}
                     </button>
                   </div>
@@ -243,7 +351,10 @@ export default function RealTimeAlerts() {
                 {alert.longSummary && (
                   <details className="mt-3">
                     <summary className="cursor-pointer text-sm text-slate-600 hover:text-slate-800 transition-colors">
-                      View detailed analysis
+                      <FormattedMessage
+                        id="dashboard.realtimeAlerts.viewDetails"
+                        defaultMessage="View detailed analysis"
+                      />
                     </summary>
                     <div className="mt-2 p-3 bg-white/30 rounded-lg border border-white/40">
                       <pre className="text-xs text-slate-700 whitespace-pre-wrap font-mono">
@@ -253,7 +364,8 @@ export default function RealTimeAlerts() {
                   </details>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -2,9 +2,54 @@
 import useSWR, { mutate as globalMutate } from "swr";
 import { useMemo, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
+import { FormattedMessage, useIntl, IntlShape } from "react-intl";
 
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((r) => r.json());
+
+// Function to translate health report symptoms
+const translateHealthSymptoms = (symptoms: string, intl: IntlShape) => {
+  if (!symptoms) return symptoms;
+  
+  // Split symptoms by comma and translate each one
+  const symptomList = symptoms.split(',').map(s => s.trim());
+  const translatedSymptoms = symptomList.map(symptom => {
+    // Map common symptoms to translation keys
+    switch (symptom.toLowerCase()) {
+      case 'constipation':
+        return intl.formatMessage({ id: "symptoms.constipation" });
+      case 'fever':
+        return intl.formatMessage({ id: "symptoms.fever" });
+      case 'stomach cramps':
+        return intl.formatMessage({ id: "symptoms.stomachCramps" });
+      case 'vomiting':
+        return intl.formatMessage({ id: "symptoms.vomiting" });
+      case 'headache':
+        return intl.formatMessage({ id: "symptoms.headache" });
+      case 'skin rash':
+        return intl.formatMessage({ id: "symptoms.skinRash" });
+      case 'nausea':
+        return intl.formatMessage({ id: "symptoms.nausea" });
+      case 'diarrhea':
+        return intl.formatMessage({ id: "symptoms.diarrhea" });
+      default:
+        return symptom; // Return original if no translation found
+    }
+  });
+  
+  return translatedSymptoms.join(', ');
+};
+
+// Function to translate location
+const translateLocation = (location: string, intl: IntlShape) => {
+  if (!location) return location;
+  
+  if (location.toLowerCase() === 'unknown location') {
+    return intl.formatMessage({ id: "healthReports.unknownLocation" });
+  }
+  
+  return location; // Return original for known locations
+};
 
 export default function ReportsList({
   regionFilter,
@@ -18,6 +63,7 @@ export default function ReportsList({
   onSelectionChange: (selectedIds: Set<string>) => void;
 }) {
   const { addToast } = useToast();
+  const intl = useIntl();
   const [sendingReports, setSendingReports] = useState<Set<string>>(new Set());
   const [removedReports, setRemovedReports] = useState<Set<string>>(new Set());
   const key = "/api/data/reports";
@@ -109,9 +155,8 @@ export default function ReportsList({
       if (response.ok) {
         addToast({
           type: "success",
-          title: "Report Sent",
-          message:
-            "Health report has been successfully sent to legal authorities.",
+          title: intl.formatMessage({ id: "healthReports.reportSent" }),
+          message: intl.formatMessage({ id: "healthReports.reportSentMessage" }),
           duration: 5000,
         });
         setRemovedReports((prev) => new Set(prev).add(report.id));
@@ -122,9 +167,8 @@ export default function ReportsList({
       console.error("Error sending report:", error);
       addToast({
         type: "error",
-        title: "Send Failed",
-        message:
-          "Failed to send report to legal authorities. Please try again.",
+        title: intl.formatMessage({ id: "healthReports.sendFailed" }),
+        message: intl.formatMessage({ id: "healthReports.sendFailedMessage" }),
         duration: 5000,
       });
     } finally {
@@ -139,10 +183,19 @@ export default function ReportsList({
   return (
     <div className="rounded-2xl bg-white/40 backdrop-blur border border-white/50 shadow-sm">
       <div className="p-4 border-b border-slate-200/60 dark:border-white/10">
-        <h3 className="text-sm font-medium text-slate-800">Health Reports</h3>
+        <h3 className="text-sm font-medium text-slate-800">
+          <FormattedMessage
+            id="healthReports.title"
+            defaultMessage="Health Reports"
+          />
+        </h3>
         {error && (
           <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-xs">
-            API Error: {error.message || "Failed to fetch reports"}
+            <FormattedMessage
+              id="healthReports.apiError"
+              defaultMessage="API Error: {error}"
+              values={{ error: error.message || intl.formatMessage({ id: "healthReports.failedToFetch" }) }}
+            />
           </div>
         )}
       </div>
@@ -167,10 +220,10 @@ export default function ReportsList({
                 />
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-800">
-                    {it.symptoms || it.title}
+                    {translateHealthSymptoms(it.symptoms || it.title, intl)}
                   </div>
                 <div className="text-xs text-slate-600 mt-1">
-                  📍 {it.location || it.region}
+                  📍 {translateLocation(it.location || it.region, intl)}
                 </div>
                   <div className="flex items-center gap-4 mt-2 text-xs text-slate-600">
                     {it.age && <span>👤 Age: {it.age}</span>}
@@ -191,10 +244,16 @@ export default function ReportsList({
                   {sendingReports.has(it.id) ? (
                     <>
                       <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                      Sending...
+                      <FormattedMessage
+                        id="healthReports.sending"
+                        defaultMessage="Sending..."
+                      />
                     </>
                   ) : (
-                    <>📤 Send Report</>
+                    <>📤 <FormattedMessage
+                      id="healthReports.sendReport"
+                      defaultMessage="Send Report"
+                    /></>
                   )}
                 </button>
               </div>
@@ -204,9 +263,17 @@ export default function ReportsList({
         {items.length === 0 && (
           <li className="p-6 text-sm text-slate-600 text-center">
             <div className="text-4xl mb-2">📋</div>
-            <div>No health reports found</div>
+            <div>
+              <FormattedMessage
+                id="healthReports.noReports"
+                defaultMessage="No health reports found"
+              />
+            </div>
             <div className="text-xs mt-1">
-              Try adjusting your filters or check back later
+              <FormattedMessage
+                id="healthReports.tryFilters"
+                defaultMessage="Try adjusting your filters or check back later"
+              />
             </div>
           </li>
         )}
