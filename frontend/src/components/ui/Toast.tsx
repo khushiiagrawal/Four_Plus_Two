@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -22,33 +28,37 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((toast: Omit<Toast, "id">) => {
-    // Check if a similar toast already exists to prevent duplicates
-    const existingToast = toasts.find(t => 
-      t.title === toast.title && 
-      t.message === toast.message && 
-      t.type === toast.type
-    );
-    
-    if (existingToast) {
-      return; // Don't add duplicate toast
-    }
-    
-    const id = Math.random().toString(36).substr(2, 9);
-    const newToast = { ...toast, id };
-    
-    setToasts(prev => [...prev, newToast]);
-
-    // Auto remove toast after duration
-    const duration = toast.duration || 5000;
-    setTimeout(() => {
-      removeToast(id);
-    }, duration);
-  }, [toasts]);
-
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
+
+  const addToast = useCallback(
+    (toast: Omit<Toast, "id">) => {
+      // Check if a similar toast already exists to prevent duplicates
+      const existingToast = toasts.find(
+        (t) =>
+          t.title === toast.title &&
+          t.message === toast.message &&
+          t.type === toast.type
+      );
+
+      if (existingToast) {
+        return; // Don't add duplicate toast
+      }
+
+      const id = Math.random().toString(36).substr(2, 9);
+      const newToast = { ...toast, id };
+
+      setToasts((prev) => [...prev, newToast]);
+
+      // Auto remove toast after duration
+      const duration = toast.duration || 5000;
+      setTimeout(() => {
+        removeToast(id);
+      }, duration);
+    },
+    [toasts, removeToast]
+  );
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
@@ -66,7 +76,13 @@ export function useToast() {
   return context;
 }
 
-function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast: (id: string) => void }) {
+function ToastContainer({
+  toasts,
+  removeToast,
+}: {
+  toasts: Toast[];
+  removeToast: (id: string) => void;
+}) {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {toasts.map((toast) => (
@@ -76,7 +92,13 @@ function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast:
   );
 }
 
-function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
+function ToastItem({
+  toast,
+  onRemove,
+}: {
+  toast: Toast;
+  onRemove: (id: string) => void;
+}) {
   const getToastStyles = (type: ToastType) => {
     switch (type) {
       case "success":
@@ -109,7 +131,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 
   return (
     <div
-      className={`max-w-sm w-full rounded-lg border p-4 shadow-lg backdrop-blur-md ${getToastStyles(toast.type)} animate-in slide-in-from-right-full duration-300`}
+      className={`max-w-sm w-full rounded-lg border p-4 shadow-lg backdrop-blur-md ${getToastStyles(
+        toast.type
+      )} animate-in slide-in-from-right-full duration-300`}
     >
       <div className="flex items-start">
         <div className="flex-shrink-0">

@@ -15,7 +15,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: `Grafana search failed: ${res.status}` }, { status: 502 });
     }
 
-    const items: any[] = await res.json();
+    const items: Array<{ type?: string; title?: string; url?: string }> = await res.json();
     const dash = items.find((i) => i.type === "dash-db" && i.title?.toLowerCase() === title.toLowerCase()) || items.find((i) => i.type === "dash-db");
 
     if (!dash || !dash.url) {

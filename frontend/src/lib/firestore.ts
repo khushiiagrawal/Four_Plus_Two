@@ -2,6 +2,22 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore, Timestamp } from 'firebase-admin/firestore';
 import { getMessaging, Messaging } from 'firebase-admin/messaging';
 
+// User interface for type safety
+export interface User {
+  id: string;
+  name?: string;
+  email?: string;
+  employeeId?: string;
+  designation?: string;
+  department?: string;
+  region?: string;
+  photoIdUrl?: string;
+  isAuthenticated?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  [key: string]: unknown; // Allow additional properties
+}
+
 // Initialize Firebase Admin SDK
 let db: Firestore;
 let msg: Messaging;
@@ -73,15 +89,16 @@ export function convertTimestamp(timestamp: Timestamp | Date | string | number):
 }
 
 // Helper function to convert user data from Firestore
-export function convertFirestoreUser(doc: FirebaseFirestore.DocumentSnapshot) {
+export function convertFirestoreUser(doc: FirebaseFirestore.DocumentSnapshot): User | null {
   if (!doc.exists) return null;
   
   const data = doc.data();
   if (!data) return null;
   
   return {
+    id: doc.id, // Add the document ID
     ...data,
-    createdAt: convertTimestamp(data.createdAt),
-    updatedAt: convertTimestamp(data.updatedAt),
-  };
+    createdAt: convertTimestamp(data.createdAt || new Date()),
+    updatedAt: convertTimestamp(data.updatedAt || new Date()),
+  } as User;
 }

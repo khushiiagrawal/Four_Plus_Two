@@ -1,4 +1,4 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, ObjectId } from "mongodb";
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 const MONGODB_DB = process.env.MONGODB_DB || "JalRaskhak";
@@ -23,7 +23,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
 }
 
 export interface Alert {
-  _id?: string;
+  _id?: ObjectId;
   title: string;
   description: string;
   location: string;
@@ -45,7 +45,7 @@ export const LEGAL_REPORTS_COLLECTION = "legal_reports";
 export const AUTHORITIES_REPORTS_COLLECTION = "authorities_reports";
 
 export interface LegalReport {
-  _id?: string;
+  _id?: ObjectId;
   originalReportId: string;
   title: string;
   type: string;

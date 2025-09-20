@@ -35,7 +35,12 @@ interface ReportDetailsModalProps {
   onStatusUpdate?: (reportId: string, newStatus: string) => void;
 }
 
-export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUpdate }: ReportDetailsModalProps) {
+export default function ReportDetailsModal({
+  report,
+  isOpen,
+  onClose,
+  onStatusUpdate,
+}: ReportDetailsModalProps) {
   const { addToast } = useToast();
   const intl = useIntl();
   // Handle escape key press
@@ -114,21 +119,37 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
 
       addToast({
         type: "success",
-        title: intl.formatMessage({ id: "report.exported.title", defaultMessage: "Report exported" }),
-        message: intl.formatMessage({ id: "report.exported.message", defaultMessage: "Saved as {filename}" }, { filename }),
+        title: intl.formatMessage({
+          id: "report.exported.title",
+          defaultMessage: "Report exported",
+        }),
+        message: intl.formatMessage(
+          {
+            id: "report.exported.message",
+            defaultMessage: "Saved as {filename}",
+          },
+          { filename }
+        ),
       });
-    } catch (e) {
+    } catch (error) {
+      console.error("Export error:", error);
       addToast({
         type: "error",
-        title: intl.formatMessage({ id: "report.exported.error.title", defaultMessage: "Export failed" }),
-        message: intl.formatMessage({ id: "common.tryAgain", defaultMessage: "Could not complete the action. Please try again." }),
+        title: intl.formatMessage({
+          id: "report.exported.error.title",
+          defaultMessage: "Export failed",
+        }),
+        message: intl.formatMessage({
+          id: "common.tryAgain",
+          defaultMessage: "Could not complete the action. Please try again.",
+        }),
       });
     }
   };
 
   const handleStatusUpdate = async (newStatus: string) => {
     if (!report) return;
-    
+
     try {
       const response = await fetch("/api/authorities-reports", {
         method: "PATCH",
@@ -144,10 +165,19 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
       if (response.ok) {
         addToast({
           type: "success",
-          title: intl.formatMessage({ id: "report.status.updated.title", defaultMessage: "Status Updated" }),
-          message: intl.formatMessage({ id: "report.status.updated.message", defaultMessage: "Report status changed to {status}" }, { status: newStatus }),
+          title: intl.formatMessage({
+            id: "report.status.updated.title",
+            defaultMessage: "Status Updated",
+          }),
+          message: intl.formatMessage(
+            {
+              id: "report.status.updated.message",
+              defaultMessage: "Report status changed to {status}",
+            },
+            { status: newStatus }
+          ),
         });
-        
+
         // Call the parent callback to refresh the data
         if (onStatusUpdate) {
           onStatusUpdate(report.id, newStatus);
@@ -156,15 +186,30 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
         const errorData = await response.json().catch(() => ({}));
         addToast({
           type: "error",
-          title: intl.formatMessage({ id: "report.status.updateFailed.title", defaultMessage: "Update Failed" }),
-          message: errorData.error || intl.formatMessage({ id: "report.status.updateFailed.message", defaultMessage: "Failed to update report status" }),
+          title: intl.formatMessage({
+            id: "report.status.updateFailed.title",
+            defaultMessage: "Update Failed",
+          }),
+          message:
+            errorData.error ||
+            intl.formatMessage({
+              id: "report.status.updateFailed.message",
+              defaultMessage: "Failed to update report status",
+            }),
         });
       }
     } catch (error) {
+      console.error("Status update error:", error);
       addToast({
         type: "error",
-        title: intl.formatMessage({ id: "report.status.updateFailed.title", defaultMessage: "Update Failed" }),
-        message: intl.formatMessage({ id: "common.networkError", defaultMessage: "Network error. Please try again." }),
+        title: intl.formatMessage({
+          id: "report.status.updateFailed.title",
+          defaultMessage: "Update Failed",
+        }),
+        message: intl.formatMessage({
+          id: "common.networkError",
+          defaultMessage: "Network error. Please try again.",
+        }),
       });
     }
   };
@@ -172,31 +217,52 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div 
+        <div
           className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-2xl"
           style={{
-            background: "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
+            background:
+              "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
           }}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-white/10">
             <div>
-              <h2 className="text-xl font-semibold text-white"><FormattedMessage id="report.details.title" defaultMessage="Report Details" /></h2>
-              <p className="text-slate-300 text-sm mt-1"><FormattedMessage id="report.details.subtitle" defaultMessage="Environmental Compliance Report" /></p>
+              <h2 className="text-xl font-semibold text-white">
+                <FormattedMessage
+                  id="report.details.title"
+                  defaultMessage="Report Details"
+                />
+              </h2>
+              <p className="text-slate-300 text-sm mt-1">
+                <FormattedMessage
+                  id="report.details.subtitle"
+                  defaultMessage="Environmental Compliance Report"
+                />
+              </p>
             </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -206,11 +272,25 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
             {/* Report Title and Status */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <h3 className="text-lg font-medium text-white">{report.title}</h3>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getSeverityColor(report.severity)}`}>
-                  {report.severity} <FormattedMessage id="report.priority" defaultMessage="Priority" />
+                <h3 className="text-lg font-medium text-white">
+                  {report.title}
+                </h3>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium border ${getSeverityColor(
+                    report.severity
+                  )}`}
+                >
+                  {report.severity}{" "}
+                  <FormattedMessage
+                    id="report.priority"
+                    defaultMessage="Priority"
+                  />
                 </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(report.status)}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                    report.status
+                  )}`}
+                >
                   {report.status}
                 </span>
               </div>
@@ -220,32 +300,70 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div className="p-3 bg-white/10 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.type" defaultMessage="Report Type" /></div>
+                  <div className="text-xs text-slate-400 mb-1">
+                    <FormattedMessage
+                      id="report.fields.type"
+                      defaultMessage="Report Type"
+                    />
+                  </div>
                   <div className="text-white font-medium">{report.type}</div>
                 </div>
                 <div className="p-3 bg-white/10 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.reportedBy" defaultMessage="Reported By" /></div>
-                  <div className="text-white font-medium">{report.reportedBy}</div>
+                  <div className="text-xs text-slate-400 mb-1">
+                    <FormattedMessage
+                      id="report.fields.reportedBy"
+                      defaultMessage="Reported By"
+                    />
+                  </div>
+                  <div className="text-white font-medium">
+                    {report.reportedBy}
+                  </div>
                 </div>
                 <div className="p-3 bg-white/10 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.region" defaultMessage="Region" /></div>
+                  <div className="text-xs text-slate-400 mb-1">
+                    <FormattedMessage
+                      id="report.fields.region"
+                      defaultMessage="Region"
+                    />
+                  </div>
                   <div className="text-white font-medium">{report.region}</div>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <div className="p-3 bg-white/10 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.id" defaultMessage="Report ID" /></div>
-                  <div className="text-white font-mono text-sm">{report.id}</div>
+                  <div className="text-xs text-slate-400 mb-1">
+                    <FormattedMessage
+                      id="report.fields.id"
+                      defaultMessage="Report ID"
+                    />
+                  </div>
+                  <div className="text-white font-mono text-sm">
+                    {report.id}
+                  </div>
                 </div>
                 <div className="p-3 bg-white/10 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.created" defaultMessage="Created" /></div>
-                  <div className="text-white font-medium">{report.timestamp}</div>
+                  <div className="text-xs text-slate-400 mb-1">
+                    <FormattedMessage
+                      id="report.fields.created"
+                      defaultMessage="Created"
+                    />
+                  </div>
+                  <div className="text-white font-medium">
+                    {report.timestamp}
+                  </div>
                 </div>
                 {report.sentAt && (
                   <div className="p-3 bg-white/10 rounded-lg">
-                    <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.fields.sentToLegal" defaultMessage="Sent to Legal" /></div>
-                    <div className="text-white font-medium">{new Date(report.sentAt).toLocaleString()}</div>
+                    <div className="text-xs text-slate-400 mb-1">
+                      <FormattedMessage
+                        id="report.fields.sentToLegal"
+                        defaultMessage="Sent to Legal"
+                      />
+                    </div>
+                    <div className="text-white font-medium">
+                      {new Date(report.sentAt).toLocaleString()}
+                    </div>
                   </div>
                 )}
               </div>
@@ -255,45 +373,97 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
             {report.reportData && (
               <div className="space-y-3">
                 <h4 className="text-lg font-medium text-white flex items-center gap-2">
-                  🩺 <FormattedMessage id="report.health.details" defaultMessage="Health Report Details" />
+                  🩺{" "}
+                  <FormattedMessage
+                    id="report.health.details"
+                    defaultMessage="Health Report Details"
+                  />
                 </h4>
                 <div className="p-4 bg-slate-500/10 rounded-lg border border-slate-500/20">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {report.reportData.age && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1">👤 <FormattedMessage id="report.health.age" defaultMessage="Patient Age" /></div>
-                        <div className="text-white font-medium">{report.reportData.age} years</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          👤{" "}
+                          <FormattedMessage
+                            id="report.health.age"
+                            defaultMessage="Patient Age"
+                          />
+                        </div>
+                        <div className="text-white font-medium">
+                          {report.reportData.age} years
+                        </div>
                       </div>
                     )}
                     {report.reportData.userID && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1">🆔 <FormattedMessage id="report.health.userId" defaultMessage="User ID" /></div>
-                        <div className="text-white font-mono text-sm">{report.reportData.userID}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          🆔{" "}
+                          <FormattedMessage
+                            id="report.health.userId"
+                            defaultMessage="User ID"
+                          />
+                        </div>
+                        <div className="text-white font-mono text-sm">
+                          {report.reportData.userID}
+                        </div>
                       </div>
                     )}
                     {report.reportData.waterID && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1">💧 <FormattedMessage id="report.health.waterId" defaultMessage="Water Source ID" /></div>
-                        <div className="text-white font-mono text-sm">{report.reportData.waterID}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          💧{" "}
+                          <FormattedMessage
+                            id="report.health.waterId"
+                            defaultMessage="Water Source ID"
+                          />
+                        </div>
+                        <div className="text-white font-mono text-sm">
+                          {report.reportData.waterID}
+                        </div>
                       </div>
                     )}
                     {report.reportData.location && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1">📍 <FormattedMessage id="report.health.location" defaultMessage="Location" /></div>
-                        <div className="text-white font-medium">{report.reportData.location}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          📍{" "}
+                          <FormattedMessage
+                            id="report.health.location"
+                            defaultMessage="Location"
+                          />
+                        </div>
+                        <div className="text-white font-medium">
+                          {report.reportData.location}
+                        </div>
                       </div>
                     )}
                     {report.reportData.symptoms && (
                       <div className="md:col-span-2">
-                        <div className="text-xs text-slate-400 mb-1">🩺 <FormattedMessage id="report.health.symptoms" defaultMessage="Reported Symptoms" /></div>
-                        <div className="text-white font-medium">{report.reportData.symptoms}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          🩺{" "}
+                          <FormattedMessage
+                            id="report.health.symptoms"
+                            defaultMessage="Reported Symptoms"
+                          />
+                        </div>
+                        <div className="text-white font-medium">
+                          {report.reportData.symptoms}
+                        </div>
                       </div>
                     )}
                     {report.reportData.originalCreatedAt && (
                       <div className="md:col-span-2">
-                        <div className="text-xs text-slate-400 mb-1">📅 <FormattedMessage id="report.health.originalDate" defaultMessage="Original Report Date" /></div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          📅{" "}
+                          <FormattedMessage
+                            id="report.health.originalDate"
+                            defaultMessage="Original Report Date"
+                          />
+                        </div>
                         <div className="text-white font-medium">
-                          {new Date(report.reportData.originalCreatedAt).toLocaleString()}
+                          {new Date(
+                            report.reportData.originalCreatedAt
+                          ).toLocaleString()}
                         </div>
                       </div>
                     )}
@@ -306,20 +476,38 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
             {report.metadata && (
               <div className="space-y-3">
                 <h4 className="text-lg font-medium text-white flex items-center gap-2">
-                  📊 <FormattedMessage id="report.meta.title" defaultMessage="Additional Information" />
+                  📊{" "}
+                  <FormattedMessage
+                    id="report.meta.title"
+                    defaultMessage="Additional Information"
+                  />
                 </h4>
                 <div className="p-4 bg-slate-500/10 rounded-lg border border-slate-500/20">
                   <div className="space-y-2">
                     {report.metadata.source && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.meta.source" defaultMessage="Source" /></div>
-                        <div className="text-white font-medium capitalize">{report.metadata.source.replace('_', ' ')}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          <FormattedMessage
+                            id="report.meta.source"
+                            defaultMessage="Source"
+                          />
+                        </div>
+                        <div className="text-white font-medium capitalize">
+                          {report.metadata.source.replace("_", " ")}
+                        </div>
                       </div>
                     )}
                     {report.metadata.originalReportId && (
                       <div>
-                        <div className="text-xs text-slate-400 mb-1"><FormattedMessage id="report.meta.originalId" defaultMessage="Original Report ID" /></div>
-                        <div className="text-white font-mono text-sm">{report.metadata.originalReportId}</div>
+                        <div className="text-xs text-slate-400 mb-1">
+                          <FormattedMessage
+                            id="report.meta.originalId"
+                            defaultMessage="Original Report ID"
+                          />
+                        </div>
+                        <div className="text-white font-mono text-sm">
+                          {report.metadata.originalReportId}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -335,7 +523,11 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
                     onClick={() => handleStatusUpdate("Completed")}
                     className="px-4 py-2 bg-green-600/30 hover:bg-green-600/40 text-green-300 rounded-lg transition-colors"
                   >
-                    ✓ <FormattedMessage id="report.actions.markCompleted" defaultMessage="Mark as Completed" />
+                    ✓{" "}
+                    <FormattedMessage
+                      id="report.actions.markCompleted"
+                      defaultMessage="Mark as Completed"
+                    />
                   </button>
                 )}
               </div>
@@ -346,8 +538,14 @@ export default function ReportDetailsModal({ report, isOpen, onClose, onStatusUp
                 >
                   <FormattedMessage id="common.close" defaultMessage="Close" />
                 </button>
-                <button onClick={handleExport} className="px-4 py-2 bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 rounded-lg transition-colors">
-                  <FormattedMessage id="report.actions.export" defaultMessage="Export Report" />
+                <button
+                  onClick={handleExport}
+                  className="px-4 py-2 bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 rounded-lg transition-colors"
+                >
+                  <FormattedMessage
+                    id="report.actions.export"
+                    defaultMessage="Export Report"
+                  />
                 </button>
               </div>
             </div>

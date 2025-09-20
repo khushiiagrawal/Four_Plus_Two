@@ -8,7 +8,12 @@ import as from "@/i18n/messages/as.json";
 
 type SupportedLocale = "en" | "hi" | "bn" | "as";
 
-const messages: Record<SupportedLocale, Record<string, string>> = { en, hi, bn, as } as const;
+const messages: Record<SupportedLocale, Record<string, string>> = {
+  en,
+  hi,
+  bn,
+  as,
+} as const;
 
 type LocaleContextValue = {
   locale: SupportedLocale;
@@ -31,7 +36,10 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem(STORAGE_KEY) as SupportedLocale | null) : null;
+    const stored =
+      typeof window !== "undefined"
+        ? (localStorage.getItem(STORAGE_KEY) as SupportedLocale | null)
+        : null;
     if (stored && messages[stored]) {
       setLocaleState(stored);
     }
@@ -43,7 +51,10 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     async function loadIntlLocaleData(target: SupportedLocale) {
       try {
         // NumberFormat polyfill + locale
-        if (typeof Intl === "undefined" || typeof (Intl as any).NumberFormat === "undefined") {
+        if (
+          typeof Intl === "undefined" ||
+          typeof Intl.NumberFormat === "undefined"
+        ) {
           await import("@formatjs/intl-numberformat/polyfill");
         }
         // Some environments miss locale data for certain languages
@@ -108,7 +119,9 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   return (
     <LocaleContext.Provider value={value}>
       {ready ? (
-        <IntlProvider locale={locale} messages={messages[locale]}>{children}</IntlProvider>
+        <IntlProvider locale={locale} messages={messages[locale]}>
+          {children}
+        </IntlProvider>
       ) : null}
     </LocaleContext.Provider>
   );
@@ -118,7 +131,5 @@ export const supportedLocales: { code: SupportedLocale; labelKey: string }[] = [
   { code: "en", labelKey: "locale.english" },
   { code: "hi", labelKey: "locale.hindi" },
   { code: "bn", labelKey: "locale.bengali" },
-  { code: "as", labelKey: "locale.assamese" }
+  { code: "as", labelKey: "locale.assamese" },
 ];
-
-

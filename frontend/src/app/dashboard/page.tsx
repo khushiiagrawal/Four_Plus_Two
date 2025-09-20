@@ -58,7 +58,7 @@ export default function DashboardPage() {
       router.push("/profile");
       return;
     }
-  }, [user, isLoading, router, addToast]);
+  }, [user, isLoading, router, addToast, intl]);
 
   const { data: summary } = useSWR(
     user?.isAuthenticated ? "/api/data/summary" : null,
@@ -108,7 +108,7 @@ export default function DashboardPage() {
         value: summary?.areasAtRisk ?? "—",
       },
     ],
-    [summary]
+    [summary, intl]
   );
 
   const [filters, setFilters] = useState<Filters>({

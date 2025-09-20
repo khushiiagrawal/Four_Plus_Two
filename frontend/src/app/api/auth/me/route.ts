@@ -24,18 +24,22 @@ export async function GET(req: NextRequest) {
       
       const dbUser = convertFirestoreUser(userDoc);
       
+      if (!dbUser) {
+        return NextResponse.json({ error: "User data not found" }, { status: 404 });
+      }
+      
       // Create updated user object with fresh data from database
       const user: AppUser = {
         id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        employeeId: dbUser.employeeId,
-        designation: dbUser.designation,
-        department: dbUser.department,
-        region: dbUser.region,
+        name: dbUser.name || "",
+        email: dbUser.email || "",
+        employeeId: dbUser.employeeId || "",
+        designation: dbUser.designation || "",
+        department: dbUser.department || "",
+        region: dbUser.region || "",
         photoIdUrl: dbUser.photoIdUrl,
         role: "official",
-        isAuthenticated: dbUser.isAuthenticated, // Use fresh data from database
+        isAuthenticated: dbUser.isAuthenticated || false, // Use fresh data from database
       };
       
       return NextResponse.json({ 
