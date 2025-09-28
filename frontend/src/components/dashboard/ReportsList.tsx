@@ -181,9 +181,9 @@ export default function ReportsList({
   };
 
   return (
-    <div className="rounded-2xl bg-white/40 backdrop-blur border border-white/50 shadow-sm">
-      <div className="p-4 border-b border-slate-200/60 dark:border-white/10">
-        <h3 className="text-sm font-medium text-slate-800">
+    <div className="rounded-xl sm:rounded-2xl bg-white/40 backdrop-blur border border-white/50 shadow-sm">
+      <div className="p-3 sm:p-4 border-b border-slate-200/60 dark:border-white/10">
+        <h3 className="text-sm sm:text-base font-medium text-slate-800">
           <FormattedMessage
             id="healthReports.title"
             defaultMessage="Health Reports"
@@ -201,8 +201,8 @@ export default function ReportsList({
       </div>
       <ul className="divide-y divide-slate-200/60">
         {items.map((it) => (
-          <li key={it.id} className="p-4">
-            <div className="flex items-start justify-between">
+          <li key={it.id} className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="flex items-start gap-3 flex-1">
                 <input
                   type="checkbox"
@@ -216,30 +216,30 @@ export default function ReportsList({
                     }
                     onSelectionChange(newSelection);
                   }}
-                  className="mt-1 w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  className="mt-1 w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-800">
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-slate-800 break-words">
                     {translateHealthSymptoms(it.symptoms || it.title, intl)}
                   </div>
-                <div className="text-xs text-slate-600 mt-1">
-                  📍 {translateLocation(it.location || it.region, intl)}
-                </div>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-slate-600">
+                  <div className="text-xs text-slate-600 mt-1">
+                    📍 {translateLocation(it.location || it.region, intl)}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs text-slate-600">
                     {it.age && <span>👤 Age: {it.age}</span>}
-                    {it.userID && <span>🆔 User: {it.userID}</span>}
-                    {it.waterID && <span>💧 Water: {it.waterID}</span>}
+                    {it.userID && <span className="break-all">🆔 User: {it.userID}</span>}
+                    {it.waterID && <span className="break-all">💧 Water: {it.waterID}</span>}
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2 ml-4">
+              <div className="flex flex-col sm:flex-col items-stretch sm:items-end gap-2">
                 <div className="text-xs text-slate-700 font-medium">
                   {new Date(it.time).toLocaleString()}
                 </div>
                 <button
                   onClick={() => sendReportToLegal(it)}
                   disabled={sendingReports.has(it.id)}
-                  className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-400 text-white disabled:text-gray-300 rounded-lg border border-blue-700 disabled:border-gray-500 text-xs transition-colors flex items-center gap-1 shadow-sm"
+                  className="w-full sm:w-auto px-3 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-400 text-white disabled:text-gray-300 rounded-lg border border-blue-700 disabled:border-gray-500 text-xs transition-colors flex items-center justify-center gap-1 shadow-sm"
                 >
                   {sendingReports.has(it.id) ? (
                     <>

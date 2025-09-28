@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   title: "JalRakshak | Digital Health Surveillance",
   description:
     "Smart Community Health Monitoring—AI and IoT powered Early Warning for Water-Borne Diseases in Rural India.",
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

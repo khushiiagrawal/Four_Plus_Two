@@ -184,8 +184,8 @@ export default function RealTimeAlerts() {
   if (isLoading) {
     return (
       <section className="mt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-800 flex items-center gap-2">
             <FormattedMessage
               id="dashboard.realtimeAlerts.title"
               defaultMessage="Real Time Alerts From Water Body"
@@ -198,9 +198,9 @@ export default function RealTimeAlerts() {
             />
           </span>
         </div>
-        <div className="rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg p-6">
-          <div className="flex items-center justify-center py-8">
-            <div className="w-8 h-8 rounded-full bg-slate-300 animate-pulse" />
+        <div className="rounded-xl sm:rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg p-4 sm:p-6">
+          <div className="flex items-center justify-center py-6 sm:py-8">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-300 animate-pulse" />
           </div>
         </div>
       </section>
@@ -210,8 +210,8 @@ export default function RealTimeAlerts() {
   if (error) {
     return (
       <section className="mt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-800 flex items-center gap-2">
             <FormattedMessage
               id="dashboard.realtimeAlerts.title"
               defaultMessage="Real Time Alerts From Water Body"
@@ -224,8 +224,8 @@ export default function RealTimeAlerts() {
             />
           </span>
         </div>
-        <div className="rounded-2xl border border-red-200 bg-red-50/40 backdrop-blur-md shadow-lg p-6">
-          <p className="text-red-600 text-center">
+        <div className="rounded-xl sm:rounded-2xl border border-red-200 bg-red-50/40 backdrop-blur-md shadow-lg p-4 sm:p-6">
+          <p className="text-red-600 text-center text-sm sm:text-base">
             <FormattedMessage
               id="dashboard.realtimeAlerts.errorMessage"
               defaultMessage="Failed to load alerts. Please try again later."
@@ -240,8 +240,8 @@ export default function RealTimeAlerts() {
 
   return (
     <section className="mt-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-800 flex items-center gap-2">
           <FormattedMessage
             id="dashboard.realtimeAlerts.title"
             defaultMessage="Real Time Alerts From Water Body"
@@ -259,17 +259,17 @@ export default function RealTimeAlerts() {
         </span>
       </div>
 
-      <div className="rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg overflow-hidden">
+      <div className="rounded-xl sm:rounded-2xl border border-white/50 bg-white/40 backdrop-blur-md shadow-lg overflow-hidden">
         {alerts.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="text-4xl mb-4">🌊</div>
-            <p className="text-slate-600">
+          <div className="p-6 sm:p-8 text-center">
+            <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">🌊</div>
+            <p className="text-sm sm:text-base text-slate-600">
               <FormattedMessage
                 id="dashboard.realtimeAlerts.noAlerts"
                 defaultMessage="No alerts at this time"
               />
             </p>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 text-xs sm:text-sm mt-1">
               <FormattedMessage
                 id="dashboard.realtimeAlerts.monitoringActive"
                 defaultMessage="Water quality monitoring is active"
@@ -283,16 +283,16 @@ export default function RealTimeAlerts() {
               return (
               <div
                 key={alert.id}
-                className="p-4 hover:bg-white/20 transition-colors"
+                className="p-3 sm:p-4 hover:bg-white/20 transition-colors"
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                   <div className="flex-1 min-w-0">
                     {/* Alert Header */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="text-base sm:text-lg">
                         {getSeverityIcon(alert.severity)}
                       </span>
-                      <h3 className="font-medium text-slate-800 truncate">
+                      <h3 className="font-medium text-slate-800 truncate text-sm sm:text-base">
                         {translatedTitle}
                       </h3>
                       <span
@@ -305,12 +305,12 @@ export default function RealTimeAlerts() {
                     </div>
 
                     {/* Alert Summary */}
-                    <p className="text-slate-700 text-sm mb-3 leading-relaxed">
+                    <p className="text-slate-700 text-xs sm:text-sm mb-3 leading-relaxed">
                       {translatedSummary}
                     </p>
 
                     {/* Alert Metadata */}
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
                         🕒 {formatTimestamp(alert.timestamp)}
                       </span>
@@ -323,15 +323,15 @@ export default function RealTimeAlerts() {
                   </div>
 
                   {/* Alert User Button */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 w-full sm:w-auto">
                     <button
                       onClick={() => handleAlertUser(alert)}
                       disabled={alertingStates[alert.id]}
-                      className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-400 text-white rounded-lg border border-red-600 disabled:border-red-400 transition-colors flex items-center gap-2 shadow-sm disabled:cursor-not-allowed text-sm font-medium"
+                      className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-400 text-white rounded-lg border border-red-600 disabled:border-red-400 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:cursor-not-allowed text-xs sm:text-sm font-medium"
                     >
                       {alertingStates[alert.id] ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           <FormattedMessage
                             id="dashboard.realtimeAlerts.alerting"
                             defaultMessage="Alerting..."
@@ -350,13 +350,13 @@ export default function RealTimeAlerts() {
                 {/* Long Summary (if available) */}
                 {alert.longSummary && (
                   <details className="mt-3">
-                    <summary className="cursor-pointer text-sm text-slate-600 hover:text-slate-800 transition-colors">
+                    <summary className="cursor-pointer text-xs sm:text-sm text-slate-600 hover:text-slate-800 transition-colors">
                       <FormattedMessage
                         id="dashboard.realtimeAlerts.viewDetails"
                         defaultMessage="View detailed analysis"
                       />
                     </summary>
-                    <div className="mt-2 p-3 bg-white/30 rounded-lg border border-white/40">
+                    <div className="mt-2 p-2 sm:p-3 bg-white/30 rounded-lg border border-white/40">
                       <pre className="text-xs text-slate-700 whitespace-pre-wrap font-mono">
                         {alert.longSummary}
                       </pre>

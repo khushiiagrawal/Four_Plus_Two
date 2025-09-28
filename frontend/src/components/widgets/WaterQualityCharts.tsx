@@ -106,12 +106,12 @@ export default function WaterQualityCharts() {
   } as const;
 
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm h-64">
+    <div className="grid grid-cols-1 gap-3 sm:gap-4">
+      <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm h-56 sm:h-64">
         <div className="text-sm font-medium text-slate-700 mb-2">pH (units)</div>
         <Line data={phData} options={commonOptions} />
       </div>
-      <div className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm h-64">
+      <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm h-56 sm:h-64">
         <div className="text-sm font-medium text-slate-700 mb-2">Turbidity (NTU)</div>
         <Line data={turbData} options={commonOptions} />
       </div>
