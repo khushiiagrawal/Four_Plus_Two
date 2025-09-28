@@ -27,13 +27,13 @@ export default function FiltersBar({
   const [q, setQ] = useState(value.query);
   const [r, setR] = useState(value.region);
   return (
-    <div className="flex flex-col md:flex-row gap-2 md:items-center">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
         onBlur={() => onChange({ query: q, region: r })}
         placeholder="Search reports..."
-        className="flex-1 rounded-xl border border-white/50 bg-white/30 px-3 py-2 outline-none text-slate-800 placeholder-slate-500"
+        className="flex-1 rounded-xl border border-white/50 bg-white/30 px-3 py-2 outline-none text-slate-800 placeholder-slate-500 text-sm sm:text-base"
       />
       <select
         value={r}
@@ -45,7 +45,7 @@ export default function FiltersBar({
             onRegionChange();
           }
         }}
-        className="rounded-xl border border-white/50 bg-white/30 px-3 py-2 text-slate-800"
+        className="w-full sm:w-auto rounded-xl border border-white/50 bg-white/30 px-3 py-2 text-slate-800 text-sm sm:text-base"
       >
         {regions.map((rr) => (
           <option

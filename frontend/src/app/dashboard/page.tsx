@@ -290,37 +290,55 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
-      <header className="flex items-center justify-between mt-20">
-        <h1 className="text-2xl md:text-3xl font-semibold text-slate-800">
+    <div className="min-h-dvh p-3 sm:p-4 md:p-6 bg-gradient-to-b from-cyan-200/90 via-sky-200/80 to-cyan-200/90">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-16 sm:mt-20 gap-4">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-800">
           <FormattedMessage
             id="dashboard.title"
             defaultMessage="Health-Care Workers Dashboard"
           />
         </h1>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsCreateReportOpen(true)}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg border border-emerald-700 transition-colors flex items-center gap-2 shadow-sm"
-          >
-            ➕{" "}
-            <FormattedMessage
-              id="dashboard.actions.createReport"
-              defaultMessage="Create Report"
-            />
-          </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+          <div className="flex gap-2 sm:gap-4">
+            <button
+              onClick={() => setIsCreateReportOpen(true)}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg border border-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base"
+            >
+              ➕{" "}
+              <span className="hidden xs:inline">
+                <FormattedMessage
+                  id="dashboard.actions.createReport"
+                  defaultMessage="Create Report"
+                />
+              </span>
+              <span className="xs:hidden">
+                <FormattedMessage
+                  id="dashboard.actions.createReport"
+                  defaultMessage="Report"
+                />
+              </span>
+            </button>
 
-          <button
-            onClick={() => setIsAlertModalOpen(true)}
-            className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center gap-2 shadow-sm"
-          >
-            🚨{" "}
-            <FormattedMessage
-              id="dashboard.actions.createAlert"
-              defaultMessage="Create Alert"
-            />
-          </button>
-          <span className="inline-flex items-center text-xs rounded-full bg-emerald-600 text-white px-2 py-1 border border-emerald-700 shadow-sm">
+            <button
+              onClick={() => setIsAlertModalOpen(true)}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg border border-red-700 transition-colors flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base"
+            >
+              🚨{" "}
+              <span className="hidden xs:inline">
+                <FormattedMessage
+                  id="dashboard.actions.createAlert"
+                  defaultMessage="Create Alert"
+                />
+              </span>
+              <span className="xs:hidden">
+                <FormattedMessage
+                  id="dashboard.actions.createAlert"
+                  defaultMessage="Alert"
+                />
+              </span>
+            </button>
+          </div>
+          <span className="inline-flex items-center justify-center text-xs rounded-full bg-emerald-600 text-white px-2 py-1 border border-emerald-700 shadow-sm">
             <FormattedMessage id="dashboard.live" defaultMessage="Live" />
           </span>
         </div>
@@ -337,14 +355,14 @@ export default function DashboardPage() {
           onRegionChange={scrollToReports}
         />
       </section>
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-4">
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mt-4">
         {counters.map((c) => (
           <div
             key={c.label}
-            className="rounded-2xl p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm"
+            className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-white/30 backdrop-blur-md border border-white/40 shadow-sm"
           >
-            <div className="text-xs text-slate-600">{c.label}</div>
-            <div className="text-2xl md:text-3xl font-semibold mt-1 text-slate-800">
+            <div className="text-xs sm:text-sm text-slate-600 leading-tight">{c.label}</div>
+            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold mt-1 text-slate-800">
               {c.value}
             </div>
           </div>
@@ -357,8 +375,8 @@ export default function DashboardPage() {
 
       {/* Summarize Action below dashboard widgets, above reports section */}
       <section className="mt-6">
-        <div className="rounded-2xl p-4 bg-white/40 backdrop-blur-md border border-white/50 shadow-sm flex items-center justify-between flex-wrap gap-3">
-          <div className="text-slate-700 text-sm">
+        <div className="rounded-xl sm:rounded-2xl p-3 sm:p-4 bg-white/40 backdrop-blur-md border border-white/50 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="text-slate-700 text-sm sm:text-base">
             <FormattedMessage
               id="dashboard.actions.summarizeReports"
               defaultMessage="Summarize Reports"
@@ -368,7 +386,7 @@ export default function DashboardPage() {
           <button
             onClick={handleSummarizeReports}
             disabled={selectedReports.size === 0 || isSummarizing}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg border border-blue-700 disabled:border-gray-500 transition-colors flex items-center gap-2 shadow-sm disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg border border-blue-700 disabled:border-gray-500 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:cursor-not-allowed text-sm sm:text-base"
           >
             {isSummarizing ? (
               <>
