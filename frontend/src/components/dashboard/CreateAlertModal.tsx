@@ -109,7 +109,7 @@ export default function CreateAlertModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       style={{
         position: "fixed",
         top: 0,
@@ -126,34 +126,34 @@ export default function CreateAlertModal({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md mx-4">
+      <div className="relative w-full max-w-md mx-auto">
         <div 
-          className="rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg p-6"
+          className="rounded-xl sm:rounded-2xl border border-white/20 bg-white/30 backdrop-blur shadow-lg p-4 sm:p-6"
           style={{
             background: "linear-gradient(to bottom, #25404c, #1f4a5e, #1e485c, #1e4558, #1d4254, #1c3e50, #1b3b4b, #1b3745, #193440, #18303c)",
           }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
               🚨 Send Emergency Report
             </h2>
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="text-white/70 hover:text-white transition-colors disabled:opacity-50"
+              className="text-white/70 hover:text-white transition-colors disabled:opacity-50 text-lg sm:text-xl"
             >
               ✕
             </button>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
             <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Report Title *
               </label>
               <input
                 {...form.register("title")}
-                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-white/50 text-white"
+                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-white/50 text-white text-sm sm:text-base"
                 placeholder="e.g., Critical Pollution Level Alert"
                 disabled={isSubmitting}
               />
@@ -170,8 +170,8 @@ export default function CreateAlertModal({
               </label>
               <textarea
                 {...form.register("description")}
-                rows={4}
-                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 resize-none placeholder:text-white/50 text-white"
+                rows={3}
+                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 resize-none placeholder:text-white/50 text-white text-sm sm:text-base"
                 placeholder="Describe the emergency situation, severity, and any immediate actions required..."
                 disabled={isSubmitting}
               />
@@ -188,7 +188,7 @@ export default function CreateAlertModal({
               </label>
               <input
                 {...form.register("location")}
-                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-white/50 text-white"
+                className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 placeholder:text-white/50 text-white text-sm sm:text-base"
                 placeholder="e.g., Industrial Zone A, Sector 12"
                 disabled={isSubmitting}
               />
@@ -199,27 +199,27 @@ export default function CreateAlertModal({
               )}
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-              <p className="text-xs text-amber-200">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-2 sm:p-3">
+              <p className="text-xs sm:text-sm text-amber-200">
                 ⚠️ This report will be immediately sent to higher authorities and
                 district officials. Please ensure all information is
                 accurate and the situation requires immediate attention.
               </p>
             </div>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-50 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               >
                 {isSubmitting ? "Sending..." : "Send Alert"}
               </button>
